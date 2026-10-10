@@ -3,24 +3,17 @@
 import React, { useState } from "react";
 import { Sidebar } from "./Sidebar";
 import { Topbar } from "./Topbar";
-import { UserProfile, UserRole, AdminPermission } from "@/types";
-import { MOCK_ADMIN_PERMISSIONS } from "@/config/navigation";
+import { UserProfile, UserRole } from "@/types";
 
 export interface AppShellProps {
   role: UserRole;
-  user?: UserProfile;
+  user: UserProfile;
   children: React.ReactNode;
 }
 
 export const AppShell: React.FC<AppShellProps> = ({
   role,
-  user = {
-    name: role === "super-admin" ? "Eleanor Vance" : "Julian Thorne",
-    email: role === "super-admin" ? "eleanor@infurnus.org" : "j.thorne@infurnus.org",
-    role: role,
-    department: role === "super-admin" ? "Global System Control" : "Regional Logistics Admin",
-    permissions: MOCK_ADMIN_PERMISSIONS,
-  },
+  user,
   children,
 }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);

@@ -33,7 +33,6 @@ export const MASTER_NAVIGATION_CONFIG: NavItemConfig[] = [
     icon: "user-check",
     requiredPermission: "VIEW_DRIVER_REQUESTS",
     section: "Core Operations",
-    badge: "New",
   },
   {
     id: "vehicles",
@@ -142,7 +141,6 @@ export const MASTER_NAVIGATION_CONFIG: NavItemConfig[] = [
     icon: "check-square",
     requiredPermission: "VIEW_APPROVALS",
     section: "Governance & Security",
-    badge: "3",
   },
   {
     id: "audit-logs",
@@ -210,12 +208,11 @@ export interface SectionGroupedNavItems {
 
 export function getGroupedNavItemsForRole(
   role: UserRole,
-  userPermissions: AdminPermission[] = MOCK_ADMIN_PERMISSIONS
+  userPermissions: AdminPermission[] = [],
 ): SectionGroupedNavItems[] {
   const basePath = role === "super-admin" ? "/super-admin" : "/admin";
 
   const visibleConfigs = MASTER_NAVIGATION_CONFIG.filter((config) => {
-    if (role === "super-admin") return true;
     if (!config.requiredPermission) return true;
     return userPermissions.includes(config.requiredPermission);
   });

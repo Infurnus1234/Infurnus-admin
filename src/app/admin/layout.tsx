@@ -1,5 +1,5 @@
 import React from "react";
-import { AppShell } from "@/components/layout/AppShell";
+import { AuthenticatedShell } from "@/components/layout/AuthenticatedShell";
 
 export const metadata = {
   title: "INFURNUS | Admin Panel",
@@ -11,5 +11,5 @@ export default function AdminLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return <AppShell role="admin">{children}</AppShell>;
+  return <AuthenticatedShell>{children}</AuthenticatedShell>;
 }

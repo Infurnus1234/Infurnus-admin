@@ -30,7 +30,10 @@ export const Topbar: React.FC<TopbarProps> = ({
     {
       label: "Sign Out",
       destructive: true,
-      onClick: () => console.log("Log out"),
+      onClick: async () => {
+        const response = await fetch("/api/backend/auth/logout", { method: "POST" });
+        if (response.ok) window.location.assign("/login");
+      },
     },
   ];
 

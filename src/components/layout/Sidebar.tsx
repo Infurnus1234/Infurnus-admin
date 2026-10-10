@@ -198,11 +198,9 @@ export const Sidebar: React.FC<SidebarProps> = ({
           {/* Sidebar Footer Context */}
           <div className="p-4 shrink-0 border-t border-[#DED8CF]/70 bg-[#F0EBE5]/50">
             <div className="p-3 rounded-2xl bg-[#FDFCF8] border border-[#DED8CF] text-center shadow-organic-sm">
-              <p className="text-xs font-bold text-[#2C2C24]">Permission Engine Active</p>
+              <p className="text-xs font-bold text-[#2C2C24]">Authenticated Administrator</p>
               <p className="text-[10px] text-[#78786C] mt-0.5">
-                {role === "super-admin"
-                  ? "Full System Privileges"
-                  : `${userPermissions?.length || 0} Frontend Scopes`}
+                Backend authorization applies to every operation
               </p>
             </div>
           </div>

@@ -42,7 +42,7 @@ export const MODULE_PERMISSIONS_MAP: Record<string, string> = {
  */
 export function can(
   permission: string,
-  userPermissions: string[] = MOCK_LOGGED_IN_ADMIN.permissions
+  userPermissions: string[] = []
 ): boolean {
   if (!permission) return true;
   return userPermissions.includes(permission);
@@ -53,7 +53,7 @@ export function can(
  */
 export function hasResource(
   resource: string,
-  userResources: string[] = MOCK_LOGGED_IN_ADMIN.resources
+  userResources: string[] = []
 ): boolean {
   if (!resource) return true;
   return userResources.some((r) => r.toLowerCase().includes(resource.toLowerCase()));
@@ -64,7 +64,7 @@ export function hasResource(
  */
 export function canAccessModule(
   module: string,
-  userPermissions: string[] = MOCK_LOGGED_IN_ADMIN.permissions
+  userPermissions: string[] = []
 ): boolean {
   const requiredPerm = MODULE_PERMISSIONS_MAP[module.toLowerCase()];
   if (!requiredPerm) return true;

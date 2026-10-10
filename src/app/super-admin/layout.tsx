@@ -1,5 +1,5 @@
 import React from "react";
-import { AppShell } from "@/components/layout/AppShell";
+import { AuthenticatedShell } from "@/components/layout/AuthenticatedShell";
 
 export const metadata = {
   title: "INFURNUS | Super Admin Portal",
@@ -11,5 +11,5 @@ export default function SuperAdminLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return <AppShell role="super-admin">{children}</AppShell>;
+  return <AuthenticatedShell superOnly>{children}</AuthenticatedShell>;
 }
