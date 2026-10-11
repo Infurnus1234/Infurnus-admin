@@ -1,15 +1,14 @@
 "use client";
 
 import React, { useState } from "react";
-import { DriverApprovalRequest, DriverRequestStatus } from "@/lib/driverRequestData";
+import { DriverApprovalRequest } from "@/lib/driverRequestData";
 import { ApprovalTimeline } from "./ApprovalTimeline";
-import { Badge, Button, Input, Modal } from "@/components";
+import { Badge, Button, Input } from "@/components";
 import {
   X,
   User,
   Phone,
   FileText,
-  ShieldCheck,
   Car,
   Building,
   MapPin,
@@ -17,7 +16,6 @@ import {
   CheckCircle,
   XCircle,
   AlertCircle,
-  Clock,
 } from "lucide-react";
 
 export interface RequestReviewDrawerProps {
@@ -55,14 +53,16 @@ export const RequestReviewDrawer: React.FC<RequestReviewDrawerProps> = ({
         <div className="p-6 border-b border-[#DED8CF] bg-[#F0EBE5]/50 flex items-center justify-between shrink-0">
           <div>
             <div className="flex items-center gap-2">
-              <span className="font-mono text-xs font-bold text-[#C18C5D]">{request.id}</span>
+              <span className="font-mono text-xs font-bold text-[#C18C5D]">
+                {request.id}
+              </span>
               <Badge
                 variant={
                   request.priority === "High"
                     ? "destructive"
                     : request.priority === "Medium"
-                    ? "terracotta"
-                    : "sand"
+                      ? "terracotta"
+                      : "sand"
                 }
                 size="sm"
               >
@@ -73,7 +73,11 @@ export const RequestReviewDrawer: React.FC<RequestReviewDrawerProps> = ({
               {request.requestType.replace(/_/g, " ")}
             </h2>
             <p className="text-xs text-[#78786C]">
-              Submitted by <span className="font-bold text-[#2C2C24]">{request.submittedBy.name}</span> ({request.submittedBy.role}) on {request.submittedDate}
+              Submitted by{" "}
+              <span className="font-bold text-[#2C2C24]">
+                {request.submittedBy.name}
+              </span>{" "}
+              ({request.submittedBy.role}) on {request.submittedDate}
             </p>
           </div>
 
@@ -98,30 +102,58 @@ export const RequestReviewDrawer: React.FC<RequestReviewDrawerProps> = ({
               <h3 className="font-heading text-sm font-bold text-[#2C2C24] flex items-center gap-2">
                 <User className="w-4 h-4 text-[#5D7052]" /> Driver Information
               </h3>
-              <p><span className="text-[#78786C]">Name:</span> <span className="font-bold text-[#2C2C24]">{request.driverName}</span></p>
-              <p><span className="text-[#78786C]">Email:</span> <span className="font-mono">{request.driverEmail}</span></p>
-              <p><span className="text-[#78786C]">Phone:</span> <span className="font-semibold">{request.driverPhone}</span></p>
+              <p>
+                <span className="text-[#78786C]">Name:</span>{" "}
+                <span className="font-bold text-[#2C2C24]">
+                  {request.driverName}
+                </span>
+              </p>
+              <p>
+                <span className="text-[#78786C]">Email:</span>{" "}
+                <span className="font-mono">{request.driverEmail}</span>
+              </p>
+              <p>
+                <span className="text-[#78786C]">Phone:</span>{" "}
+                <span className="font-semibold">{request.driverPhone}</span>
+              </p>
             </div>
 
             <div className="p-4 rounded-3xl border border-[#DED8CF] bg-white space-y-2 text-xs">
               <h3 className="font-heading text-sm font-bold text-[#2C2C24] flex items-center gap-2">
                 <Phone className="w-4 h-4 text-[#C18C5D]" /> Contact Details
               </h3>
-              <p><span className="text-[#78786C]">Direct Phone:</span> <span className="font-semibold">{request.details.contact.phone}</span></p>
-              <p><span className="text-[#78786C]">Emergency Contact:</span> <span className="font-semibold">{request.details.contact.emergency}</span></p>
+              <p>
+                <span className="text-[#78786C]">Direct Phone:</span>{" "}
+                <span className="font-semibold">
+                  {request.details.contact.phone}
+                </span>
+              </p>
+              <p>
+                <span className="text-[#78786C]">Emergency Contact:</span>{" "}
+                <span className="font-semibold">
+                  {request.details.contact.emergency}
+                </span>
+              </p>
             </div>
           </div>
 
           {/* Documents & Verification */}
           <div className="p-5 rounded-3xl border border-[#DED8CF] bg-white space-y-3 text-xs">
             <h3 className="font-heading text-sm font-bold text-[#2C2C24] flex items-center gap-2">
-              <FileText className="w-4 h-4 text-[#5D7052]" /> Verification & Documents
+              <FileText className="w-4 h-4 text-[#5D7052]" /> Verification &
+              Documents
             </h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               {request.details.documents.map((doc, idx) => (
-                <div key={idx} className="p-3 rounded-2xl bg-[#F0EBE5]/50 flex items-center justify-between border border-[#DED8CF]/60">
+                <div
+                  key={idx}
+                  className="p-3 rounded-2xl bg-[#F0EBE5]/50 flex items-center justify-between border border-[#DED8CF]/60"
+                >
                   <span className="font-bold text-[#2C2C24]">{doc.title}</span>
-                  <Badge variant={doc.status === "Verified" ? "moss" : "terracotta"} size="sm">
+                  <Badge
+                    variant={doc.status === "Verified" ? "moss" : "terracotta"}
+                    size="sm"
+                  >
                     {doc.status}
                   </Badge>
                 </div>
@@ -135,42 +167,68 @@ export const RequestReviewDrawer: React.FC<RequestReviewDrawerProps> = ({
               <h4 className="font-bold text-[#2C2C24] flex items-center gap-1.5">
                 <Car className="w-3.5 h-3.5 text-[#5D7052]" /> Vehicle
               </h4>
-              <p className="font-semibold text-[#5D7052]">{request.details.vehicle.model}</p>
-              <p className="text-[#78786C] font-mono">{request.details.vehicle.plate} ({request.details.vehicle.type})</p>
+              <p className="font-semibold text-[#5D7052]">
+                {request.details.vehicle.model}
+              </p>
+              <p className="text-[#78786C] font-mono">
+                {request.details.vehicle.plate} ({request.details.vehicle.type})
+              </p>
             </div>
 
             <div className="p-4 rounded-2xl border border-[#DED8CF] bg-white space-y-1">
               <h4 className="font-bold text-[#2C2C24] flex items-center gap-1.5">
                 <Building className="w-3.5 h-3.5 text-[#C18C5D]" /> Fleet
               </h4>
-              <p className="font-semibold text-[#2C2C24]">{request.details.fleet.name}</p>
-              <p className="text-[#78786C] font-mono">{request.details.fleet.id}</p>
+              <p className="font-semibold text-[#2C2C24]">
+                {request.details.fleet.name}
+              </p>
+              <p className="text-[#78786C] font-mono">
+                {request.details.fleet.id}
+              </p>
             </div>
 
             <div className="p-4 rounded-2xl border border-[#DED8CF] bg-white space-y-1">
               <h4 className="font-bold text-[#2C2C24] flex items-center gap-1.5">
-                <MapPin className="w-3.5 h-3.5 text-[#5D7052]" /> Partner & Location
+                <MapPin className="w-3.5 h-3.5 text-[#5D7052]" /> Partner &
+                Location
               </h4>
-              <p className="font-semibold text-[#C18C5D]">{request.details.partner.name}</p>
-              <p className="text-[#78786C]">{request.details.location.city}, {request.details.location.district}</p>
+              <p className="font-semibold text-[#C18C5D]">
+                {request.details.partner.name}
+              </p>
+              <p className="text-[#78786C]">
+                {request.details.location.city},{" "}
+                {request.details.location.district}
+              </p>
             </div>
           </div>
 
           {/* Previous Request History */}
           <div className="p-5 rounded-3xl border border-[#DED8CF] bg-white space-y-3 text-xs">
             <h3 className="font-heading text-sm font-bold text-[#2C2C24] flex items-center gap-2">
-              <History className="w-4 h-4 text-[#C18C5D]" /> Previous Request History
+              <History className="w-4 h-4 text-[#C18C5D]" /> Previous Request
+              History
             </h3>
             {request.details.previousHistory.length === 0 ? (
-              <p className="text-[#78786C]">No prior approval requests for this driver.</p>
+              <p className="text-[#78786C]">
+                No prior approval requests for this driver.
+              </p>
             ) : (
               request.details.previousHistory.map((hist) => (
-                <div key={hist.id} className="p-3 rounded-2xl bg-[#F0EBE5]/50 flex items-center justify-between border border-[#DED8CF]">
+                <div
+                  key={hist.id}
+                  className="p-3 rounded-2xl bg-[#F0EBE5]/50 flex items-center justify-between border border-[#DED8CF]"
+                >
                   <div>
-                    <span className="font-bold text-[#2C2C24]">{hist.type}</span>
-                    <span className="text-[#78786C] text-[10px] block">{hist.id} • {hist.date}</span>
+                    <span className="font-bold text-[#2C2C24]">
+                      {hist.type}
+                    </span>
+                    <span className="text-[#78786C] text-[10px] block">
+                      {hist.id} • {hist.date}
+                    </span>
                   </div>
-                  <Badge variant="moss" size="sm">{hist.status}</Badge>
+                  <Badge variant="moss" size="sm">
+                    {hist.status}
+                  </Badge>
                 </div>
               ))
             )}

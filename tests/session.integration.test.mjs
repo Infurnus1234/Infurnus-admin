@@ -59,6 +59,12 @@ test(
     response = await call("/super-admin/driver-requests");
     assert.equal(response.status, 307);
     assert.equal(response.headers.get("location"), "/admin/driver-requests");
+    response = await call("/super-admin/settings");
+    assert.equal(response.status, 307);
+    assert.equal(response.headers.get("location"), "/admin/driver-requests");
+    response = await call("/admin/settings");
+    assert.equal(response.status, 200);
+    assert.match(await response.text(), /is not connected yet/);
     response = await call("/admin/driver-requests");
     assert.equal(response.status, 200);
     response = await call("/api/backend/provider-approvals");

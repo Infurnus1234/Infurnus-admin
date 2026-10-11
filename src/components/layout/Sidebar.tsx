@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
@@ -40,7 +40,10 @@ export interface SidebarProps {
 }
 
 const renderNavIcon = (iconName?: string) => {
-  const iconProps = { className: "w-4 h-4 shrink-0 transition-transform duration-300 group-hover:scale-110" };
+  const iconProps = {
+    className:
+      "w-4 h-4 shrink-0 transition-transform duration-300 group-hover:scale-110",
+  };
   switch (iconName) {
     case "dashboard":
       return <LayoutDashboard {...iconProps} />;
@@ -96,6 +99,43 @@ export const Sidebar: React.FC<SidebarProps> = ({
   onClose,
   className = "",
 }) => {
+  const drawer = useRef<HTMLElement>(null);
+  useEffect(() => {
+    if (!isOpen || window.matchMedia("(min-width:1024px)").matches) return;
+    const previous = document.activeElement as HTMLElement;
+    const overflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    const panel = drawer.current;
+    panel?.querySelector<HTMLButtonElement>("button")?.focus();
+    const keydown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        event.preventDefault();
+        onClose();
+      }
+      if (event.key === "Tab") {
+        const elements = Array.from(
+          panel?.querySelectorAll<HTMLElement>(
+            "a[href],button:not(:disabled)",
+          ) || [],
+        );
+        const first = elements[0],
+          last = elements.at(-1);
+        if (event.shiftKey && document.activeElement === first) {
+          event.preventDefault();
+          last?.focus();
+        } else if (!event.shiftKey && document.activeElement === last) {
+          event.preventDefault();
+          first?.focus();
+        }
+      }
+    };
+    document.addEventListener("keydown", keydown);
+    return () => {
+      document.body.style.overflow = overflow;
+      document.removeEventListener("keydown", keydown);
+      previous?.focus();
+    };
+  }, [isOpen, onClose]);
   const pathname = usePathname();
   const groupedSections = getGroupedNavItemsForRole(role, userPermissions);
 
@@ -104,7 +144,9 @@ export const Sidebar: React.FC<SidebarProps> = ({
       {/* Mobile Drawer Backdrop overlay with blur */}
       <div
         className={`fixed inset-0 z-40 bg-[#2C2C24]/30 backdrop-blur-xs transition-opacity duration-300 lg:hidden ${
-          isOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
+          isOpen
+            ? "opacity-100 pointer-events-auto"
+            : "opacity-0 pointer-events-none"
         }`}
         onClick={onClose}
         aria-hidden="true"
@@ -112,8 +154,12 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
       {/* Desktop & Mobile Sidebar Drawer Container */}
       <aside
-        className={`fixed top-0 bottom-0 left-0 z-50 w-72 bg-[#FDFCF8] bg-grain border-r border-[#DED8CF] flex flex-col justify-between transition-transform duration-400 ease-in-out lg:translate-x-0 ${
-          isOpen ? "translate-x-0 shadow-organic-lg" : "-translate-x-full"
+        ref={drawer}
+        aria-label="Main navigation"
+        className={`fixed top-0 bottom-0 left-0 z-50 w-72 bg-[#FDFCF8] bg-grain border-r border-[#DED8CF] flex flex-col justify-between transition-transform duration-400 ease-in-out lg:translate-x-0 lg:visible ${
+          isOpen
+            ? "translate-x-0 shadow-organic-lg"
+            : "-translate-x-full invisible"
         } ${className}`}
       >
         <div className="flex flex-col h-full overflow-hidden">
@@ -159,12 +205,14 @@ export const Sidebar: React.FC<SidebarProps> = ({
                   {group.items.map((item) => {
                     const isActive =
                       pathname === item.href ||
-                      (item.href !== `/${role}` && pathname.startsWith(item.href));
+                      (item.href !== `/${role}` &&
+                        pathname.startsWith(item.href));
 
                     return (
                       <Link
                         key={item.href}
                         href={item.href}
+                        aria-current={isActive ? "page" : undefined}
                         onClick={onClose}
                         className={`group flex items-center gap-3 px-3.5 py-2.5 rounded-2xl text-xs font-semibold transition-all duration-300 ${
                           isActive
@@ -172,7 +220,13 @@ export const Sidebar: React.FC<SidebarProps> = ({
                             : "text-[#78786C] hover:bg-[#F0EBE5] hover:text-[#2C2C24]"
                         }`}
                       >
-                        <span className={isActive ? "text-[#F3F4F1]" : "text-[#78786C] group-hover:text-[#5D7052]"}>
+                        <span
+                          className={
+                            isActive
+                              ? "text-[#F3F4F1]"
+                              : "text-[#78786C] group-hover:text-[#5D7052]"
+                          }
+                        >
                           {renderNavIcon(item.icon)}
                         </span>
                         <span className="flex-1 truncate">{item.title}</span>
@@ -198,7 +252,9 @@ export const Sidebar: React.FC<SidebarProps> = ({
           {/* Sidebar Footer Context */}
           <div className="p-4 shrink-0 border-t border-[#DED8CF]/70 bg-[#F0EBE5]/50">
             <div className="p-3 rounded-2xl bg-[#FDFCF8] border border-[#DED8CF] text-center shadow-organic-sm">
-              <p className="text-xs font-bold text-[#2C2C24]">Authenticated Administrator</p>
+              <p className="text-xs font-bold text-[#2C2C24]">
+                Authenticated Administrator
+              </p>
               <p className="text-[10px] text-[#78786C] mt-0.5">
                 Backend authorization applies to every operation
               </p>

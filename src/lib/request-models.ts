@@ -11,7 +11,8 @@ export interface ApprovalRequest {
 export interface ReviewDocument {
   id: string;
   document_type: string;
-  status: string;
+  status?: string;
+  verification_status?: string;
   pageCount: number;
 }
 export interface ApprovalDetails {
@@ -62,8 +63,10 @@ export interface Page<T> {
   page: number;
   pageSize: number;
 }
-export const statusLabel = (value: string) =>
-  value.replaceAll("_", " ").toLowerCase();
+export const statusLabel = (value: string | null | undefined) =>
+  value ? value.replaceAll("_", " ").toLowerCase() : "Not provided";
+export const requestPage = (page: number, total: number) =>
+  Math.max(1, Math.min(page, Math.max(1, Math.ceil(total / 10))));
 export function reviewPayload(
   details: ApprovalDetails,
   status: "APPROVED" | "REJECTED",
