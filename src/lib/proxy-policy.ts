@@ -1,9 +1,6 @@
 export function allowedBackendPath(method: string, path: string): boolean {
   const uuid = "[\\da-f-]{36}";
-  if (
-    method === "POST" &&
-    /^\/auth\/(login|login\/verify|login\/resend|refresh|logout)$/.test(path)
-  )
+  if (method === "POST" && /^\/auth\/(admin\/login|refresh|logout)$/.test(path))
     return true;
   if (
     method === "GET" &&
@@ -47,4 +44,21 @@ export function sameOriginMutation(
   expected: string,
 ) {
   return method === "GET" || origin === expected;
+}
+
+export function proxyOrigin(
+  configured: string | undefined,
+  development: boolean,
+  host: string | null,
+  fallback: string,
+) {
+  if (configured) return configured;
+  // Next dev normalizes nextUrl to localhost even for 127.0.0.1 requests.
+  if (
+    development &&
+    host &&
+    /^(localhost|127\.0\.0\.1|\[::1\])(?::\d{1,5})?$/.test(host)
+  )
+    return `http://${host}`;
+  return fallback;
 }
