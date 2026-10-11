@@ -22,9 +22,6 @@ import {
   ShieldCheck,
   FileText,
   Car,
-  Building,
-  Briefcase,
-  MapPin,
   Star,
   DollarSign,
   TrendingUp,
@@ -33,14 +30,15 @@ import {
   History,
   Ban,
   UserCheck,
-  CheckCircle2,
 } from "lucide-react";
 
 export interface DriverDetailsViewProps {
   driver: DetailedDriver;
 }
 
-export const DriverDetailsView: React.FC<DriverDetailsViewProps> = ({ driver: initialDriver }) => {
+export const DriverDetailsView: React.FC<DriverDetailsViewProps> = ({
+  driver: initialDriver,
+}) => {
   const [driver, setDriver] = useState<DetailedDriver>(initialDriver);
   const [activeTab, setActiveTab] = useState("profile");
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
@@ -71,10 +69,10 @@ export const DriverDetailsView: React.FC<DriverDetailsViewProps> = ({ driver: in
                 driver.status === "Active"
                   ? "moss"
                   : driver.status === "On Trip"
-                  ? "terracotta"
-                  : driver.status === "Suspended"
-                  ? "destructive"
-                  : "muted"
+                    ? "terracotta"
+                    : driver.status === "Suspended"
+                      ? "destructive"
+                      : "muted"
               }
               dot
             >
@@ -102,7 +100,11 @@ export const DriverDetailsView: React.FC<DriverDetailsViewProps> = ({ driver: in
             )}
 
             <Link href="/super-admin/drivers">
-              <Button variant="outline" size="sm" icon={<ArrowLeft className="w-4 h-4" />}>
+              <Button
+                variant="outline"
+                size="sm"
+                icon={<ArrowLeft className="w-4 h-4" />}
+              >
                 Back to Directory
               </Button>
             </Link>
@@ -113,11 +115,31 @@ export const DriverDetailsView: React.FC<DriverDetailsViewProps> = ({ driver: in
       {/* Navigation Tabs across 15 Sections */}
       <Tabs
         tabs={[
-          { id: "profile", label: "Profile & Assignment", icon: <User className="w-3.5 h-3.5" /> },
-          { id: "verification", label: "Verification & Compliance", icon: <ShieldCheck className="w-3.5 h-3.5" /> },
-          { id: "performance", label: "Performance & Earnings", icon: <TrendingUp className="w-3.5 h-3.5" /> },
-          { id: "rides", label: "Ride History & Complaints", icon: <Car className="w-3.5 h-3.5" /> },
-          { id: "history", label: "Driver & Audit History", icon: <History className="w-3.5 h-3.5" /> },
+          {
+            id: "profile",
+            label: "Profile & Assignment",
+            icon: <User className="w-3.5 h-3.5" />,
+          },
+          {
+            id: "verification",
+            label: "Verification & Compliance",
+            icon: <ShieldCheck className="w-3.5 h-3.5" />,
+          },
+          {
+            id: "performance",
+            label: "Performance & Earnings",
+            icon: <TrendingUp className="w-3.5 h-3.5" />,
+          },
+          {
+            id: "rides",
+            label: "Ride History & Complaints",
+            icon: <Car className="w-3.5 h-3.5" />,
+          },
+          {
+            id: "history",
+            label: "Driver & Audit History",
+            icon: <History className="w-3.5 h-3.5" />,
+          },
         ]}
         activeTab={activeTab}
         onChange={setActiveTab}
@@ -139,26 +161,36 @@ export const DriverDetailsView: React.FC<DriverDetailsViewProps> = ({ driver: in
                   {driver.avatar || driver.name.charAt(0)}
                 </div>
                 <div>
-                  <h3 className="font-bold text-sm text-[#2C2C24]">{driver.name}</h3>
+                  <h3 className="font-bold text-sm text-[#2C2C24]">
+                    {driver.name}
+                  </h3>
                   <p className="text-[#78786C] font-mono">{driver.id}</p>
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-2">
                 <div>
                   <span className="text-[#78786C] block">Date of Birth</span>
-                  <span className="font-semibold text-[#2C2C24]">{driver.profile.dob}</span>
+                  <span className="font-semibold text-[#2C2C24]">
+                    {driver.profile.dob}
+                  </span>
                 </div>
                 <div>
                   <span className="text-[#78786C] block">Experience</span>
-                  <span className="font-semibold text-[#2C2C24]">{driver.profile.experienceYears} Years</span>
+                  <span className="font-semibold text-[#2C2C24]">
+                    {driver.profile.experienceYears} Years
+                  </span>
                 </div>
                 <div>
                   <span className="text-[#78786C] block">License No</span>
-                  <span className="font-semibold text-[#2C2C24] font-mono">{driver.profile.licenseNumber}</span>
+                  <span className="font-semibold text-[#2C2C24] font-mono">
+                    {driver.profile.licenseNumber}
+                  </span>
                 </div>
                 <div>
                   <span className="text-[#78786C] block">License Expiry</span>
-                  <span className="font-semibold text-[#2C2C24]">{driver.profile.licenseExpiry}</span>
+                  <span className="font-semibold text-[#2C2C24]">
+                    {driver.profile.licenseExpiry}
+                  </span>
                 </div>
               </div>
             </CardContent>
@@ -168,25 +200,57 @@ export const DriverDetailsView: React.FC<DriverDetailsViewProps> = ({ driver: in
           <Card variant="elevated" rounded="3xl">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <Phone className="w-5 h-5 text-[#C18C5D]" /> 2 & 8. Contact & Location
+                <Phone className="w-5 h-5 text-[#C18C5D]" /> 2 & 8. Contact &
+                Location
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4 text-xs">
               <div className="space-y-2">
                 <p className="font-bold text-[#2C2C24]">Contact Information</p>
                 <div className="space-y-1">
-                  <p><span className="text-[#78786C]">Phone:</span> <span className="font-semibold">{driver.phone}</span></p>
-                  <p><span className="text-[#78786C]">Email:</span> <span className="font-semibold font-mono">{driver.email}</span></p>
-                  <p><span className="text-[#78786C]">Emergency:</span> <span className="font-semibold">{driver.emergencyContact}</span></p>
+                  <p>
+                    <span className="text-[#78786C]">Phone:</span>{" "}
+                    <span className="font-semibold">{driver.phone}</span>
+                  </p>
+                  <p>
+                    <span className="text-[#78786C]">Email:</span>{" "}
+                    <span className="font-semibold font-mono">
+                      {driver.email}
+                    </span>
+                  </p>
+                  <p>
+                    <span className="text-[#78786C]">Emergency:</span>{" "}
+                    <span className="font-semibold">
+                      {driver.emergencyContact}
+                    </span>
+                  </p>
                 </div>
               </div>
 
               <div className="pt-3 border-t border-[#DED8CF] space-y-2">
-                <p className="font-bold text-[#2C2C24]">Current Location (GPS)</p>
+                <p className="font-bold text-[#2C2C24]">
+                  Current Location (GPS)
+                </p>
                 <div className="space-y-1">
-                  <p><span className="text-[#78786C]">City / District:</span> <span className="font-semibold">{driver.location.city}, {driver.location.district} ({driver.location.state})</span></p>
-                  <p><span className="text-[#78786C]">Coordinates:</span> <span className="font-mono text-[#5D7052]">{driver.location.coordinates}</span></p>
-                  <p><span className="text-[#78786C]">Last Ping:</span> <span className="font-semibold">{driver.location.lastPing}</span></p>
+                  <p>
+                    <span className="text-[#78786C]">City / District:</span>{" "}
+                    <span className="font-semibold">
+                      {driver.location.city}, {driver.location.district} (
+                      {driver.location.state})
+                    </span>
+                  </p>
+                  <p>
+                    <span className="text-[#78786C]">Coordinates:</span>{" "}
+                    <span className="font-mono text-[#5D7052]">
+                      {driver.location.coordinates}
+                    </span>
+                  </p>
+                  <p>
+                    <span className="text-[#78786C]">Last Ping:</span>{" "}
+                    <span className="font-semibold">
+                      {driver.location.lastPing}
+                    </span>
+                  </p>
                 </div>
               </div>
             </CardContent>
@@ -196,26 +260,40 @@ export const DriverDetailsView: React.FC<DriverDetailsViewProps> = ({ driver: in
           <Card variant="elevated" rounded="3xl">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <Car className="w-5 h-5 text-[#5D7052]" /> 5, 6, 7. Vehicle, Fleet & Partner
+                <Car className="w-5 h-5 text-[#5D7052]" /> 5, 6, 7. Vehicle,
+                Fleet & Partner
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4 text-xs">
               <div className="space-y-1">
                 <p className="font-bold text-[#2C2C24]">Assigned Vehicle</p>
-                <p className="font-semibold text-[#5D7052]">{driver.vehicle.model} ({driver.vehicle.type})</p>
-                <p className="text-[#78786C] font-mono">Plate: {driver.vehicle.plateNumber} • Inspection Expiry: {driver.vehicle.inspectionExpiry}</p>
+                <p className="font-semibold text-[#5D7052]">
+                  {driver.vehicle.model} ({driver.vehicle.type})
+                </p>
+                <p className="text-[#78786C] font-mono">
+                  Plate: {driver.vehicle.plateNumber} • Inspection Expiry:{" "}
+                  {driver.vehicle.inspectionExpiry}
+                </p>
               </div>
 
               <div className="pt-3 border-t border-[#DED8CF] space-y-1">
                 <p className="font-bold text-[#2C2C24]">Fleet Assignment</p>
-                <p className="font-semibold text-[#2C2C24]">{driver.fleet.name} ({driver.fleet.id})</p>
-                <p className="text-[#78786C]">Manager: {driver.fleet.manager}</p>
+                <p className="font-semibold text-[#2C2C24]">
+                  {driver.fleet.name} ({driver.fleet.id})
+                </p>
+                <p className="text-[#78786C]">
+                  Manager: {driver.fleet.manager}
+                </p>
               </div>
 
               <div className="pt-3 border-t border-[#DED8CF] space-y-1">
                 <p className="font-bold text-[#2C2C24]">Partner Organization</p>
-                <p className="font-semibold text-[#C18C5D]">{driver.partner.name}</p>
-                <Badge variant="moss" size="sm">{driver.partner.contractStatus}</Badge>
+                <p className="font-semibold text-[#C18C5D]">
+                  {driver.partner.name}
+                </p>
+                <Badge variant="moss" size="sm">
+                  {driver.partner.contractStatus}
+                </Badge>
               </div>
             </CardContent>
           </Card>
@@ -229,18 +307,29 @@ export const DriverDetailsView: React.FC<DriverDetailsViewProps> = ({ driver: in
           <Card variant="elevated" rounded="3xl">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <FileText className="w-5 h-5 text-[#C18C5D]" /> 3 & 4. Documents & Verification Status
+                <FileText className="w-5 h-5 text-[#C18C5D]" /> 3 & 4. Documents
+                & Verification Status
               </CardTitle>
-              <CardDescription>Submitted safety certificates and identity documents</CardDescription>
+              <CardDescription>
+                Submitted safety certificates and identity documents
+              </CardDescription>
             </CardHeader>
             <CardContent className="space-y-3">
               {driver.documents.map((doc) => (
-                <div key={doc.id} className="p-3.5 rounded-2xl border border-[#DED8CF] bg-white flex items-center justify-between text-xs">
+                <div
+                  key={doc.id}
+                  className="p-3.5 rounded-2xl border border-[#DED8CF] bg-white flex items-center justify-between text-xs"
+                >
                   <div>
                     <p className="font-bold text-[#2C2C24]">{doc.type}</p>
-                    <p className="text-[#78786C] font-mono mt-0.5">{doc.number} • Expires {doc.expiryDate}</p>
+                    <p className="text-[#78786C] font-mono mt-0.5">
+                      {doc.number} • Expires {doc.expiryDate}
+                    </p>
                   </div>
-                  <Badge variant={doc.status === "Verified" ? "moss" : "terracotta"} size="sm">
+                  <Badge
+                    variant={doc.status === "Verified" ? "moss" : "terracotta"}
+                    size="sm"
+                  >
                     {doc.status}
                   </Badge>
                 </div>
@@ -252,26 +341,51 @@ export const DriverDetailsView: React.FC<DriverDetailsViewProps> = ({ driver: in
           <Card variant="elevated" rounded="3xl">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <ShieldCheck className="w-5 h-5 text-[#5D7052]" /> 13. Safety & Regulatory Compliance
+                <ShieldCheck className="w-5 h-5 text-[#5D7052]" /> 13. Safety &
+                Regulatory Compliance
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4 text-xs">
               <div className="p-4 rounded-2xl bg-[#F0EBE5]/60 border border-[#DED8CF] space-y-2">
                 <div className="flex items-center justify-between">
-                  <span className="font-bold text-[#2C2C24]">Background Check</span>
-                  <Badge variant={driver.compliance.backgroundCheck === "Passed" ? "moss" : "terracotta"}>
+                  <span className="font-bold text-[#2C2C24]">
+                    Background Check
+                  </span>
+                  <Badge
+                    variant={
+                      driver.compliance.backgroundCheck === "Passed"
+                        ? "moss"
+                        : "terracotta"
+                    }
+                  >
                     {driver.compliance.backgroundCheck}
                   </Badge>
                 </div>
                 <div className="flex items-center justify-between pt-2 border-t border-[#DED8CF]">
-                  <span className="font-bold text-[#2C2C24]">Drug & Medical Test</span>
-                  <Badge variant={driver.compliance.drugTest === "Passed" ? "moss" : "terracotta"}>
+                  <span className="font-bold text-[#2C2C24]">
+                    Drug & Medical Test
+                  </span>
+                  <Badge
+                    variant={
+                      driver.compliance.drugTest === "Passed"
+                        ? "moss"
+                        : "terracotta"
+                    }
+                  >
                     {driver.compliance.drugTest}
                   </Badge>
                 </div>
                 <div className="flex items-center justify-between pt-2 border-t border-[#DED8CF]">
-                  <span className="font-bold text-[#2C2C24]">Commercial Safety Certification</span>
-                  <Badge variant={driver.compliance.safetyCert === "Valid" ? "moss" : "destructive"}>
+                  <span className="font-bold text-[#2C2C24]">
+                    Commercial Safety Certification
+                  </span>
+                  <Badge
+                    variant={
+                      driver.compliance.safetyCert === "Valid"
+                        ? "moss"
+                        : "destructive"
+                    }
+                  >
                     {driver.compliance.safetyCert}
                   </Badge>
                 </div>
@@ -288,25 +402,42 @@ export const DriverDetailsView: React.FC<DriverDetailsViewProps> = ({ driver: in
           <Card variant="elevated" rounded="3xl">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <Star className="w-5 h-5 text-[#C18C5D]" /> 11. Driver Performance Metrics
+                <Star className="w-5 h-5 text-[#C18C5D]" /> 11. Driver
+                Performance Metrics
               </CardTitle>
             </CardHeader>
             <CardContent className="grid grid-cols-2 gap-4 text-center">
               <div className="p-4 rounded-2xl bg-[#F0EBE5] border border-[#DED8CF]">
-                <p className="text-xs text-[#78786C] font-bold uppercase">Overall Rating</p>
-                <p className="font-heading text-3xl font-extrabold text-[#5D7052] mt-1">★ {driver.rating}</p>
+                <p className="text-xs text-[#78786C] font-bold uppercase">
+                  Overall Rating
+                </p>
+                <p className="font-heading text-3xl font-extrabold text-[#5D7052] mt-1">
+                  ★ {driver.rating}
+                </p>
               </div>
               <div className="p-4 rounded-2xl bg-[#F0EBE5] border border-[#DED8CF]">
-                <p className="text-xs text-[#78786C] font-bold uppercase">Completion Rate</p>
-                <p className="font-heading text-3xl font-extrabold text-[#2C2C24] mt-1">{driver.completionRate}%</p>
+                <p className="text-xs text-[#78786C] font-bold uppercase">
+                  Completion Rate
+                </p>
+                <p className="font-heading text-3xl font-extrabold text-[#2C2C24] mt-1">
+                  {driver.completionRate}%
+                </p>
               </div>
               <div className="p-4 rounded-2xl bg-[#F0EBE5] border border-[#DED8CF]">
-                <p className="text-xs text-[#78786C] font-bold uppercase">Acceptance Rate</p>
-                <p className="font-heading text-3xl font-extrabold text-[#2C2C24] mt-1">{driver.acceptanceRate}%</p>
+                <p className="text-xs text-[#78786C] font-bold uppercase">
+                  Acceptance Rate
+                </p>
+                <p className="font-heading text-3xl font-extrabold text-[#2C2C24] mt-1">
+                  {driver.acceptanceRate}%
+                </p>
               </div>
               <div className="p-4 rounded-2xl bg-[#F0EBE5] border border-[#DED8CF]">
-                <p className="text-xs text-[#78786C] font-bold uppercase">Cancellation Rate</p>
-                <p className="font-heading text-3xl font-extrabold text-[#A85448] mt-1">{driver.cancellationRate}%</p>
+                <p className="text-xs text-[#78786C] font-bold uppercase">
+                  Cancellation Rate
+                </p>
+                <p className="font-heading text-3xl font-extrabold text-[#A85448] mt-1">
+                  {driver.cancellationRate}%
+                </p>
               </div>
             </CardContent>
           </Card>
@@ -315,25 +446,40 @@ export const DriverDetailsView: React.FC<DriverDetailsViewProps> = ({ driver: in
           <Card variant="elevated" rounded="3xl">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <DollarSign className="w-5 h-5 text-[#5D7052]" /> 10. Financial Earnings Summary
+                <DollarSign className="w-5 h-5 text-[#5D7052]" /> 10. Financial
+                Earnings Summary
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3 text-xs">
               <div className="flex items-center justify-between p-3.5 rounded-2xl bg-white border border-[#DED8CF]">
-                <span className="font-bold text-[#78786C]">Lifetime Net Earnings</span>
-                <span className="font-heading text-lg font-bold text-[#5D7052]">{driver.earnings.totalEarnings}</span>
+                <span className="font-bold text-[#78786C]">
+                  Lifetime Net Earnings
+                </span>
+                <span className="font-heading text-lg font-bold text-[#5D7052]">
+                  {driver.earnings.totalEarnings}
+                </span>
               </div>
               <div className="flex items-center justify-between p-3.5 rounded-2xl bg-white border border-[#DED8CF]">
-                <span className="font-bold text-[#78786C]">Current Week Earnings</span>
-                <span className="font-bold text-[#2C2C24]">{driver.earnings.weeklyEarnings}</span>
+                <span className="font-bold text-[#78786C]">
+                  Current Week Earnings
+                </span>
+                <span className="font-bold text-[#2C2C24]">
+                  {driver.earnings.weeklyEarnings}
+                </span>
               </div>
               <div className="flex items-center justify-between p-3.5 rounded-2xl bg-white border border-[#DED8CF]">
-                <span className="font-bold text-[#78786C]">Platform Commission Paid</span>
-                <span className="font-bold text-[#2C2C24]">{driver.earnings.commissionPaid}</span>
+                <span className="font-bold text-[#78786C]">
+                  Platform Commission Paid
+                </span>
+                <span className="font-bold text-[#2C2C24]">
+                  {driver.earnings.commissionPaid}
+                </span>
               </div>
               <div className="flex items-center justify-between p-3.5 rounded-2xl bg-white border border-[#DED8CF]">
                 <span className="font-bold text-[#78786C]">Tips Received</span>
-                <span className="font-bold text-[#C18C5D]">{driver.earnings.tipsReceived}</span>
+                <span className="font-bold text-[#C18C5D]">
+                  {driver.earnings.tipsReceived}
+                </span>
               </div>
             </CardContent>
           </Card>
@@ -347,17 +493,25 @@ export const DriverDetailsView: React.FC<DriverDetailsViewProps> = ({ driver: in
           <Card variant="elevated" rounded="3xl">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <Car className="w-5 h-5 text-[#5D7052]" /> 9. Dispatched Ride History
+                <Car className="w-5 h-5 text-[#5D7052]" /> 9. Dispatched Ride
+                History
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3 text-xs">
               {driver.rideHistory.length === 0 ? (
-                <p className="text-[#78786C]">No recent dispatches on record.</p>
+                <p className="text-[#78786C]">
+                  No recent dispatches on record.
+                </p>
               ) : (
                 driver.rideHistory.map((r) => (
-                  <div key={r.id} className="p-3.5 rounded-2xl border border-[#DED8CF] bg-white space-y-1">
+                  <div
+                    key={r.id}
+                    className="p-3.5 rounded-2xl border border-[#DED8CF] bg-white space-y-1"
+                  >
                     <div className="flex items-center justify-between font-bold">
-                      <span className="text-[#2C2C24]">{r.id} • {r.passenger}</span>
+                      <span className="text-[#2C2C24]">
+                        {r.id} • {r.passenger}
+                      </span>
                       <span className="text-[#5D7052]">{r.fare}</span>
                     </div>
                     <div className="flex items-center justify-between text-[#78786C]">
@@ -374,22 +528,37 @@ export const DriverDetailsView: React.FC<DriverDetailsViewProps> = ({ driver: in
           <Card variant="elevated" rounded="3xl">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <AlertTriangle className="w-5 h-5 text-[#A85448]" /> 12. Logged Complaints & Disputes
+                <AlertTriangle className="w-5 h-5 text-[#A85448]" /> 12. Logged
+                Complaints & Disputes
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3 text-xs">
               {driver.complaints.length === 0 ? (
-                <p className="text-[#78786C]">No complaints logged against this driver.</p>
+                <p className="text-[#78786C]">
+                  No complaints logged against this driver.
+                </p>
               ) : (
                 driver.complaints.map((cmp) => (
-                  <div key={cmp.id} className="p-3.5 rounded-2xl border border-[#DED8CF] bg-white space-y-1">
+                  <div
+                    key={cmp.id}
+                    className="p-3.5 rounded-2xl border border-[#DED8CF] bg-white space-y-1"
+                  >
                     <div className="flex items-center justify-between">
-                      <span className="font-bold text-[#2C2C24]">{cmp.subject}</span>
-                      <Badge variant={cmp.status === "Resolved" ? "moss" : "destructive"} size="sm">
+                      <span className="font-bold text-[#2C2C24]">
+                        {cmp.subject}
+                      </span>
+                      <Badge
+                        variant={
+                          cmp.status === "Resolved" ? "moss" : "destructive"
+                        }
+                        size="sm"
+                      >
                         {cmp.status}
                       </Badge>
                     </div>
-                    <p className="text-[#78786C]">{cmp.id} • Logged on {cmp.date} ({cmp.complainant})</p>
+                    <p className="text-[#78786C]">
+                      {cmp.id} • Logged on {cmp.date} ({cmp.complainant})
+                    </p>
                   </div>
                 ))
               )}
@@ -405,18 +574,28 @@ export const DriverDetailsView: React.FC<DriverDetailsViewProps> = ({ driver: in
           <Card variant="elevated" rounded="3xl">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <History className="w-5 h-5 text-[#C18C5D]" /> 14. Driver Lifecycle History
+                <History className="w-5 h-5 text-[#C18C5D]" /> 14. Driver
+                Lifecycle History
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3 text-xs">
               {driver.lifecycleHistory.map((hist, i) => (
-                <div key={i} className="p-3.5 rounded-2xl bg-[#F0EBE5]/60 border border-[#DED8CF] space-y-1">
+                <div
+                  key={i}
+                  className="p-3.5 rounded-2xl bg-[#F0EBE5]/60 border border-[#DED8CF] space-y-1"
+                >
                   <div className="flex items-center justify-between">
-                    <span className="font-bold text-[#2C2C24]">{hist.event}</span>
-                    <span className="text-[#78786C] text-[10px]">{hist.date}</span>
+                    <span className="font-bold text-[#2C2C24]">
+                      {hist.event}
+                    </span>
+                    <span className="text-[#78786C] text-[10px]">
+                      {hist.date}
+                    </span>
                   </div>
                   <p className="text-[#78786C]">{hist.notes}</p>
-                  <p className="text-[10px] text-[#5D7052] font-semibold">Actor: {hist.actor}</p>
+                  <p className="text-[10px] text-[#5D7052] font-semibold">
+                    Actor: {hist.actor}
+                  </p>
                 </div>
               ))}
             </CardContent>
@@ -426,20 +605,32 @@ export const DriverDetailsView: React.FC<DriverDetailsViewProps> = ({ driver: in
           <Card variant="elevated" rounded="3xl">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <Clock className="w-5 h-5 text-[#5D7052]" /> 15. Administrative Audit Trail
+                <Clock className="w-5 h-5 text-[#5D7052]" /> 15. Administrative
+                Audit Trail
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3 text-xs">
               {driver.auditLogs.length === 0 ? (
-                <p className="text-[#78786C]">No recent administrative audit modifications.</p>
+                <p className="text-[#78786C]">
+                  No recent administrative audit modifications.
+                </p>
               ) : (
                 driver.auditLogs.map((log, i) => (
-                  <div key={i} className="p-3.5 rounded-2xl bg-white border border-[#DED8CF] space-y-1">
+                  <div
+                    key={i}
+                    className="p-3.5 rounded-2xl bg-white border border-[#DED8CF] space-y-1"
+                  >
                     <div className="flex items-center justify-between">
-                      <span className="font-bold text-[#2C2C24]">{log.action}</span>
-                      <span className="text-[#78786C] text-[10px]">{log.timestamp}</span>
+                      <span className="font-bold text-[#2C2C24]">
+                        {log.action}
+                      </span>
+                      <span className="text-[#78786C] text-[10px]">
+                        {log.timestamp}
+                      </span>
                     </div>
-                    <p className="text-[11px] text-[#78786C]">By {log.performedBy} ({log.ipAddress})</p>
+                    <p className="text-[11px] text-[#78786C]">
+                      By {log.performedBy} ({log.ipAddress})
+                    </p>
                   </div>
                 ))
               )}
@@ -456,11 +647,16 @@ export const DriverDetailsView: React.FC<DriverDetailsViewProps> = ({ driver: in
         description={`Are you sure you want to update the status of driver "${driver.name}"?`}
         footer={
           <>
-            <Button variant="outline" onClick={() => setIsConfirmModalOpen(false)}>
+            <Button
+              variant="outline"
+              onClick={() => setIsConfirmModalOpen(false)}
+            >
               Cancel
             </Button>
             <Button
-              variant={driver.status === "Suspended" ? "primary" : "destructive"}
+              variant={
+                driver.status === "Suspended" ? "primary" : "destructive"
+              }
               onClick={toggleDriverStatus}
             >
               Confirm Update

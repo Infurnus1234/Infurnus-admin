@@ -10,7 +10,6 @@ import {
   Card,
   CardHeader,
   CardTitle,
-  CardDescription,
   CardContent,
   Tabs,
   Modal,
@@ -23,18 +22,16 @@ import {
   Key,
   Layers,
   SlidersHorizontal,
-  ShieldAlert,
-  Activity,
   Check,
-  Clock,
-  Lock,
 } from "lucide-react";
 
 export interface AdminDetailsViewProps {
   admin: AdminUserRecord;
 }
 
-export const AdminDetailsView: React.FC<AdminDetailsViewProps> = ({ admin: initialAdmin }) => {
+export const AdminDetailsView: React.FC<AdminDetailsViewProps> = ({
+  admin: initialAdmin,
+}) => {
   const [admin, setAdmin] = useState<AdminUserRecord>(initialAdmin);
   const [activeTab, setActiveTab] = useState("overview");
 
@@ -101,7 +98,10 @@ export const AdminDetailsView: React.FC<AdminDetailsViewProps> = ({ admin: initi
         ]}
         actions={
           <div className="flex items-center gap-2.5 flex-wrap">
-            <Badge variant={admin.status === "Active" ? "moss" : "destructive"} dot>
+            <Badge
+              variant={admin.status === "Active" ? "moss" : "destructive"}
+              dot
+            >
               {admin.status}
             </Badge>
 
@@ -153,7 +153,11 @@ export const AdminDetailsView: React.FC<AdminDetailsViewProps> = ({ admin: initi
             </Button>
 
             <Link href="/super-admin/admins">
-              <Button variant="outline" size="sm" icon={<ArrowLeft className="w-4 h-4" />}>
+              <Button
+                variant="outline"
+                size="sm"
+                icon={<ArrowLeft className="w-4 h-4" />}
+              >
                 Back to List
               </Button>
             </Link>
@@ -165,13 +169,25 @@ export const AdminDetailsView: React.FC<AdminDetailsViewProps> = ({ admin: initi
       <Tabs
         tabs={[
           { id: "overview", label: "Overview" },
-          { id: "permissions", label: `Permissions (${admin.permissions.length})` },
-          { id: "resources", label: `Resources (${admin.assignedResources.length})` },
+          {
+            id: "permissions",
+            label: `Permissions (${admin.permissions.length})`,
+          },
+          {
+            id: "resources",
+            label: `Resources (${admin.assignedResources.length})`,
+          },
           { id: "scope", label: "Scope" },
           { id: "activity", label: `Activity (${admin.activityLogs.length})` },
-          { id: "requests", label: `Requests (${admin.requestsSubmitted.length})` },
+          {
+            id: "requests",
+            label: `Requests (${admin.requestsSubmitted.length})`,
+          },
           { id: "approvalHistory", label: "Approval History" },
-          { id: "securityEvents", label: `Security Events (${admin.securityEvents.length})` },
+          {
+            id: "securityEvents",
+            label: `Security Events (${admin.securityEvents.length})`,
+          },
         ]}
         activeTab={activeTab}
         onChange={setActiveTab}
@@ -187,7 +203,9 @@ export const AdminDetailsView: React.FC<AdminDetailsViewProps> = ({ admin: initi
             <CardContent className="space-y-3">
               <div>
                 <span className="text-[#78786C] block">Full Name</span>
-                <span className="font-bold text-sm text-[#2C2C24]">{admin.name}</span>
+                <span className="font-bold text-sm text-[#2C2C24]">
+                  {admin.name}
+                </span>
               </div>
               <div>
                 <span className="text-[#78786C] block">Email</span>
@@ -195,11 +213,15 @@ export const AdminDetailsView: React.FC<AdminDetailsViewProps> = ({ admin: initi
               </div>
               <div>
                 <span className="text-[#78786C] block">Assigned Role</span>
-                <span className="font-semibold text-[#2C2C24]">{admin.role}</span>
+                <span className="font-semibold text-[#2C2C24]">
+                  {admin.role}
+                </span>
               </div>
               <div>
                 <span className="text-[#78786C] block">Department</span>
-                <span className="font-semibold text-[#2C2C24]">{admin.overview.department}</span>
+                <span className="font-semibold text-[#2C2C24]">
+                  {admin.overview.department}
+                </span>
               </div>
             </CardContent>
           </Card>
@@ -211,17 +233,25 @@ export const AdminDetailsView: React.FC<AdminDetailsViewProps> = ({ admin: initi
             <CardContent className="space-y-3">
               <div>
                 <span className="text-[#78786C] block">MFA Status</span>
-                <Badge variant={admin.overview.mfaEnabled ? "moss" : "destructive"}>
+                <Badge
+                  variant={admin.overview.mfaEnabled ? "moss" : "destructive"}
+                >
                   {admin.overview.mfaEnabled ? "Enforced & Active" : "Disabled"}
                 </Badge>
               </div>
               <div>
-                <span className="text-[#78786C] block">IP Access Restriction</span>
-                <span className="font-mono text-[#5D7052]">{admin.overview.ipRestriction}</span>
+                <span className="text-[#78786C] block">
+                  IP Access Restriction
+                </span>
+                <span className="font-mono text-[#5D7052]">
+                  {admin.overview.ipRestriction}
+                </span>
               </div>
               <div>
                 <span className="text-[#78786C] block">Last Active</span>
-                <span className="font-semibold text-[#2C2C24]">{admin.lastActive}</span>
+                <span className="font-semibold text-[#2C2C24]">
+                  {admin.lastActive}
+                </span>
               </div>
             </CardContent>
           </Card>
@@ -233,11 +263,15 @@ export const AdminDetailsView: React.FC<AdminDetailsViewProps> = ({ admin: initi
             <CardContent className="space-y-3">
               <div>
                 <span className="text-[#78786C] block">Current Scope</span>
-                <span className="font-bold text-sm text-[#C18C5D]">{admin.scope}</span>
+                <span className="font-bold text-sm text-[#C18C5D]">
+                  {admin.scope}
+                </span>
               </div>
               <div>
                 <span className="text-[#78786C] block">Total Permissions</span>
-                <span className="font-mono font-bold text-[#5D7052]">{admin.permissions.length} Active Scopes</span>
+                <span className="font-mono font-bold text-[#5D7052]">
+                  {admin.permissions.length} Active Scopes
+                </span>
               </div>
             </CardContent>
           </Card>
@@ -250,16 +284,25 @@ export const AdminDetailsView: React.FC<AdminDetailsViewProps> = ({ admin: initi
           <CardHeader>
             <div className="flex items-center justify-between">
               <CardTitle>Assigned Permissions</CardTitle>
-              <Button variant="outline" size="sm" onClick={handleOpenPermissions}>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleOpenPermissions}
+              >
                 Modify Permissions
               </Button>
             </div>
           </CardHeader>
           <CardContent className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
             {admin.permissions.map((p) => (
-              <div key={p} className="p-3.5 rounded-2xl bg-[#F0EBE5]/60 border border-[#DED8CF] flex items-center justify-between text-xs">
+              <div
+                key={p}
+                className="p-3.5 rounded-2xl bg-[#F0EBE5]/60 border border-[#DED8CF] flex items-center justify-between text-xs"
+              >
                 <span className="font-mono font-bold text-[#2C2C24]">{p}</span>
-                <Badge variant="moss" size="sm">Granted</Badge>
+                <Badge variant="moss" size="sm">
+                  Granted
+                </Badge>
               </div>
             ))}
           </CardContent>
@@ -279,9 +322,14 @@ export const AdminDetailsView: React.FC<AdminDetailsViewProps> = ({ admin: initi
           </CardHeader>
           <CardContent className="space-y-3">
             {admin.assignedResources.map((res, idx) => (
-              <div key={idx} className="p-3.5 rounded-2xl bg-white border border-[#DED8CF] flex items-center justify-between text-xs">
+              <div
+                key={idx}
+                className="p-3.5 rounded-2xl bg-white border border-[#DED8CF] flex items-center justify-between text-xs"
+              >
                 <span className="font-bold text-[#2C2C24]">{res}</span>
-                <Badge variant="sand" size="sm">Active Resource</Badge>
+                <Badge variant="sand" size="sm">
+                  Active Resource
+                </Badge>
               </div>
             ))}
           </CardContent>
@@ -301,8 +349,12 @@ export const AdminDetailsView: React.FC<AdminDetailsViewProps> = ({ admin: initi
           </CardHeader>
           <CardContent className="space-y-3 text-xs">
             <div className="p-4 rounded-2xl bg-[#E6DCCD]/40 border border-[#DED8CF]">
-              <p className="text-[#78786C] font-bold uppercase">Current Scope</p>
-              <p className="font-heading text-xl font-bold text-[#2C2C24] mt-1">{admin.scope}</p>
+              <p className="text-[#78786C] font-bold uppercase">
+                Current Scope
+              </p>
+              <p className="font-heading text-xl font-bold text-[#2C2C24] mt-1">
+                {admin.scope}
+              </p>
             </div>
           </CardContent>
         </Card>
@@ -316,12 +368,19 @@ export const AdminDetailsView: React.FC<AdminDetailsViewProps> = ({ admin: initi
           </CardHeader>
           <CardContent className="space-y-3 text-xs">
             {admin.activityLogs.map((log, i) => (
-              <div key={i} className="p-3.5 rounded-2xl border border-[#DED8CF] bg-white flex items-center justify-between">
+              <div
+                key={i}
+                className="p-3.5 rounded-2xl border border-[#DED8CF] bg-white flex items-center justify-between"
+              >
                 <div>
                   <p className="font-bold text-[#2C2C24]">{log.action}</p>
-                  <p className="text-[10px] text-[#78786C] font-mono">Resource: {log.targetResource} • {log.timestamp}</p>
+                  <p className="text-[10px] text-[#78786C] font-mono">
+                    Resource: {log.targetResource} • {log.timestamp}
+                  </p>
                 </div>
-                <Badge variant="moss" size="sm">{log.status}</Badge>
+                <Badge variant="moss" size="sm">
+                  {log.status}
+                </Badge>
               </div>
             ))}
           </CardContent>
@@ -339,12 +398,19 @@ export const AdminDetailsView: React.FC<AdminDetailsViewProps> = ({ admin: initi
               <p className="text-[#78786C]">No submitted requests found.</p>
             ) : (
               admin.requestsSubmitted.map((req) => (
-                <div key={req.id} className="p-3.5 rounded-2xl border border-[#DED8CF] bg-white flex items-center justify-between">
+                <div
+                  key={req.id}
+                  className="p-3.5 rounded-2xl border border-[#DED8CF] bg-white flex items-center justify-between"
+                >
                   <div>
                     <p className="font-bold text-[#2C2C24]">{req.type}</p>
-                    <p className="text-[10px] text-[#78786C] font-mono">{req.id} • {req.date}</p>
+                    <p className="text-[10px] text-[#78786C] font-mono">
+                      {req.id} • {req.date}
+                    </p>
                   </div>
-                  <Badge variant="moss" size="sm">{req.status}</Badge>
+                  <Badge variant="moss" size="sm">
+                    {req.status}
+                  </Badge>
                 </div>
               ))
             )}
@@ -363,12 +429,19 @@ export const AdminDetailsView: React.FC<AdminDetailsViewProps> = ({ admin: initi
               <p className="text-[#78786C]">No approval decisions recorded.</p>
             ) : (
               admin.approvalHistory.map((app) => (
-                <div key={app.id} className="p-3.5 rounded-2xl border border-[#DED8CF] bg-white flex items-center justify-between">
+                <div
+                  key={app.id}
+                  className="p-3.5 rounded-2xl border border-[#DED8CF] bg-white flex items-center justify-between"
+                >
                   <div>
                     <p className="font-bold text-[#2C2C24]">{app.action}</p>
-                    <p className="text-[10px] text-[#78786C] font-mono">{app.id} • Decided on {app.decidedDate}</p>
+                    <p className="text-[10px] text-[#78786C] font-mono">
+                      {app.id} • Decided on {app.decidedDate}
+                    </p>
                   </div>
-                  <Badge variant="moss" size="sm">{app.decision}</Badge>
+                  <Badge variant="moss" size="sm">
+                    {app.decision}
+                  </Badge>
                 </div>
               ))
             )}
@@ -387,12 +460,20 @@ export const AdminDetailsView: React.FC<AdminDetailsViewProps> = ({ admin: initi
               <p className="text-[#78786C]">No security incidents logged.</p>
             ) : (
               admin.securityEvents.map((sec) => (
-                <div key={sec.id} className="p-3.5 rounded-2xl border border-[#DED8CF] bg-white flex items-center justify-between">
+                <div
+                  key={sec.id}
+                  className="p-3.5 rounded-2xl border border-[#DED8CF] bg-white flex items-center justify-between"
+                >
                   <div>
                     <p className="font-bold text-[#2C2C24]">{sec.event}</p>
-                    <p className="text-[10px] text-[#78786C] font-mono">{sec.id} • {sec.timestamp}</p>
+                    <p className="text-[10px] text-[#78786C] font-mono">
+                      {sec.id} • {sec.timestamp}
+                    </p>
                   </div>
-                  <Badge variant={sec.severity === "High" ? "destructive" : "moss"} size="sm">
+                  <Badge
+                    variant={sec.severity === "High" ? "destructive" : "moss"}
+                    size="sm"
+                  >
                     {sec.severity} Severity
                   </Badge>
                 </div>
@@ -410,12 +491,18 @@ export const AdminDetailsView: React.FC<AdminDetailsViewProps> = ({ admin: initi
         description={`Are you sure you want to toggle status for "${admin.name}"?`}
         footer={
           <>
-            <Button variant="outline" onClick={() => setActiveModal(null)}>Cancel</Button>
-            <Button variant="primary" onClick={toggleStatus}>Confirm</Button>
+            <Button variant="outline" onClick={() => setActiveModal(null)}>
+              Cancel
+            </Button>
+            <Button variant="primary" onClick={toggleStatus}>
+              Confirm
+            </Button>
           </>
         }
       >
-        <p className="text-xs text-[#78786C] py-2">Toggles status in local mock state.</p>
+        <p className="text-xs text-[#78786C] py-2">
+          Toggles status in local mock state.
+        </p>
       </Modal>
 
       {/* Edit Permissions Modal */}
@@ -426,8 +513,12 @@ export const AdminDetailsView: React.FC<AdminDetailsViewProps> = ({ admin: initi
         description="Select permissions to grant locally."
         footer={
           <>
-            <Button variant="outline" onClick={() => setActiveModal(null)}>Cancel</Button>
-            <Button variant="primary" onClick={handleSavePermissions}>Save</Button>
+            <Button variant="outline" onClick={() => setActiveModal(null)}>
+              Cancel
+            </Button>
+            <Button variant="primary" onClick={handleSavePermissions}>
+              Save
+            </Button>
           </>
         }
       >
@@ -439,11 +530,15 @@ export const AdminDetailsView: React.FC<AdminDetailsViewProps> = ({ admin: initi
                 key={p}
                 onClick={() =>
                   setTempPermissions((prev) =>
-                    prev.includes(p) ? prev.filter((item) => item !== p) : [...prev, p]
+                    prev.includes(p)
+                      ? prev.filter((item) => item !== p)
+                      : [...prev, p],
                   )
                 }
                 className={`p-3 rounded-2xl border flex items-center justify-between font-mono ${
-                  isChecked ? "bg-[#5D7052]/10 border-[#5D7052] text-[#2C2C24]" : "bg-[#F0EBE5]/40 border-[#DED8CF] text-[#78786C]"
+                  isChecked
+                    ? "bg-[#5D7052]/10 border-[#5D7052] text-[#2C2C24]"
+                    : "bg-[#F0EBE5]/40 border-[#DED8CF] text-[#78786C]"
                 }`}
               >
                 <span>{p}</span>
@@ -462,8 +557,12 @@ export const AdminDetailsView: React.FC<AdminDetailsViewProps> = ({ admin: initi
         description="Comma-separated list of resources."
         footer={
           <>
-            <Button variant="outline" onClick={() => setActiveModal(null)}>Cancel</Button>
-            <Button variant="primary" onClick={handleSaveResources}>Save</Button>
+            <Button variant="outline" onClick={() => setActiveModal(null)}>
+              Cancel
+            </Button>
+            <Button variant="primary" onClick={handleSaveResources}>
+              Save
+            </Button>
           </>
         }
       >
@@ -484,8 +583,12 @@ export const AdminDetailsView: React.FC<AdminDetailsViewProps> = ({ admin: initi
         description="Set scope string."
         footer={
           <>
-            <Button variant="outline" onClick={() => setActiveModal(null)}>Cancel</Button>
-            <Button variant="primary" onClick={handleSaveScope}>Save</Button>
+            <Button variant="outline" onClick={() => setActiveModal(null)}>
+              Cancel
+            </Button>
+            <Button variant="primary" onClick={handleSaveScope}>
+              Save
+            </Button>
           </>
         }
       >

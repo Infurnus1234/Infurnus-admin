@@ -12,8 +12,6 @@ import {
   CheckCircle2,
   XCircle,
   AlertCircle,
-  ArrowRight,
-  Sparkles,
   GitCompare,
 } from "lucide-react";
 
@@ -26,14 +24,9 @@ export interface ApprovalTicketDetailDrawerProps {
   onRequestChanges: (t: CentralizedApprovalTicket, notes: string) => void;
 }
 
-export const ApprovalTicketDetailDrawer: React.FC<ApprovalTicketDetailDrawerProps> = ({
-  ticket,
-  isOpen,
-  onClose,
-  onApprove,
-  onReject,
-  onRequestChanges,
-}) => {
+export const ApprovalTicketDetailDrawer: React.FC<
+  ApprovalTicketDetailDrawerProps
+> = ({ ticket, isOpen, onClose, onApprove, onReject, onRequestChanges }) => {
   const [decisionNotes, setDecisionNotes] = useState("");
 
   if (!isOpen || !ticket) return null;
@@ -42,8 +35,8 @@ export const ApprovalTicketDetailDrawer: React.FC<ApprovalTicketDetailDrawerProp
     ticket.riskLevel === "Critical" || ticket.riskLevel === "High"
       ? "destructive"
       : ticket.riskLevel === "Medium"
-      ? "terracotta"
-      : "moss";
+        ? "terracotta"
+        : "moss";
 
   return (
     <div className="fixed inset-0 z-50 flex justify-end">
@@ -59,17 +52,24 @@ export const ApprovalTicketDetailDrawer: React.FC<ApprovalTicketDetailDrawerProp
         <div className="p-6 border-b border-[#DED8CF] bg-[#F0EBE5]/50 flex items-center justify-between shrink-0">
           <div>
             <div className="flex items-center gap-2">
-              <span className="font-mono text-xs font-bold text-[#C18C5D]">{ticket.id}</span>
+              <span className="font-mono text-xs font-bold text-[#C18C5D]">
+                {ticket.id}
+              </span>
               <Badge variant={riskBadgeVariant} size="sm">
                 {ticket.riskLevel} Risk
               </Badge>
-              <Badge variant="sand" size="sm">{ticket.category}</Badge>
+              <Badge variant="sand" size="sm">
+                {ticket.category}
+              </Badge>
             </div>
             <h2 className="font-heading text-xl font-bold text-[#2C2C24] mt-1">
               {ticket.type}
             </h2>
             <p className="text-xs text-[#78786C] mt-0.5">
-              Required Approval: <span className="font-semibold text-[#5D7052]">{ticket.requiredApproval}</span>
+              Required Approval:{" "}
+              <span className="font-semibold text-[#5D7052]">
+                {ticket.requiredApproval}
+              </span>
             </p>
           </div>
 
@@ -89,22 +89,34 @@ export const ApprovalTicketDetailDrawer: React.FC<ApprovalTicketDetailDrawerProp
               <h3 className="font-heading text-sm font-bold text-[#2C2C24] flex items-center gap-2">
                 <FileText className="w-4 h-4 text-[#5D7052]" /> Request Summary
               </h3>
-              <p className="text-[#2C2C24] leading-relaxed font-medium">{ticket.summary}</p>
-              <p className="text-[10px] text-[#78786C] pt-1">Target Resource: <span className="font-mono font-semibold">{ticket.resource}</span></p>
+              <p className="text-[#2C2C24] leading-relaxed font-medium">
+                {ticket.summary}
+              </p>
+              <p className="text-[10px] text-[#78786C] pt-1">
+                Target Resource:{" "}
+                <span className="font-mono font-semibold">
+                  {ticket.resource}
+                </span>
+              </p>
             </div>
 
             <div className="p-4 rounded-3xl border border-[#DED8CF] bg-white space-y-2">
               <h3 className="font-heading text-sm font-bold text-[#2C2C24] flex items-center gap-2">
-                <User className="w-4 h-4 text-[#C18C5D]" /> Requester Information
+                <User className="w-4 h-4 text-[#C18C5D]" /> Requester
+                Information
               </h3>
               <div className="flex items-center gap-3 pt-1">
                 <div className="w-9 h-9 rounded-full bg-[#5D7052] text-white flex items-center justify-center font-bold text-xs">
                   {ticket.requester.avatar || ticket.requester.name.charAt(0)}
                 </div>
                 <div>
-                  <p className="font-bold text-[#2C2C24]">{ticket.requester.name}</p>
+                  <p className="font-bold text-[#2C2C24]">
+                    {ticket.requester.name}
+                  </p>
                   <p className="text-[#78786C]">{ticket.requester.role}</p>
-                  <p className="text-[10px] text-[#78786C] font-mono">Created: {ticket.createdAt}</p>
+                  <p className="text-[10px] text-[#78786C] font-mono">
+                    Created: {ticket.createdAt}
+                  </p>
                 </div>
               </div>
             </div>
@@ -117,16 +129,26 @@ export const ApprovalTicketDetailDrawer: React.FC<ApprovalTicketDetailDrawerProp
             </h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div className="p-3 rounded-2xl bg-[#F0EBE5]/60 border border-[#DED8CF]">
-                <span className="text-[#78786C] font-bold block uppercase text-[10px]">Current State</span>
-                <span className="font-semibold text-[#2C2C24] mt-1 block">{ticket.currentState}</span>
+                <span className="text-[#78786C] font-bold block uppercase text-[10px]">
+                  Current State
+                </span>
+                <span className="font-semibold text-[#2C2C24] mt-1 block">
+                  {ticket.currentState}
+                </span>
               </div>
               <div className="p-3 rounded-2xl bg-[#E6DCCD]/50 border border-[#DED8CF]">
-                <span className="text-[#5D7052] font-bold block uppercase text-[10px]">Requested Change</span>
-                <span className="font-bold text-[#5D7052] mt-1 block">{ticket.requestedChange}</span>
+                <span className="text-[#5D7052] font-bold block uppercase text-[10px]">
+                  Requested Change
+                </span>
+                <span className="font-bold text-[#5D7052] mt-1 block">
+                  {ticket.requestedChange}
+                </span>
               </div>
             </div>
             <div className="pt-2 border-t border-[#DED8CF]">
-              <span className="text-[#78786C] font-bold block">Justification / Reason:</span>
+              <span className="text-[#78786C] font-bold block">
+                Justification / Reason:
+              </span>
               <p className="text-[#2C2C24] mt-0.5">{ticket.reason}</p>
             </div>
           </div>
@@ -134,27 +156,42 @@ export const ApprovalTicketDetailDrawer: React.FC<ApprovalTicketDetailDrawerProp
           {/* 4. Previous State vs Proposed State (Side-by-Side Diff Comparison) */}
           <div className="p-5 rounded-3xl border border-[#DED8CF] bg-white space-y-3 text-xs">
             <h3 className="font-heading text-sm font-bold text-[#2C2C24] flex items-center gap-2">
-              <GitCompare className="w-4 h-4 text-[#C18C5D]" /> Previous State vs. Proposed State Comparison
+              <GitCompare className="w-4 h-4 text-[#C18C5D]" /> Previous State
+              vs. Proposed State Comparison
             </h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {/* Previous State */}
               <div className="p-3.5 rounded-2xl bg-[#F0EBE5]/40 border border-[#DED8CF] space-y-2">
-                <span className="font-bold text-[#A85448] uppercase text-[10px] block">- Previous State</span>
+                <span className="font-bold text-[#A85448] uppercase text-[10px] block">
+                  - Previous State
+                </span>
                 {Object.entries(ticket.previousState).map(([k, v]) => (
-                  <div key={k} className="flex justify-between border-b border-[#DED8CF]/60 pb-1">
+                  <div
+                    key={k}
+                    className="flex justify-between border-b border-[#DED8CF]/60 pb-1"
+                  >
                     <span className="text-[#78786C]">{k}</span>
-                    <span className="font-mono text-[#2C2C24] font-semibold">{v}</span>
+                    <span className="font-mono text-[#2C2C24] font-semibold">
+                      {v}
+                    </span>
                   </div>
                 ))}
               </div>
 
               {/* Proposed State */}
               <div className="p-3.5 rounded-2xl bg-[#5D7052]/10 border border-[#5D7052] space-y-2">
-                <span className="font-bold text-[#5D7052] uppercase text-[10px] block">+ Proposed State</span>
+                <span className="font-bold text-[#5D7052] uppercase text-[10px] block">
+                  + Proposed State
+                </span>
                 {Object.entries(ticket.proposedState).map(([k, v]) => (
-                  <div key={k} className="flex justify-between border-b border-[#5D7052]/20 pb-1">
+                  <div
+                    key={k}
+                    className="flex justify-between border-b border-[#5D7052]/20 pb-1"
+                  >
                     <span className="text-[#78786C]">{k}</span>
-                    <span className="font-mono text-[#5D7052] font-bold">{v}</span>
+                    <span className="font-mono text-[#5D7052] font-bold">
+                      {v}
+                    </span>
                   </div>
                 ))}
               </div>
@@ -167,13 +204,18 @@ export const ApprovalTicketDetailDrawer: React.FC<ApprovalTicketDetailDrawerProp
               <Clock className="w-4 h-4 text-[#5D7052]" /> Approval History
             </h3>
             {ticket.approvalHistory.map((h, i) => (
-              <div key={i} className="p-3 rounded-2xl bg-[#F0EBE5]/50 border border-[#DED8CF] space-y-1">
+              <div
+                key={i}
+                className="p-3 rounded-2xl bg-[#F0EBE5]/50 border border-[#DED8CF] space-y-1"
+              >
                 <div className="flex items-center justify-between font-bold text-[#2C2C24]">
                   <span>{h.action}</span>
                   <span className="text-[#78786C] text-[10px]">{h.date}</span>
                 </div>
                 <p className="text-[#78786C]">{h.notes}</p>
-                <p className="text-[10px] text-[#5D7052] font-semibold">Actor: {h.actor}</p>
+                <p className="text-[10px] text-[#5D7052] font-semibold">
+                  Actor: {h.actor}
+                </p>
               </div>
             ))}
           </div>
@@ -181,11 +223,27 @@ export const ApprovalTicketDetailDrawer: React.FC<ApprovalTicketDetailDrawerProp
           {/* 6. Audit Preview */}
           <div className="p-5 rounded-3xl border border-[#DED8CF] bg-[#F0EBE5]/40 space-y-2 text-xs">
             <h3 className="font-heading text-sm font-bold text-[#2C2C24] flex items-center gap-2">
-              <ShieldAlert className="w-4 h-4 text-[#C18C5D]" /> Audit & Compliance Preview
+              <ShieldAlert className="w-4 h-4 text-[#C18C5D]" /> Audit &
+              Compliance Preview
             </h3>
-            <p><span className="text-[#78786C]">Audit Rule Code:</span> <span className="font-mono font-bold text-[#5D7052]">{ticket.auditPreview.ruleCode}</span></p>
-            <p><span className="text-[#78786C]">Risk Check Status:</span> <span className="font-mono font-semibold text-[#2C2C24]">{ticket.auditPreview.riskCheck}</span></p>
-            <p><span className="text-[#78786C]">Compliance Policy:</span> <span className="font-semibold text-[#2C2C24]">{ticket.auditPreview.compliancePolicy}</span></p>
+            <p>
+              <span className="text-[#78786C]">Audit Rule Code:</span>{" "}
+              <span className="font-mono font-bold text-[#5D7052]">
+                {ticket.auditPreview.ruleCode}
+              </span>
+            </p>
+            <p>
+              <span className="text-[#78786C]">Risk Check Status:</span>{" "}
+              <span className="font-mono font-semibold text-[#2C2C24]">
+                {ticket.auditPreview.riskCheck}
+              </span>
+            </p>
+            <p>
+              <span className="text-[#78786C]">Compliance Policy:</span>{" "}
+              <span className="font-semibold text-[#2C2C24]">
+                {ticket.auditPreview.compliancePolicy}
+              </span>
+            </p>
           </div>
 
           {/* Decision Notes */}

@@ -2,7 +2,8 @@ import React from "react";
 
 // --- BUTTON ---
 export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: "primary" | "secondary" | "accent" | "outline" | "ghost" | "destructive";
+  variant?:
+    "primary" | "secondary" | "accent" | "outline" | "ghost" | "destructive";
   size?: "sm" | "md" | "lg";
   icon?: React.ReactNode;
   children: React.ReactNode;
@@ -18,15 +19,20 @@ export const Button: React.FC<ButtonProps> = ({
   ...props
 }) => {
   const baseStyle =
-    "inline-flex items-center justify-center font-semibold rounded-full transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[#5D7052]/50 disabled:opacity-50 disabled:cursor-not-allowed";
+    "inline-flex min-h-11 items-center justify-center font-semibold rounded-full transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[#5D7052]/50 disabled:opacity-50 disabled:cursor-not-allowed";
 
   const variants = {
-    primary: "bg-[#5D7052] text-[#F3F4F1] hover:bg-[#4d5e43] shadow-sm hover:shadow active:scale-[0.98]",
-    secondary: "bg-[#C18C5D] text-white hover:bg-[#b07d4f] shadow-sm hover:shadow active:scale-[0.98]",
-    accent: "bg-[#E6DCCD] text-[#2C2C24] hover:bg-[#ded1be] active:scale-[0.98]",
-    outline: "border-2 border-[#DED8CF] text-[#2C2C24] bg-transparent hover:border-[#5D7052] hover:text-[#5D7052]",
+    primary:
+      "bg-[#5D7052] text-[#F3F4F1] hover:bg-[#4d5e43] shadow-sm hover:shadow active:scale-[0.98]",
+    secondary:
+      "bg-[#C18C5D] text-white hover:bg-[#b07d4f] shadow-sm hover:shadow active:scale-[0.98]",
+    accent:
+      "bg-[#E6DCCD] text-[#2C2C24] hover:bg-[#ded1be] active:scale-[0.98]",
+    outline:
+      "border-2 border-[#DED8CF] text-[#2C2C24] bg-transparent hover:border-[#5D7052] hover:text-[#5D7052]",
     ghost: "bg-transparent text-[#2C2C24] hover:bg-[#F0EBE5]",
-    destructive: "bg-[#A85448] text-white hover:bg-[#96473c] shadow-sm active:scale-[0.98]",
+    destructive:
+      "bg-[#A85448] text-white hover:bg-[#96473c] shadow-sm active:scale-[0.98]",
   };
 
   const sizes = {
@@ -64,17 +70,25 @@ export const Input: React.FC<InputProps> = ({
   id,
   ...props
 }) => {
-  const inputId = id || (label ? label.toLowerCase().replace(/\s+/g, "-") : undefined);
+  const inputId =
+    id || (label ? label.toLowerCase().replace(/\s+/g, "-") : undefined);
 
   return (
     <div className="w-full flex flex-col gap-1.5">
       {label && (
-        <label htmlFor={inputId} className="text-xs font-bold tracking-wide uppercase text-[#78786C]">
+        <label
+          htmlFor={inputId}
+          className="text-xs font-bold tracking-wide uppercase text-[#78786C]"
+        >
           {label}
         </label>
       )}
       <div className="relative flex items-center">
-        {leftIcon && <div className="absolute left-3.5 text-[#78786C] pointer-events-none">{leftIcon}</div>}
+        {leftIcon && (
+          <div className="absolute left-3.5 text-[#78786C] pointer-events-none">
+            {leftIcon}
+          </div>
+        )}
         <input
           id={inputId}
           className={`w-full bg-[#F0EBE5]/60 border border-[#DED8CF] text-[#2C2C24] placeholder-[#78786C]/60 rounded-2xl px-4 py-2.5 text-sm focus:outline-none focus:border-[#5D7052] focus:bg-[#FDFCF8] focus:ring-2 focus:ring-[#5D7052]/20 transition-all ${
@@ -82,9 +96,13 @@ export const Input: React.FC<InputProps> = ({
           } ${rightIcon ? "pr-10" : ""} ${error ? "border-[#A85448] focus:border-[#A85448] focus:ring-[#A85448]/20" : ""} ${className}`}
           {...props}
         />
-        {rightIcon && <div className="absolute right-3.5 text-[#78786C]">{rightIcon}</div>}
+        {rightIcon && (
+          <div className="absolute right-3.5 text-[#78786C]">{rightIcon}</div>
+        )}
       </div>
-      {error && <span className="text-xs text-[#A85448] font-medium">{error}</span>}
+      {error && (
+        <span className="text-xs text-[#A85448] font-medium">{error}</span>
+      )}
     </div>
   );
 };
@@ -104,12 +122,16 @@ export const Select: React.FC<SelectProps> = ({
   id,
   ...props
 }) => {
-  const selectId = id || (label ? label.toLowerCase().replace(/\s+/g, "-") : undefined);
+  const selectId =
+    id || (label ? label.toLowerCase().replace(/\s+/g, "-") : undefined);
 
   return (
     <div className="w-full flex flex-col gap-1.5">
       {label && (
-        <label htmlFor={selectId} className="text-xs font-bold tracking-wide uppercase text-[#78786C]">
+        <label
+          htmlFor={selectId}
+          className="text-xs font-bold tracking-wide uppercase text-[#78786C]"
+        >
           {label}
         </label>
       )}
@@ -131,7 +153,9 @@ export const Select: React.FC<SelectProps> = ({
           </svg>
         </div>
       </div>
-      {error && <span className="text-xs text-[#A85448] font-medium">{error}</span>}
+      {error && (
+        <span className="text-xs text-[#A85448] font-medium">{error}</span>
+      )}
     </div>
   );
 };
@@ -143,7 +167,11 @@ export interface BadgeProps {
   className?: string;
 }
 
-export const Badge: React.FC<BadgeProps> = ({ variant = "moss", children, className = "" }) => {
+export const Badge: React.FC<BadgeProps> = ({
+  variant = "moss",
+  children,
+  className = "",
+}) => {
   const variants = {
     moss: "bg-[#5D7052]/15 text-[#5D7052] border border-[#5D7052]/30",
     terracotta: "bg-[#C18C5D]/15 text-[#C18C5D] border border-[#C18C5D]/30",
@@ -168,7 +196,11 @@ export interface CardProps {
   hoverable?: boolean;
 }
 
-export const Card: React.FC<CardProps> = ({ children, className = "", hoverable = false }) => {
+export const Card: React.FC<CardProps> = ({
+  children,
+  className = "",
+  hoverable = false,
+}) => {
   return (
     <div
       className={`bg-[#FDFCF8] border border-[#DED8CF] rounded-3xl p-6 organic-shadow ${
@@ -210,16 +242,24 @@ export const StatCard: React.FC<StatCardProps> = ({
     <Card hoverable className="relative overflow-hidden">
       <div className="flex items-start justify-between">
         <div>
-          <p className="text-xs font-bold tracking-wider uppercase text-[#78786C]">{title}</p>
-          <h3 className="text-3xl font-bold font-heading text-[#2C2C24] mt-2">{value}</h3>
+          <p className="text-xs font-bold tracking-wider uppercase text-[#78786C]">
+            {title}
+          </p>
+          <h3 className="text-3xl font-bold font-heading text-[#2C2C24] mt-2">
+            {value}
+          </h3>
         </div>
-        {icon && <div className={`p-3 rounded-2xl ${iconBg[accentColor]}`}>{icon}</div>}
+        {icon && (
+          <div className={`p-3 rounded-2xl ${iconBg[accentColor]}`}>{icon}</div>
+        )}
       </div>
 
       {(change || description) && (
         <div className="mt-4 pt-3 border-t border-[#DED8CF]/60 flex items-center justify-between text-xs">
           {change && (
-            <span className={`font-bold ${isPositive ? "text-[#5D7052]" : "text-[#A85448]"}`}>
+            <span
+              className={`font-bold ${isPositive ? "text-[#5D7052]" : "text-[#A85448]"}`}
+            >
               {isPositive ? "↑" : "↓"} {change}
             </span>
           )}
@@ -239,14 +279,22 @@ export interface ModalProps {
   footer?: React.ReactNode;
 }
 
-export const Modal: React.FC<ModalProps> = ({ isOpen, onClose, title, children, footer }) => {
+export const Modal: React.FC<ModalProps> = ({
+  isOpen,
+  onClose,
+  title,
+  children,
+  footer,
+}) => {
   if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#2C2C24]/40 backdrop-blur-sm animate-fadeIn">
       <div className="bg-[#FDFCF8] border border-[#DED8CF] rounded-3xl max-w-lg w-full p-6 organic-shadow-lg flex flex-col gap-5">
         <div className="flex items-center justify-between border-b border-[#DED8CF] pb-4">
-          <h3 className="text-xl font-bold font-heading text-[#2C2C24]">{title}</h3>
+          <h3 className="text-xl font-bold font-heading text-[#2C2C24]">
+            {title}
+          </h3>
           <button
             onClick={onClose}
             className="w-8 h-8 rounded-full bg-[#F0EBE5] flex items-center justify-center text-[#78786C] hover:bg-[#E6DCCD] transition-colors"
@@ -255,7 +303,11 @@ export const Modal: React.FC<ModalProps> = ({ isOpen, onClose, title, children, 
           </button>
         </div>
         <div className="text-sm text-[#2C2C24]">{children}</div>
-        {footer && <div className="border-t border-[#DED8CF] pt-4 flex justify-end gap-3">{footer}</div>}
+        {footer && (
+          <div className="border-t border-[#DED8CF] pt-4 flex justify-end gap-3">
+            {footer}
+          </div>
+        )}
       </div>
     </div>
   );
@@ -280,7 +332,10 @@ export const Dropdown: React.FC<DropdownProps> = ({ trigger, items }) => {
 
   React.useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
+      if (
+        containerRef.current &&
+        !containerRef.current.contains(event.target as Node)
+      ) {
         setIsOpen(false);
       }
     };
@@ -348,7 +403,9 @@ export const Tabs: React.FC<TabsProps> = ({ tabs, activeTab, onChange }) => {
             {tab.badge !== undefined && (
               <span
                 className={`px-2 py-0.5 rounded-full text-[10px] ${
-                  isActive ? "bg-[#F3F4F1]/20 text-white" : "bg-[#E6DCCD] text-[#2C2C24]"
+                  isActive
+                    ? "bg-[#F3F4F1]/20 text-white"
+                    : "bg-[#E6DCCD] text-[#2C2C24]"
                 }`}
               >
                 {tab.badge}
@@ -409,7 +466,10 @@ export function DataTable<T>({
               className="hover:bg-[#F0EBE5]/40 transition-colors"
             >
               {columns.map((col, idx) => (
-                <td key={idx} className={`px-6 py-4 text-[#2C2C24] ${col.className || ""}`}>
+                <td
+                  key={idx}
+                  className={`px-6 py-4 text-[#2C2C24] ${col.className || ""}`}
+                >
                   {typeof col.accessor === "function"
                     ? col.accessor(row)
                     : (row[col.accessor] as React.ReactNode)}
@@ -440,7 +500,9 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
   return (
     <div className="flex flex-col items-center justify-center p-12 bg-[#FDFCF8] border border-dashed border-[#DED8CF] rounded-3xl text-center">
       {icon ? (
-        <div className="p-4 rounded-full bg-[#E6DCCD]/40 text-[#5D7052] mb-4">{icon}</div>
+        <div className="p-4 rounded-full bg-[#E6DCCD]/40 text-[#5D7052] mb-4">
+          {icon}
+        </div>
       ) : (
         <div className="w-14 h-14 rounded-full bg-[#E6DCCD]/40 text-[#5D7052] flex items-center justify-center text-xl mb-4">
           🍃
@@ -454,11 +516,15 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
 };
 
 // --- LOADING STATE ---
-export const LoadingState: React.FC<{ label?: string }> = ({ label = "Loading data..." }) => {
+export const LoadingState: React.FC<{ label?: string }> = ({
+  label = "Loading data...",
+}) => {
   return (
     <div className="flex flex-col items-center justify-center p-12 text-center gap-3">
       <div className="w-10 h-10 border-4 border-[#E6DCCD] border-t-[#5D7052] rounded-full animate-spin"></div>
-      <span className="text-xs font-bold text-[#78786C] uppercase tracking-wider">{label}</span>
+      <span className="text-xs font-bold text-[#78786C] uppercase tracking-wider">
+        {label}
+      </span>
     </div>
   );
 };
@@ -469,14 +535,19 @@ export interface BreadcrumbItem {
   href?: string;
 }
 
-export const Breadcrumbs: React.FC<{ items: BreadcrumbItem[] }> = ({ items }) => {
+export const Breadcrumbs: React.FC<{ items: BreadcrumbItem[] }> = ({
+  items,
+}) => {
   return (
     <nav className="flex items-center gap-2 text-xs text-[#78786C] mb-2 font-medium">
       {items.map((item, idx) => (
         <React.Fragment key={idx}>
           {idx > 0 && <span>/</span>}
           {item.href ? (
-            <a href={item.href} className="hover:text-[#5D7052] transition-colors">
+            <a
+              href={item.href}
+              className="hover:text-[#5D7052] transition-colors"
+            >
               {item.label}
             </a>
           ) : (
@@ -506,7 +577,9 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
     <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 pb-6 border-b border-[#DED8CF]">
       <div>
         {breadcrumbs && <Breadcrumbs items={breadcrumbs} />}
-        <h1 className="text-3xl font-bold font-heading text-[#2C2C24]">{title}</h1>
+        <h1 className="text-3xl font-bold font-heading text-[#2C2C24]">
+          {title}
+        </h1>
         {subtitle && <p className="text-sm text-[#78786C] mt-1">{subtitle}</p>}
       </div>
       {actions && <div className="flex items-center gap-3">{actions}</div>}

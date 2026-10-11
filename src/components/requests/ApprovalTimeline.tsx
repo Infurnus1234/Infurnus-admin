@@ -1,12 +1,14 @@
 import React from "react";
 import { DriverRequestStatus } from "@/lib/driverRequestData";
-import { CheckCircle2, Clock, AlertCircle, XCircle } from "lucide-react";
+import { CheckCircle2, AlertCircle, XCircle } from "lucide-react";
 
 export interface ApprovalTimelineProps {
   status: DriverRequestStatus;
 }
 
-export const ApprovalTimeline: React.FC<ApprovalTimelineProps> = ({ status }) => {
+export const ApprovalTimeline: React.FC<ApprovalTimelineProps> = ({
+  status,
+}) => {
   const steps = [
     { key: "submitted", label: "Submitted" },
     { key: "review", label: "Under Review" },
@@ -36,18 +38,21 @@ export const ApprovalTimeline: React.FC<ApprovalTimelineProps> = ({ status }) =>
           const isCurrent = idx === currentStepIndex;
 
           return (
-            <div key={step.key} className="relative z-10 flex flex-col items-center">
+            <div
+              key={step.key}
+              className="relative z-10 flex flex-col items-center"
+            >
               <div
                 className={`w-9 h-9 rounded-full flex items-center justify-center font-bold text-xs transition-all duration-300 ${
                   isDone
                     ? "bg-[#5D7052] text-white shadow-moss"
                     : isCurrent
-                    ? status === "Rejected"
-                      ? "bg-[#A85448] text-white shadow-sm ring-4 ring-[#A85448]/20"
-                      : status === "Changes Requested"
-                      ? "bg-[#C18C5D] text-white shadow-terracotta ring-4 ring-[#C18C5D]/20"
-                      : "bg-[#5D7052] text-white shadow-moss ring-4 ring-[#5D7052]/20 animate-pulse"
-                    : "bg-[#FDFCF8] border-2 border-[#DED8CF] text-[#78786C]"
+                      ? status === "Rejected"
+                        ? "bg-[#A85448] text-white shadow-sm ring-4 ring-[#A85448]/20"
+                        : status === "Changes Requested"
+                          ? "bg-[#C18C5D] text-white shadow-terracotta ring-4 ring-[#C18C5D]/20"
+                          : "bg-[#5D7052] text-white shadow-moss ring-4 ring-[#5D7052]/20 animate-pulse"
+                      : "bg-[#FDFCF8] border-2 border-[#DED8CF] text-[#78786C]"
                 }`}
               >
                 {isDone ? (
@@ -62,7 +67,11 @@ export const ApprovalTimeline: React.FC<ApprovalTimelineProps> = ({ status }) =>
               </div>
               <span
                 className={`text-[11px] font-bold mt-2 ${
-                  isCurrent ? "text-[#2C2C24]" : isDone ? "text-[#5D7052]" : "text-[#78786C]"
+                  isCurrent
+                    ? "text-[#2C2C24]"
+                    : isDone
+                      ? "text-[#5D7052]"
+                      : "text-[#78786C]"
                 }`}
               >
                 {step.label}
