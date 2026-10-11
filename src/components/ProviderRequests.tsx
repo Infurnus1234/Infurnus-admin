@@ -3,7 +3,7 @@ import { useCallback, useEffect, useState } from "react";
 import { PageHeader } from "./layout/PageHeader";
 import { Modal } from "./ui/Modal";
 import { useRouter } from "next/navigation";
-import { adminApi, ApiError } from "@/lib/admin-api";
+import { adminApi, ApiError, documentAccessUrl } from "@/lib/admin-api";
 import {
   ApprovalDetails,
   ApprovalRequest,
@@ -119,20 +119,15 @@ export function ProviderRequests() {
   async function document(id: string, page: number) {
     if (!detail) return;
     setBusy(true);
+    setError("");
     try {
-      const result = await adminApi<{ accessUrl: string }>(
-        `/provider-approvals/${detail.request.id}/documents/${id}/access-url?page=${page}`,
+      const accessUrl = await documentAccessUrl(
+        detail.request.id,
+        id,
+        page,
+        detail.documents.find((row) => row.id === id)?.pageCount || 1,
       );
-      const url = new URL(result.accessUrl);
-      if (
-        url.protocol !== "https:" &&
-        !(
-          url.protocol === "http:" &&
-          ["localhost", "127.0.0.1"].includes(url.hostname)
-        )
-      )
-        throw new Error("Invalid document access URL");
-      window.open(url.href, "_blank", "noopener,noreferrer");
+      window.open(accessUrl, "_blank", "noopener,noreferrer");
     } catch (error) {
       failure(error);
     } finally {
