@@ -101,7 +101,12 @@ export const Sidebar: React.FC<SidebarProps> = ({
 }) => {
   const drawer = useRef<HTMLElement>(null);
   useEffect(() => {
-    if (!isOpen || window.matchMedia("(min-width:1024px)").matches) return;
+    const breakpoint = window.matchMedia("(min-width:1024px)");
+    if (!isOpen || breakpoint.matches) return;
+    const resize = (event: MediaQueryListEvent) => {
+      if (event.matches) onClose();
+    };
+    breakpoint.addEventListener("change", resize);
     const previous = document.activeElement as HTMLElement;
     const overflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
@@ -133,6 +138,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
     return () => {
       document.body.style.overflow = overflow;
       document.removeEventListener("keydown", keydown);
+      breakpoint.removeEventListener("change", resize);
       previous?.focus();
     };
   }, [isOpen, onClose]);
