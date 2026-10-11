@@ -44,10 +44,13 @@ export function ProviderRequests() {
         if (active) setRequests(rows);
       })
       .catch((error) => {
-        if (active)
+        if (active) {
+          if (error instanceof ApiError && error.status === 401)
+            router.replace("/login");
           setError(
             error instanceof Error ? error.message : "Unable to load requests",
           );
+        }
       })
       .finally(() => {
         if (active) setLoading(false);
@@ -55,7 +58,7 @@ export function ProviderRequests() {
     return () => {
       active = false;
     };
-  }, []);
+  }, [router]);
   async function open(id: string) {
     setBusy(true);
     setError("");
@@ -154,7 +157,11 @@ export function ProviderRequests() {
       {loading ? (
         <p>Loading requests…</p>
       ) : requests.length === 0 ? (
-        <p>No pending requests</p>
+        <p>
+          {error
+            ? "Requests could not be loaded. Resolve the error and retry."
+            : "No pending requests"}
+        </p>
       ) : (
         <table className="w-full">
           <thead>

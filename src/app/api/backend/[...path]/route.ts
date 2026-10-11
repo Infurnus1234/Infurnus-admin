@@ -6,7 +6,11 @@ import {
   backendFetch,
   identityFor,
 } from "@/lib/backend-session";
-import { allowedBackendPath, sameOriginMutation } from "@/lib/proxy-policy";
+import {
+  allowedBackendPath,
+  sameOriginMutation,
+  proxyOrigin,
+} from "@/lib/proxy-policy";
 
 const fail = (message: string, status: number) =>
   NextResponse.json({ success: false, error: { message } }, { status });
@@ -21,7 +25,12 @@ async function handle(
     !sameOriginMutation(
       request.method,
       request.headers.get("origin"),
-      process.env.ADMIN_APP_ORIGIN || request.nextUrl.origin,
+      proxyOrigin(
+        process.env.ADMIN_APP_ORIGIN,
+        process.env.NODE_ENV === "development",
+        request.headers.get("host"),
+        request.nextUrl.origin,
+      ),
     )
   )
     return fail("Invalid request origin", 403);
