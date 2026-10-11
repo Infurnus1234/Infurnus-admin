@@ -38,3 +38,40 @@ export function adminApi<T>(
   pending = result.catch(() => undefined);
   return result;
 }
+
+export async function documentAccessUrl(
+  requestId: string,
+  documentId: string,
+  page: number,
+  pageCount: number,
+): Promise<string> {
+  const path = `/provider-approvals/${requestId}/documents/${documentId}/access-url`;
+  let result: { accessUrl: string };
+  try {
+    result = await adminApi<{ accessUrl: string }>(`${path}?page=${page}`);
+  } catch (error) {
+    // Legacy single-file records have a root asset but no document-page row.
+    // The same authorized endpoint supports that asset without a page query.
+    if (!(
+      page === 1 &&
+      pageCount === 1 &&
+      error instanceof ApiError &&
+      error.status === 404 &&
+      ["Page not found", "Stored document/page not found"].includes(
+        error.message,
+      )
+    ))
+      throw error;
+    result = await adminApi<{ accessUrl: string }>(path);
+  }
+  const url = new URL(result.accessUrl);
+  if (
+    url.protocol !== "https:" &&
+    !(
+      url.protocol === "http:" &&
+      ["localhost", "127.0.0.1"].includes(url.hostname)
+    )
+  )
+    throw new Error("Invalid document access URL");
+  return url.href;
+}

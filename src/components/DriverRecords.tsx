@@ -3,7 +3,7 @@ import { Modal } from "./ui/Modal";
 import { PageHeader } from "./layout/PageHeader";
 import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { adminApi, ApiError } from "@/lib/admin-api";
+import { adminApi, ApiError, documentAccessUrl } from "@/lib/admin-api";
 import {
   ApprovalDetails,
   ApprovalRequest,
@@ -110,19 +110,14 @@ export function DriverRecords() {
     setBusy(true);
     setError("");
     try {
-      const result = await adminApi<{ accessUrl: string }>(
-        `/provider-approvals/${documentReview.request.id}/documents/${documentId}/access-url?page=${page}`,
+      const accessUrl = await documentAccessUrl(
+        documentReview.request.id,
+        documentId,
+        page,
+        documentReview.documents.find((row) => row.id === documentId)
+          ?.pageCount || 1,
       );
-      const url = new URL(result.accessUrl);
-      if (
-        url.protocol !== "https:" &&
-        !(
-          url.protocol === "http:" &&
-          ["localhost", "127.0.0.1"].includes(url.hostname)
-        )
-      )
-        throw new Error("Invalid document access URL");
-      window.open(url.href, "_blank", "noopener,noreferrer");
+      window.open(accessUrl, "_blank", "noopener,noreferrer");
     } catch (error) {
       setError(
         error instanceof Error ? error.message : "Document access failed",
