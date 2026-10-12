@@ -2,10 +2,15 @@
 import { useState } from "react";
 import { OperationsRecords } from "./OperationsRecords";
 import type { ModuleKey } from "@/lib/operations";
+import { PageHeader } from "./layout/PageHeader";
 export function OperationsReports() {
   const [source, setSource] = useState<ModuleKey>("users");
   return (
     <section className="workspace-section">
+      <PageHeader
+        title="Reports & Analytics"
+        description="Explore current authorized records by source. Export and advanced analytics are not connected."
+      />
       <div className="operations-toolbar">
         <label>
           Report source
@@ -25,7 +30,12 @@ export function OperationsReports() {
           the selected source.
         </p>
       </div>
-      <OperationsRecords key={source} module={source} readOnly />
+      <OperationsRecords
+        key={source}
+        module={source}
+        readOnly
+        headingLevel={2}
+      />
     </section>
   );
 }

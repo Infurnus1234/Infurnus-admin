@@ -2,7 +2,8 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { adminApi, ApiError } from "@/lib/admin-api";
-export function RestoreSession() {
+import { sessionReturnPath } from "@/lib/session-return";
+export function RestoreSession({ returnTo }: { returnTo?: string }) {
   const router = useRouter();
   const [attempt, setAttempt] = useState(0);
   const [error, setError] = useState("");
@@ -16,9 +17,10 @@ export function RestoreSession() {
           return;
         }
         router.replace(
-          result.identity.role === "super_admin"
-            ? "/super-admin/driver-requests"
-            : "/admin/driver-requests",
+          sessionReturnPath(returnTo) ||
+            (result.identity.role === "super_admin"
+              ? "/super-admin/driver-requests"
+              : "/admin/driver-requests"),
         );
         router.refresh();
       },
@@ -39,7 +41,7 @@ export function RestoreSession() {
     return () => {
       current = false;
     };
-  }, [attempt, router]);
+  }, [attempt, router, returnTo]);
   return (
     <main className="session-restore">
       <h1>Restoring your session</h1>

@@ -19,18 +19,19 @@ export const Button: React.FC<ButtonProps> = ({
   ...props
 }) => {
   const baseStyle =
-    "inline-flex min-h-11 items-center justify-center font-semibold rounded-md transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[#154B3D]/50 disabled:opacity-50 disabled:cursor-not-allowed";
+    "inline-flex min-h-11 items-center justify-center font-semibold rounded-md transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[var(--admin-primary)]/50 disabled:opacity-50 disabled:cursor-not-allowed";
 
   const variants = {
     primary:
-      "bg-[#154B3D] text-[#F3F4F1] hover:bg-[#103B30] shadow-sm hover:shadow ",
+      "bg-[var(--admin-primary)] text-[#F3F4F1] hover:bg-[var(--admin-primary-hover)] shadow-sm hover:shadow ",
     secondary:
       "bg-[#52645B] text-white hover:bg-[#3F5147] shadow-sm hover:shadow ",
-    accent: "bg-[#E7ECE8] text-[#202A25] hover:bg-[#ded1be] ",
+    accent: "bg-[#E7ECE8] text-[var(--admin-ink)] hover:bg-[#ded1be] ",
     outline:
-      "border-2 border-[#DCE2DD] text-[#202A25] bg-transparent hover:border-[#154B3D] hover:text-[#154B3D]",
-    ghost: "bg-transparent text-[#202A25] hover:bg-[#F2F5F2]",
-    destructive: "bg-[#A85448] text-white hover:bg-[#96473c] shadow-sm ",
+      "border-2 border-[var(--admin-border)] text-[var(--admin-ink)] bg-transparent hover:border-[var(--admin-primary)] hover:text-[var(--admin-primary)]",
+    ghost: "bg-transparent text-[var(--admin-ink)] hover:bg-[#F2F5F2]",
+    destructive:
+      "bg-[var(--admin-error)] text-white hover:bg-[#96473c] shadow-sm ",
   };
 
   const sizes = {
@@ -76,30 +77,34 @@ export const Input: React.FC<InputProps> = ({
       {label && (
         <label
           htmlFor={inputId}
-          className="text-xs font-bold tracking-wide uppercase text-[#58675D]"
+          className="text-xs font-bold tracking-wide uppercase text-[var(--admin-muted)]"
         >
           {label}
         </label>
       )}
       <div className="relative flex items-center">
         {leftIcon && (
-          <div className="absolute left-3.5 text-[#58675D] pointer-events-none">
+          <div className="absolute left-3.5 text-[var(--admin-muted)] pointer-events-none">
             {leftIcon}
           </div>
         )}
         <input
           id={inputId}
-          className={`w-full bg-[#F2F5F2]/60 border border-[#DCE2DD] text-[#202A25] placeholder-[#58675D]/60 rounded-md px-4 py-2.5 text-sm focus:outline-none focus:border-[#154B3D] focus:bg-[#FFFFFF] focus:ring-2 focus:ring-[#154B3D]/20 transition-all ${
+          className={`w-full bg-[#F2F5F2]/60 border border-[var(--admin-border)] text-[var(--admin-ink)] placeholder-[var(--admin-muted)]/60 rounded-md px-4 py-2.5 text-sm focus:outline-none focus:border-[var(--admin-primary)] focus:bg-[#FFFFFF] focus:ring-2 focus:ring-[var(--admin-primary)]/20 transition-all ${
             leftIcon ? "pl-10" : ""
-          } ${rightIcon ? "pr-10" : ""} ${error ? "border-[#A85448] focus:border-[#A85448] focus:ring-[#A85448]/20" : ""} ${className}`}
+          } ${rightIcon ? "pr-10" : ""} ${error ? "border-[var(--admin-error)] focus:border-[var(--admin-error)] focus:ring-[var(--admin-error)]/20" : ""} ${className}`}
           {...props}
         />
         {rightIcon && (
-          <div className="absolute right-3.5 text-[#58675D]">{rightIcon}</div>
+          <div className="absolute right-3.5 text-[var(--admin-muted)]">
+            {rightIcon}
+          </div>
         )}
       </div>
       {error && (
-        <span className="text-xs text-[#A85448] font-medium">{error}</span>
+        <span className="text-xs text-[var(--admin-error)] font-medium">
+          {error}
+        </span>
       )}
     </div>
   );
@@ -128,7 +133,7 @@ export const Select: React.FC<SelectProps> = ({
       {label && (
         <label
           htmlFor={selectId}
-          className="text-xs font-bold tracking-wide uppercase text-[#58675D]"
+          className="text-xs font-bold tracking-wide uppercase text-[var(--admin-muted)]"
         >
           {label}
         </label>
@@ -136,7 +141,7 @@ export const Select: React.FC<SelectProps> = ({
       <div className="relative">
         <select
           id={selectId}
-          className={`w-full bg-[#F2F5F2]/60 border border-[#DCE2DD] text-[#202A25] rounded-md px-4 py-2.5 text-sm appearance-none focus:outline-none focus:border-[#154B3D] focus:bg-[#FFFFFF] focus:ring-2 focus:ring-[#154B3D]/20 transition-all pr-10 cursor-pointer ${className}`}
+          className={`w-full bg-[#F2F5F2]/60 border border-[var(--admin-border)] text-[var(--admin-ink)] rounded-md px-4 py-2.5 text-sm appearance-none focus:outline-none focus:border-[var(--admin-primary)] focus:bg-[#FFFFFF] focus:ring-2 focus:ring-[var(--admin-primary)]/20 transition-all pr-10 cursor-pointer ${className}`}
           {...props}
         >
           {options.map((opt) => (
@@ -145,14 +150,16 @@ export const Select: React.FC<SelectProps> = ({
             </option>
           ))}
         </select>
-        <div className="absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none text-[#58675D]">
+        <div className="absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none text-[var(--admin-muted)]">
           <svg className="w-4 h-4 fill-current" viewBox="0 0 20 20">
             <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" />
           </svg>
         </div>
       </div>
       {error && (
-        <span className="text-xs text-[#A85448] font-medium">{error}</span>
+        <span className="text-xs text-[var(--admin-error)] font-medium">
+          {error}
+        </span>
       )}
     </div>
   );
@@ -171,11 +178,13 @@ export const Badge: React.FC<BadgeProps> = ({
   className = "",
 }) => {
   const variants = {
-    moss: "bg-[#154B3D]/15 text-[#154B3D] border border-[#154B3D]/30",
+    moss: "bg-[var(--admin-primary)]/15 text-[var(--admin-primary)] border border-[var(--admin-primary)]/30",
     terracotta: "bg-[#52645B]/15 text-[#52645B] border border-[#52645B]/30",
-    sand: "bg-[#E7ECE8] text-[#554a3b] border border-[#DCE2DD]",
-    neutral: "bg-[#F2F5F2] text-[#58675D] border border-[#DCE2DD]",
-    destructive: "bg-[#A85448]/15 text-[#A85448] border border-[#A85448]/30",
+    sand: "bg-[#E7ECE8] text-[#554a3b] border border-[var(--admin-border)]",
+    neutral:
+      "bg-[#F2F5F2] text-[var(--admin-muted)] border border-[var(--admin-border)]",
+    destructive:
+      "bg-[var(--admin-error)]/15 text-[var(--admin-error)] border border-[var(--admin-error)]/30",
   };
 
   return (
@@ -201,7 +210,7 @@ export const Card: React.FC<CardProps> = ({
 }) => {
   return (
     <div
-      className={`bg-[#FFFFFF] border border-[#DCE2DD] rounded-lg p-6 organic-shadow ${
+      className={`bg-[#FFFFFF] border border-[var(--admin-border)] rounded-lg p-6 organic-shadow ${
         hoverable ? "organic-shadow-hover cursor-pointer" : ""
       } ${className}`}
     >
@@ -231,7 +240,7 @@ export const StatCard: React.FC<StatCardProps> = ({
   accentColor = "moss",
 }) => {
   const iconBg = {
-    moss: "bg-[#154B3D]/10 text-[#154B3D]",
+    moss: "bg-[var(--admin-primary)]/10 text-[var(--admin-primary)]",
     terracotta: "bg-[#52645B]/10 text-[#52645B]",
     sand: "bg-[#E7ECE8] text-[#554a3b]",
   };
@@ -240,10 +249,10 @@ export const StatCard: React.FC<StatCardProps> = ({
     <Card hoverable className="relative overflow-hidden">
       <div className="flex items-start justify-between">
         <div>
-          <p className="text-xs font-bold tracking-wider uppercase text-[#58675D]">
+          <p className="text-xs font-bold tracking-wider uppercase text-[var(--admin-muted)]">
             {title}
           </p>
-          <h3 className="text-3xl font-bold font-heading text-[#202A25] mt-2">
+          <h3 className="text-3xl font-bold font-heading text-[var(--admin-ink)] mt-2">
             {value}
           </h3>
         </div>
@@ -253,15 +262,17 @@ export const StatCard: React.FC<StatCardProps> = ({
       </div>
 
       {(change || description) && (
-        <div className="mt-4 pt-3 border-t border-[#DCE2DD]/60 flex items-center justify-between text-xs">
+        <div className="mt-4 pt-3 border-t border-[var(--admin-border)]/60 flex items-center justify-between text-xs">
           {change && (
             <span
-              className={`font-bold ${isPositive ? "text-[#154B3D]" : "text-[#A85448]"}`}
+              className={`font-bold ${isPositive ? "text-[var(--admin-primary)]" : "text-[var(--admin-error)]"}`}
             >
               {isPositive ? "↑" : "↓"} {change}
             </span>
           )}
-          {description && <span className="text-[#58675D]">{description}</span>}
+          {description && (
+            <span className="text-[var(--admin-muted)]">{description}</span>
+          )}
         </div>
       )}
     </Card>
@@ -287,22 +298,22 @@ export const Modal: React.FC<ModalProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#202A25]/40 backdrop-blur-sm animate-fadeIn">
-      <div className="bg-[#FFFFFF] border border-[#DCE2DD] rounded-lg max-w-lg w-full p-6 organic-shadow-lg flex flex-col gap-5">
-        <div className="flex items-center justify-between border-b border-[#DCE2DD] pb-4">
-          <h3 className="text-xl font-bold font-heading text-[#202A25]">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[var(--admin-ink)]/40 backdrop-blur-sm animate-fadeIn">
+      <div className="bg-[#FFFFFF] border border-[var(--admin-border)] rounded-lg max-w-lg w-full p-6 organic-shadow-lg flex flex-col gap-5">
+        <div className="flex items-center justify-between border-b border-[var(--admin-border)] pb-4">
+          <h3 className="text-xl font-bold font-heading text-[var(--admin-ink)]">
             {title}
           </h3>
           <button
             onClick={onClose}
-            className="w-8 h-8 rounded-md bg-[#F2F5F2] flex items-center justify-center text-[#58675D] hover:bg-[#E7ECE8] transition-colors"
+            className="w-8 h-8 rounded-md bg-[#F2F5F2] flex items-center justify-center text-[var(--admin-muted)] hover:bg-[#E7ECE8] transition-colors"
           >
             ✕
           </button>
         </div>
-        <div className="text-sm text-[#202A25]">{children}</div>
+        <div className="text-sm text-[var(--admin-ink)]">{children}</div>
         {footer && (
-          <div className="border-t border-[#DCE2DD] pt-4 flex justify-end gap-3">
+          <div className="border-t border-[var(--admin-border)] pt-4 flex justify-end gap-3">
             {footer}
           </div>
         )}
@@ -345,7 +356,7 @@ export const Dropdown: React.FC<DropdownProps> = ({ trigger, items }) => {
     <div className="relative inline-block" ref={containerRef}>
       <div onClick={() => setIsOpen(!isOpen)}>{trigger}</div>
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-48 bg-[#FFFFFF] border border-[#DCE2DD] rounded-md organic-shadow py-2 z-40">
+        <div className="absolute right-0 mt-2 w-48 bg-[#FFFFFF] border border-[var(--admin-border)] rounded-md organic-shadow py-2 z-40">
           {items.map((item, idx) => (
             <button
               key={idx}
@@ -355,8 +366,8 @@ export const Dropdown: React.FC<DropdownProps> = ({ trigger, items }) => {
               }}
               className={`w-full px-4 py-2 text-xs font-semibold flex items-center gap-2 transition-colors ${
                 item.danger
-                  ? "text-[#A85448] hover:bg-[#A85448]/10"
-                  : "text-[#202A25] hover:bg-[#F2F5F2]"
+                  ? "text-[var(--admin-error)] hover:bg-[var(--admin-error)]/10"
+                  : "text-[var(--admin-ink)] hover:bg-[#F2F5F2]"
               }`}
             >
               {item.icon}
@@ -393,8 +404,8 @@ export const Tabs: React.FC<TabsProps> = ({ tabs, activeTab, onChange }) => {
             onClick={() => onChange(tab.id)}
             className={`px-5 py-2 rounded-md text-xs font-bold transition-all flex items-center gap-2 ${
               isActive
-                ? "bg-[#154B3D] text-[#F3F4F1] shadow-sm"
-                : "text-[#58675D] hover:text-[#202A25]"
+                ? "bg-[var(--admin-primary)] text-[#F3F4F1] shadow-sm"
+                : "text-[var(--admin-muted)] hover:text-[var(--admin-ink)]"
             }`}
           >
             {tab.label}
@@ -403,7 +414,7 @@ export const Tabs: React.FC<TabsProps> = ({ tabs, activeTab, onChange }) => {
                 className={`px-2 py-0.5 rounded-md text-[10px] ${
                   isActive
                     ? "bg-[#F3F4F1]/20 text-white"
-                    : "bg-[#E7ECE8] text-[#202A25]"
+                    : "bg-[#E7ECE8] text-[var(--admin-ink)]"
                 }`}
               >
                 {tab.badge}
@@ -441,14 +452,14 @@ export function DataTable<T>({
   }
 
   return (
-    <div className="w-full overflow-x-auto rounded-lg border border-[#DCE2DD] bg-[#FFFFFF] organic-shadow">
+    <div className="w-full overflow-x-auto rounded-lg border border-[var(--admin-border)] bg-[#FFFFFF] organic-shadow">
       <table className="w-full text-left border-collapse text-sm">
         <thead>
-          <tr className="border-b border-[#DCE2DD] bg-[#F2F5F2]/50">
+          <tr className="border-b border-[var(--admin-border)] bg-[#F2F5F2]/50">
             {columns.map((col, idx) => (
               <th
                 key={idx}
-                className={`px-6 py-4 text-xs font-bold tracking-wider uppercase text-[#58675D] ${
+                className={`px-6 py-4 text-xs font-bold tracking-wider uppercase text-[var(--admin-muted)] ${
                   col.className || ""
                 }`}
               >
@@ -457,7 +468,7 @@ export function DataTable<T>({
             ))}
           </tr>
         </thead>
-        <tbody className="divide-y divide-[#DCE2DD]/60">
+        <tbody className="divide-y divide-[var(--admin-border)]/60">
           {data.map((row) => (
             <tr
               key={keyExtractor(row)}
@@ -466,7 +477,7 @@ export function DataTable<T>({
               {columns.map((col, idx) => (
                 <td
                   key={idx}
-                  className={`px-6 py-4 text-[#202A25] ${col.className || ""}`}
+                  className={`px-6 py-4 text-[var(--admin-ink)] ${col.className || ""}`}
                 >
                   {typeof col.accessor === "function"
                     ? col.accessor(row)
@@ -496,18 +507,22 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
   action,
 }) => {
   return (
-    <div className="flex flex-col items-center justify-center p-12 bg-[#FFFFFF] border border-dashed border-[#DCE2DD] rounded-lg text-center">
+    <div className="flex flex-col items-center justify-center p-12 bg-[#FFFFFF] border border-dashed border-[var(--admin-border)] rounded-lg text-center">
       {icon ? (
-        <div className="p-4 rounded-md bg-[#E7ECE8]/40 text-[#154B3D] mb-4">
+        <div className="p-4 rounded-md bg-[#E7ECE8]/40 text-[var(--admin-primary)] mb-4">
           {icon}
         </div>
       ) : (
-        <div className="w-14 h-14 rounded-md bg-[#E7ECE8]/40 text-[#154B3D] flex items-center justify-center text-xl mb-4">
+        <div className="w-14 h-14 rounded-md bg-[#E7ECE8]/40 text-[var(--admin-primary)] flex items-center justify-center text-xl mb-4">
           🍃
         </div>
       )}
-      <h4 className="text-lg font-bold font-heading text-[#202A25]">{title}</h4>
-      <p className="text-sm text-[#58675D] max-w-sm mt-1">{description}</p>
+      <h4 className="text-lg font-bold font-heading text-[var(--admin-ink)]">
+        {title}
+      </h4>
+      <p className="text-sm text-[var(--admin-muted)] max-w-sm mt-1">
+        {description}
+      </p>
       {action && <div className="mt-6">{action}</div>}
     </div>
   );
@@ -519,8 +534,8 @@ export const LoadingState: React.FC<{ label?: string }> = ({
 }) => {
   return (
     <div className="flex flex-col items-center justify-center p-12 text-center gap-3">
-      <div className="w-10 h-10 border-4 border-[#E7ECE8] border-t-[#154B3D] rounded-md animate-spin"></div>
-      <span className="text-xs font-bold text-[#58675D] uppercase tracking-wider">
+      <div className="w-10 h-10 border-4 border-[#E7ECE8] border-t-[var(--admin-primary)] rounded-md animate-spin"></div>
+      <span className="text-xs font-bold text-[var(--admin-muted)] uppercase tracking-wider">
         {label}
       </span>
     </div>
@@ -537,19 +552,21 @@ export const Breadcrumbs: React.FC<{ items: BreadcrumbItem[] }> = ({
   items,
 }) => {
   return (
-    <nav className="flex items-center gap-2 text-xs text-[#58675D] mb-2 font-medium">
+    <nav className="flex items-center gap-2 text-xs text-[var(--admin-muted)] mb-2 font-medium">
       {items.map((item, idx) => (
         <React.Fragment key={idx}>
           {idx > 0 && <span>/</span>}
           {item.href ? (
             <a
               href={item.href}
-              className="hover:text-[#154B3D] transition-colors"
+              className="hover:text-[var(--admin-primary)] transition-colors"
             >
               {item.label}
             </a>
           ) : (
-            <span className="text-[#202A25] font-semibold">{item.label}</span>
+            <span className="text-[var(--admin-ink)] font-semibold">
+              {item.label}
+            </span>
           )}
         </React.Fragment>
       ))}
@@ -572,13 +589,15 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
   actions,
 }) => {
   return (
-    <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 pb-6 border-b border-[#DCE2DD]">
+    <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 pb-6 border-b border-[var(--admin-border)]">
       <div>
         {breadcrumbs && <Breadcrumbs items={breadcrumbs} />}
-        <h1 className="text-3xl font-bold font-heading text-[#202A25]">
+        <h1 className="text-3xl font-bold font-heading text-[var(--admin-ink)]">
           {title}
         </h1>
-        {subtitle && <p className="text-sm text-[#58675D] mt-1">{subtitle}</p>}
+        {subtitle && (
+          <p className="text-sm text-[var(--admin-muted)] mt-1">{subtitle}</p>
+        )}
       </div>
       {actions && <div className="flex items-center gap-3">{actions}</div>}
     </div>

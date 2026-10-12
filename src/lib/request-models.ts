@@ -4,6 +4,8 @@ export interface ApprovalRequest {
   requester_role: string;
   requester_display_name?: string | null;
   requester_account_role?: string | null;
+  requester_email?: string | null;
+  requester_phone?: string | null;
   target_description?: string | null;
   can_review?: boolean;
   request_type: string;
@@ -19,10 +21,31 @@ export interface ReviewDocument {
   status?: string;
   verification_status?: string;
   pageCount: number;
+  pages?: {
+    pageNumber: number;
+    side?: string;
+    mimeType?: string;
+    createdAt?: string;
+  }[];
+  mime_type?: string;
+  created_at?: string;
+  verified_at?: string;
+  reviewed_at?: string;
+  rejection_reason?: string;
+  document_metadata?: { documentNumber?: string; expiresAt?: string };
 }
 export interface ApprovalDetails {
   request: ApprovalRequest;
   target: {
+    id: string;
+    driver_profile_id?: string;
+    license_number?: string;
+    license_expiry?: string;
+    address?: string;
+    city?: string;
+    state?: string;
+    business_name?: string;
+    plate_number?: string;
     updated_at: string;
     verification_status?: string;
     first_name?: string;
@@ -33,10 +56,13 @@ export interface ApprovalDetails {
     id: string;
     status: string;
     reviewed_at: string | null;
+    submitted_at?: string;
     rejection_reason: string | null;
     requester_display_name?: string | null;
     requester_account_role?: string | null;
     requester_role?: string;
+    reviewer_display_name?: string | null;
+    reviewer_account_role?: string | null;
   }[];
 }
 export interface Driver {

@@ -26,7 +26,6 @@ import {
   Settings,
   Flame,
   X,
-  Lock,
 } from "lucide-react";
 import { UserRole, AdminPermission } from "@/types";
 import { getGroupedNavItemsForRole } from "@/config/navigation";
@@ -119,9 +118,9 @@ export const Sidebar: React.FC<SidebarProps> = ({
       if (event.key === "Tab") {
         const elements = Array.from(
           panel?.querySelectorAll<HTMLElement>(
-            "a[href],button:not(:disabled)",
+            "a[href],button:not(:disabled),summary",
           ) || [],
-        );
+        ).filter((element) => element.getClientRects().length > 0);
         const first = elements[0],
           last = elements.at(-1);
         if (event.shiftKey && document.activeElement === first) {
@@ -146,125 +145,63 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
   return (
     <>
-      {/* Mobile Drawer Backdrop overlay with blur */}
       <div
-        className={`fixed inset-0 z-40 bg-[#202A25]/30 backdrop-blur-xs transition-opacity duration-300 lg:hidden ${
-          isOpen
-            ? "opacity-100 pointer-events-auto"
-            : "opacity-0 pointer-events-none"
-        }`}
+        className={`admin-nav-backdrop ${isOpen ? "is-open" : ""}`}
         onClick={onClose}
         aria-hidden="true"
       />
-
-      {/* Desktop & Mobile Sidebar Drawer Container */}
       <aside
         ref={drawer}
         aria-label="Main navigation"
-        className={`fixed top-0 bottom-0 left-0 z-50 w-72 bg-[#FFFFFF]  border-r border-[#DCE2DD] flex flex-col justify-between transition-transform duration-400 ease-in-out lg:translate-x-0 lg:visible ${
-          isOpen
-            ? "translate-x-0 shadow-organic-lg"
-            : "-translate-x-full invisible"
-        } ${className}`}
+        className={`admin-sidebar ${isOpen ? "is-open" : ""} ${className}`}
       >
-        <div className="flex flex-col h-full overflow-hidden">
-          {/* Brand Header */}
-          <div className="p-6 shrink-0 flex items-center justify-between border-b border-[#DCE2DD]/70">
-            <Link href={`/${role}`} className="flex items-center gap-3.5 group">
-              <div className="w-10 h-10 rounded-md bg-[#154B3D] flex items-center justify-center text-[#F3F4F1]  group-hover:scale-105 ">
-                <Flame className="w-5 h-5" />
-              </div>
+        <div className="admin-brand">
+          <Link href={`/${role}`}>
+            <Flame size={30} aria-hidden="true" />
+            <span>INFURNUS</span>
+          </Link>
+          <button
+            className="admin-nav-close"
+            onClick={onClose}
+            aria-label="Close navigation"
+          >
+            <X size={20} />
+          </button>
+        </div>
+        <nav className="admin-nav-scroll">
+          {groupedSections.map((group) => (
+            <details className="admin-nav-group" key={group.section} open>
+              <summary>{group.section}</summary>
               <div>
-                <h2 className="font-heading text-xl font-bold tracking-tight text-[#202A25]">
-                  INFURNUS
-                </h2>
-                <div className="flex items-center gap-1.5 mt-0.5">
-                  <span className="inline-block text-[10px] font-bold uppercase tracking-wider text-[#52645B]">
-                    {role === "super-admin" ? "Super Admin" : "Admin Console"}
-                  </span>
-                  {role === "admin" && (
-                    <span className="inline-flex items-center gap-1 text-[9px] px-1.5 py-0.2 rounded-md bg-[#E7ECE8] text-[#58675D]">
-                      <Lock className="w-2.5 h-2.5" /> Scoped
-                    </span>
-                  )}
-                </div>
+                {group.items.map((item) => {
+                  const isActive =
+                    pathname === item.href ||
+                    (item.href !== `/${role}` &&
+                      pathname.startsWith(item.href + "/"));
+                  return (
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      aria-current={isActive ? "page" : undefined}
+                      className={`admin-nav-link ${isActive ? "is-active" : ""}`}
+                      onClick={onClose}
+                    >
+                      {renderNavIcon(item.icon)}
+                      <span>{item.title}</span>
+                    </Link>
+                  );
+                })}
               </div>
-            </Link>
-            <button
-              onClick={onClose}
-              className="lg:hidden p-2 rounded-xl text-[#58675D] hover:bg-[#F2F5F2] transition-colors focus:outline-none"
-              aria-label="Close navigation"
-            >
-              <X className="w-5 h-5" />
-            </button>
-          </div>
-
-          {/* Navigation Scrollable Area */}
-          <div className="flex-1 overflow-y-auto p-4 space-y-6 scrollbar-thin scrollbar-thumb-[#DCE2DD]">
-            {groupedSections.map((group, groupIdx) => (
-              <div key={groupIdx} className="space-y-1.5">
-                <h3 className="px-3 text-[10px] font-bold uppercase tracking-wider text-[#58675D]/80 font-sans">
-                  {group.section}
-                </h3>
-                <div className="space-y-1">
-                  {group.items.map((item) => {
-                    const isActive =
-                      pathname === item.href ||
-                      (item.href !== `/${role}` &&
-                        pathname.startsWith(item.href));
-
-                    return (
-                      <Link
-                        key={item.href}
-                        href={item.href}
-                        aria-current={isActive ? "page" : undefined}
-                        onClick={onClose}
-                        className={`group flex items-center gap-3 px-3.5 py-2.5 rounded-md text-xs font-semibold transition-colors ${
-                          isActive
-                            ? "bg-[#154B3D] text-[#F3F4F1]  font-bold"
-                            : "text-[#58675D] hover:bg-[#F2F5F2] hover:text-[#202A25]"
-                        }`}
-                      >
-                        <span
-                          className={
-                            isActive
-                              ? "text-[#F3F4F1]"
-                              : "text-[#58675D] group-hover:text-[#154B3D]"
-                          }
-                        >
-                          {renderNavIcon(item.icon)}
-                        </span>
-                        <span className="flex-1 truncate">{item.title}</span>
-                        {item.badge && (
-                          <span
-                            className={`px-2 py-0.5 text-[10px] font-bold rounded-md ${
-                              isActive
-                                ? "bg-[#52645B] text-white"
-                                : "bg-[#E7ECE8] text-[#202A25]"
-                            }`}
-                          >
-                            {item.badge}
-                          </span>
-                        )}
-                      </Link>
-                    );
-                  })}
-                </div>
-              </div>
-            ))}
-          </div>
-
-          {/* Sidebar Footer Context */}
-          <div className="p-4 shrink-0 border-t border-[#DCE2DD]/70 bg-[#F2F5F2]/50">
-            <div className="p-3 rounded-md bg-[#FFFFFF] border border-[#DCE2DD] text-center shadow-organic-sm">
-              <p className="text-xs font-bold text-[#202A25]">
-                Authenticated Administrator
-              </p>
-              <p className="text-[10px] text-[#58675D] mt-0.5">
-                Backend authorization applies to every operation
-              </p>
-            </div>
-          </div>
+            </details>
+          ))}
+        </nav>
+        <div className="admin-nav-footer">
+          <Shield size={16} />
+          <span>
+            {role === "super-admin" ? "Super Admin" : "Admin"} workspace
+            <br />
+            <small>Backend-authorized access</small>
+          </span>
         </div>
       </aside>
     </>

@@ -1,13 +1,18 @@
-import { NavItemConfig, AdminPermission, UserRole, NavItem } from "@/types";
+import type {
+  NavItemConfig,
+  AdminPermission,
+  UserRole,
+  NavItem,
+} from "@/types";
 
 export const MASTER_NAVIGATION_CONFIG: NavItemConfig[] = [
   {
     id: "commission",
-    title: "Recorded Commission",
+    title: "Commission Management",
     path: "commission",
     icon: "wallet",
     requiredPermission: "VIEW_PAYMENTS",
-    section: "Finance & Engagement",
+    section: "Pricing & Commission",
   },
   {
     id: "refunds",
@@ -15,23 +20,23 @@ export const MASTER_NAVIGATION_CONFIG: NavItemConfig[] = [
     path: "refunds",
     icon: "wallet",
     requiredPermission: "VIEW_PAYMENTS",
-    section: "Finance & Engagement",
+    section: "Wallet & Payments",
   },
   {
     id: "pricing",
-    title: "Categories & Pricing",
+    title: "Vehicle Categories & Pricing",
     path: "pricing",
     icon: "car",
     requiredPermission: "VIEW_VEHICLES",
-    section: "Core Operations",
+    section: "Pricing & Commission",
   },
   {
     id: "logistics",
-    title: "Logistics & Parcels",
+    title: "Logistics Bookings",
     path: "logistics",
     icon: "truck",
     requiredPermission: "VIEW_RIDES",
-    section: "Core Operations",
+    section: "Booking Management",
   },
   {
     id: "rentals",
@@ -39,15 +44,15 @@ export const MASTER_NAVIGATION_CONFIG: NavItemConfig[] = [
     path: "rentals",
     icon: "car",
     requiredPermission: "VIEW_RIDES",
-    section: "Core Operations",
+    section: "Booking Management",
   },
   {
     id: "wallets",
-    title: "Wallets",
+    title: "Wallet Management",
     path: "wallets",
     icon: "wallet",
     requiredPermission: "VIEW_PAYMENTS",
-    section: "Finance & Engagement",
+    section: "Wallet & Payments",
   },
   {
     id: "transactions",
@@ -55,7 +60,7 @@ export const MASTER_NAVIGATION_CONFIG: NavItemConfig[] = [
     path: "transactions",
     icon: "wallet",
     requiredPermission: "VIEW_PAYMENTS",
-    section: "Finance & Engagement",
+    section: "Wallet & Payments",
   },
   {
     id: "settlements",
@@ -63,7 +68,7 @@ export const MASTER_NAVIGATION_CONFIG: NavItemConfig[] = [
     path: "settlements",
     icon: "wallet",
     requiredPermission: "VIEW_PAYMENTS",
-    section: "Finance & Engagement",
+    section: "Wallet & Payments",
   },
   // Section: Core Operations
   {
@@ -72,15 +77,15 @@ export const MASTER_NAVIGATION_CONFIG: NavItemConfig[] = [
     path: "",
     icon: "dashboard",
     requiredPermission: "VIEW_DASHBOARD",
-    section: "Core Operations",
+    section: "Dashboard",
   },
   {
     id: "users",
-    title: "Users",
+    title: "Customers",
     path: "users",
     icon: "users",
     requiredPermission: "VIEW_USERS",
-    section: "Core Operations",
+    section: "User Management",
   },
   {
     id: "drivers",
@@ -88,65 +93,65 @@ export const MASTER_NAVIGATION_CONFIG: NavItemConfig[] = [
     path: "drivers",
     icon: "steering",
     requiredPermission: "VIEW_DRIVERS",
-    section: "Core Operations",
+    section: "User Management",
   },
   {
     id: "driver-requests",
-    title: "Driver Requests",
+    title: "Verification Requests",
     path: "driver-requests",
     icon: "user-check",
     requiredPermission: "VIEW_DRIVER_REQUESTS",
-    section: "Core Operations",
+    section: "User Management",
   },
   {
     id: "vehicles",
-    title: "Vehicles",
+    title: "Vehicle Inventory",
     path: "vehicles",
     icon: "car",
     requiredPermission: "VIEW_VEHICLES",
-    section: "Core Operations",
+    section: "Vehicle Management",
   },
   {
     id: "partners",
-    title: "Partners",
+    title: "Business Profiles",
     path: "partners",
     icon: "briefcase",
     requiredPermission: "VIEW_PARTNERS",
-    section: "Core Operations",
+    section: "User Management",
   },
   {
     id: "fleets",
-    title: "Fleets",
+    title: "Fleet Monitoring",
     path: "fleets",
     icon: "truck",
     requiredPermission: "VIEW_FLEETS",
-    section: "Core Operations",
+    section: "Vehicle Management",
   },
   {
     id: "rides",
-    title: "Rides",
+    title: "Ride Bookings",
     path: "rides",
     icon: "map-pin",
     requiredPermission: "VIEW_RIDES",
-    section: "Core Operations",
+    section: "Booking Management",
   },
 
   // Section: Finance & Engagement
   {
     id: "finance",
-    title: "Payments & Finance",
+    title: "Payments",
     path: "finance",
     icon: "wallet",
     requiredPermission: "VIEW_PAYMENTS",
-    section: "Finance & Engagement",
+    section: "Wallet & Payments",
   },
   {
     id: "coupons",
-    title: "Coupons",
+    title: "Promo Codes",
     path: "coupons",
     icon: "ticket",
     requiredPermission: "VIEW_COUPONS",
-    section: "Finance & Engagement",
+    section: "Pricing & Commission",
   },
   {
     id: "notifications",
@@ -154,7 +159,7 @@ export const MASTER_NAVIGATION_CONFIG: NavItemConfig[] = [
     path: "notifications",
     icon: "bell",
     requiredPermission: "VIEW_NOTIFICATIONS",
-    section: "Finance & Engagement",
+    section: "System Management",
   },
   {
     id: "support",
@@ -162,7 +167,7 @@ export const MASTER_NAVIGATION_CONFIG: NavItemConfig[] = [
     path: "support",
     icon: "help-circle",
     requiredPermission: "VIEW_SUPPORT",
-    section: "Finance & Engagement",
+    section: "System Management",
   },
   {
     id: "reports",
@@ -170,7 +175,7 @@ export const MASTER_NAVIGATION_CONFIG: NavItemConfig[] = [
     path: "reports",
     icon: "bar-chart",
     requiredPermission: "VIEW_REPORTS",
-    section: "Finance & Engagement",
+    section: "Reports & Analytics",
   },
 
   // Section: Governance & Security
@@ -204,15 +209,7 @@ export const MASTER_NAVIGATION_CONFIG: NavItemConfig[] = [
     path: "approvals",
     icon: "check-square",
     requiredPermission: "VIEW_APPROVALS",
-    section: "Governance & Security",
-  },
-  {
-    id: "audit-logs",
-    title: "Audit Logs",
-    path: "audit-logs",
-    icon: "file-text",
-    requiredPermission: "VIEW_AUDIT_LOGS",
-    section: "Governance & Security",
+    section: "User Management",
   },
   {
     id: "security",
@@ -290,8 +287,14 @@ export function getGroupedNavItemsForRole(
   });
 
   const order = [
-    "Core Operations",
-    "Finance & Engagement",
+    "Dashboard",
+    "User Management",
+    "Booking Management",
+    "Vehicle Management",
+    "Pricing & Commission",
+    "Wallet & Payments",
+    "Reports & Analytics",
+    "System Management",
     "Governance & Security",
     "System & Control",
   ];

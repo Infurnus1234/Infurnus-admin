@@ -1,4 +1,11 @@
-import { UnavailableModule } from "@/components/UnavailableModule";
-export default function Page() {
-  return <UnavailableModule title="Vehicles" />;
+import { notFound } from "next/navigation";
+import { RecordDetails } from "@/components/RecordDetails";
+export default async function Page({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = await params;
+  if (!/^[\da-f-]{36}$/i.test(id)) notFound();
+  return <RecordDetails module="vehicles" id={id} role="super-admin" />;
 }

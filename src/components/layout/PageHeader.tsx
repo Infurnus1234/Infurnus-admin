@@ -21,21 +21,15 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
 }) => {
   const Heading = headingLevel === 1 ? "h1" : "h2";
   return (
-    <div
-      className={`flex flex-col gap-3 pb-6 border-b border-[#DED8CF]/60 ${className}`}
-    >
+    <div className={`admin-page-header ${className}`}>
       {breadcrumbs && breadcrumbs.length > 0 && (
         <Breadcrumbs items={breadcrumbs} className="mb-1" />
       )}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <Heading className="font-heading text-2xl sm:text-3xl font-extrabold text-[#2C2C24] tracking-tight">
-            {title}
-          </Heading>
+          <Heading className="admin-page-title">{title}</Heading>
           {description && (
-            <p className="text-sm text-[#78786C] mt-1 font-sans font-medium max-w-2xl">
-              {description}
-            </p>
+            <p className="admin-page-description">{description}</p>
           )}
         </div>
         {actions && (

@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
-import { Nunito } from "next/font/google";
+import { Inter } from "next/font/google";
 import "./globals.css";
 
-const nunito = Nunito({
-  variable: "--font-nunito",
+const nunito = Inter({
+  variable: "--font-admin",
   subsets: ["latin"],
   weight: ["400", "500", "600", "700", "800"],
   display: "swap",
@@ -21,9 +21,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${nunito.variable} h-full antialiased`}>
-      <body className="min-h-full flex flex-col bg-[#f5f6f5] text-[#202a25] font-sans selection:bg-[#dde9e1] selection:text-[#154b3d]">
-        {children}
-      </body>
+      <body className="admin-root">{children}</body>
     </html>
   );
 }

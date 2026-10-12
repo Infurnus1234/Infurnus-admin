@@ -26,7 +26,7 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
         {label && (
           <label
             htmlFor={selectId}
-            className="text-xs font-semibold uppercase tracking-wider text-[#78786C]"
+            className="text-xs font-semibold uppercase tracking-wider text-[#526581]"
           >
             {label}
           </label>
@@ -44,10 +44,10 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
                 .filter(Boolean)
                 .join(" ") || undefined
             }
-            className={`w-full bg-[#FDFCF8] border rounded-2xl px-4 py-2.5 text-sm text-[#2C2C24] appearance-none cursor-pointer transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[#5D7052] focus:border-[#5D7052] ${
+            className={`w-full bg-[#FFFFFF] border rounded-2xl px-4 py-2.5 text-sm text-[#101828] appearance-none cursor-pointer transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[#FF7A0A] focus:border-[#FF7A0A] ${
               error
-                ? "border-[#A85448] focus:ring-[#A85448]"
-                : "border-[#DED8CF] hover:border-[#C18C5D]"
+                ? "border-[#F04438] focus:ring-[#F04438]"
+                : "border-[#E5EAF0] hover:border-[#2678F3]"
             } ${className}`}
             {...props}
           >
@@ -57,7 +57,7 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
               </option>
             ))}
           </select>
-          <div className="absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none text-[#78786C]">
+          <div className="absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none text-[#526581]">
             <svg
               className="w-4 h-4"
               fill="none"
@@ -76,12 +76,12 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
         {error ? (
           <p
             id={selectId + "-message"}
-            className="text-xs text-[#A85448] font-medium"
+            className="text-xs text-[#F04438] font-medium"
           >
             {error}
           </p>
         ) : helperText ? (
-          <p id={selectId + "-message"} className="text-xs text-[#78786C]">
+          <p id={selectId + "-message"} className="text-xs text-[#526581]">
             {helperText}
           </p>
         ) : null}

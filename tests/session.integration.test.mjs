@@ -41,11 +41,16 @@ test(
     jar.set("infurnus_admin_access", "expired-access-fixture");
     const protectedPage = await call("/admin/users");
     assert.equal(protectedPage.status, 307);
-    assert.equal(protectedPage.headers.get("location"), "/session/restore");
+    assert.equal(
+      protectedPage.headers.get("location"),
+      "/session/restore?returnTo=%2Fadmin%2Fusers",
+    );
     assert.equal((await call("/session/restore")).status, 200);
     assert.equal((await call("/api/backend/auth/refresh", "POST")).status, 200);
     assert.equal((await call("/admin/users")).status, 200);
-    assert.equal((await call("/admin/finance")).status, 307);
+    const forbiddenPage = await call("/admin/finance");
+    assert.equal(forbiddenPage.status, 200);
+    assert.match(await forbiddenPage.text(), /Access restricted/);
     assert.equal(
       (await call("/api/backend/admin/operations/payments")).status,
       403,
@@ -114,11 +119,11 @@ test(
     assert(jar.has("infurnus_refresh_token"));
     assert(jar.has("infurnus_csrf_token"));
     response = await call("/super-admin/driver-requests");
-    assert.equal(response.status, 307);
-    assert.equal(response.headers.get("location"), "/admin/driver-requests");
+    assert.equal(response.status, 200);
+    assert.match(await response.text(), /Access restricted/);
     response = await call("/super-admin/settings");
-    assert.equal(response.status, 307);
-    assert.equal(response.headers.get("location"), "/admin/driver-requests");
+    assert.equal(response.status, 200);
+    assert.match(await response.text(), /Access restricted/);
     response = await call("/admin/settings");
     assert.equal(response.status, 200);
     assert.match(await response.text(), /is not connected yet/);

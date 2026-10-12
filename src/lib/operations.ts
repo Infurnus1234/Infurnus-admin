@@ -360,9 +360,13 @@ export function operationPath(
   search: string,
   status: string,
   role = "customer",
+  pageSize = 25,
 ) {
   const config = operationConfigs[key];
-  const query = new URLSearchParams({ page: String(page), pageSize: "25" });
+  const query = new URLSearchParams({
+    page: String(page),
+    pageSize: String(pageSize),
+  });
   if (key === "users") query.set("role", role);
   if (search.trim()) query.set(config.searchKey, search.trim());
   if (status && config.statusKey) query.set(config.statusKey, status);

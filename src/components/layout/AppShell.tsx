@@ -16,7 +16,7 @@ export const AppShell: React.FC<AppShellProps> = ({ role, user, children }) => {
 
   const closeSidebar = useCallback(() => setIsSidebarOpen(false), []);
   return (
-    <div className="min-h-screen bg-[#f5f6f5] text-[#202a25] flex flex-col font-sans selection:bg-[#dde9e1] selection:text-[#154b3d]">
+    <div className="admin-app-shell">
       <a href="#main-content" className="skip-link">
         Skip to content
       </a>
@@ -28,10 +28,7 @@ export const AppShell: React.FC<AppShellProps> = ({ role, user, children }) => {
       />
 
       {/* Main App Container */}
-      <div
-        inert={isSidebarOpen}
-        className="lg:pl-72 flex flex-col flex-1 min-w-0"
-      >
+      <div inert={isSidebarOpen} className="admin-app-content">
         {/* Topbar Navigation Bar */}
         <Topbar
           user={user}
@@ -39,11 +36,7 @@ export const AppShell: React.FC<AppShellProps> = ({ role, user, children }) => {
         />
 
         {/* Main Content Area */}
-        <main
-          id="main-content"
-          tabIndex={-1}
-          className="min-w-0 flex-1 p-4 sm:p-6 max-w-[1600px] w-full mx-auto"
-        >
+        <main id="main-content" tabIndex={-1} className="admin-main">
           {children}
         </main>
       </div>

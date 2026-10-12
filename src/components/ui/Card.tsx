@@ -18,10 +18,10 @@ export const Card: React.FC<CardProps> = ({
   const roundedClass = rounded === "2xl" ? "rounded-2xl" : "rounded-3xl";
 
   const variantStyles = {
-    flat: "bg-[#F0EBE5] border border-transparent",
-    elevated: "bg-white border border-[#DED8CF] shadow-organic",
-    outlined: "bg-[#FDFCF8] border border-[#DED8CF]",
-    sand: "bg-[#E6DCCD]/40 border border-[#DED8CF]",
+    flat: "bg-[#F4F6F9] border border-transparent",
+    elevated: "bg-white border border-[#E5EAF0] shadow-organic",
+    outlined: "bg-[#FFFFFF] border border-[#E5EAF0]",
+    sand: "bg-[#E5EAF0]/40 border border-[#E5EAF0]",
   };
 
   const paddingStyles = {
@@ -44,7 +44,9 @@ export const CardHeader: React.FC<{
   children: React.ReactNode;
   className?: string;
 }> = ({ children, className = "" }) => (
-  <div className={`flex flex-col gap-1 pb-4 border-b border-[#DED8CF]/60 ${className}`}>
+  <div
+    className={`flex flex-col gap-1 pb-4 border-b border-[#E5EAF0]/60 ${className}`}
+  >
     {children}
   </div>
 );
@@ -53,7 +55,9 @@ export const CardTitle: React.FC<{
   children: React.ReactNode;
   className?: string;
 }> = ({ children, className = "" }) => (
-  <h3 className={`font-heading text-xl font-bold text-[#2C2C24] tracking-tight ${className}`}>
+  <h3
+    className={`font-heading text-xl font-bold text-[#101828] tracking-tight ${className}`}
+  >
     {children}
   </h3>
 );
@@ -62,7 +66,7 @@ export const CardDescription: React.FC<{
   children: React.ReactNode;
   className?: string;
 }> = ({ children, className = "" }) => (
-  <p className={`text-sm text-[#78786C] ${className}`}>{children}</p>
+  <p className={`text-sm text-[#526581] ${className}`}>{children}</p>
 );
 
 export const CardContent: React.FC<{
@@ -76,7 +80,9 @@ export const CardFooter: React.FC<{
   children: React.ReactNode;
   className?: string;
 }> = ({ children, className = "" }) => (
-  <div className={`pt-4 mt-4 border-t border-[#DED8CF]/60 flex items-center justify-between ${className}`}>
+  <div
+    className={`pt-4 mt-4 border-t border-[#E5EAF0]/60 flex items-center justify-between ${className}`}
+  >
     {children}
   </div>
 );

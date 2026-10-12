@@ -17,10 +17,10 @@ export const OrganicAreaChart: React.FC<ChartProps> = ({
   const maxValue = Math.max(...data.map((d) => d.value), 1);
   const strokeColor =
     color === "moss"
-      ? "#5D7052"
+      ? "#FF7A0A"
       : color === "terracotta"
-        ? "#C18C5D"
-        : "#78786C";
+        ? "#2678F3"
+        : "#526581";
 
   const width = 500;
   const height = 180;
@@ -45,14 +45,14 @@ export const OrganicAreaChart: React.FC<ChartProps> = ({
     <div className="w-full flex flex-col justify-between">
       <div className="flex items-center justify-between mb-4">
         <div>
-          <h4 className="font-heading text-lg font-bold text-[#2C2C24]">
+          <h4 className="font-heading text-lg font-bold text-[#101828]">
             {title}
           </h4>
           {subtitle && (
-            <p className="text-xs text-[#78786C] mt-0.5">{subtitle}</p>
+            <p className="text-xs text-[#526581] mt-0.5">{subtitle}</p>
           )}
         </div>
-        <span className="text-xs font-bold font-mono px-2.5 py-1 rounded-full bg-[#F0EBE5] text-[#5D7052]">
+        <span className="text-xs font-bold font-mono px-2.5 py-1 rounded-full bg-[#F4F6F9] text-[#FF7A0A]">
           Max: {data[data.length - 1].value.toLocaleString()}
         </span>
       </div>
@@ -81,7 +81,7 @@ export const OrganicAreaChart: React.FC<ChartProps> = ({
                 cx={pt.x}
                 cy={pt.y}
                 r="5"
-                fill="#FDFCF8"
+                fill="#FFFFFF"
                 stroke={strokeColor}
                 strokeWidth="2.5"
                 className="transition-transform duration-200 group-hover:scale-150"
@@ -92,7 +92,7 @@ export const OrganicAreaChart: React.FC<ChartProps> = ({
       </div>
 
       {/* Labels */}
-      <div className="flex items-center justify-between mt-2 pt-2 border-t border-[#DED8CF]/60 text-[11px] text-[#78786C] font-semibold">
+      <div className="flex items-center justify-between mt-2 pt-2 border-t border-[#E5EAF0]/60 text-[11px] text-[#526581] font-semibold">
         {data.map((d, i) => (
           <span key={i}>{d.label}</span>
         ))}
@@ -110,20 +110,20 @@ export const OrganicBarChart: React.FC<ChartProps> = ({
   const maxValue = Math.max(...data.map((d) => d.value), 1);
   const barBg =
     color === "terracotta"
-      ? "bg-[#C18C5D]"
+      ? "bg-[#2678F3]"
       : color === "moss"
-        ? "bg-[#5D7052]"
-        : "bg-[#E6DCCD]";
+        ? "bg-[#FF7A0A]"
+        : "bg-[#E5EAF0]";
 
   return (
     <div className="w-full flex flex-col justify-between">
       <div className="flex items-center justify-between mb-4">
         <div>
-          <h4 className="font-heading text-lg font-bold text-[#2C2C24]">
+          <h4 className="font-heading text-lg font-bold text-[#101828]">
             {title}
           </h4>
           {subtitle && (
-            <p className="text-xs text-[#78786C] mt-0.5">{subtitle}</p>
+            <p className="text-xs text-[#526581] mt-0.5">{subtitle}</p>
           )}
         </div>
       </div>
@@ -136,18 +136,18 @@ export const OrganicBarChart: React.FC<ChartProps> = ({
               key={idx}
               className="flex-1 flex flex-col items-center gap-2 group h-full justify-end"
             >
-              <div className="text-[10px] font-bold text-[#78786C] opacity-0 group-hover:opacity-100 transition-opacity">
+              <div className="text-[10px] font-bold text-[#526581] opacity-0 group-hover:opacity-100 transition-opacity">
                 {pt.value >= 1000
                   ? `${(pt.value / 1000).toFixed(1)}k`
                   : pt.value}
               </div>
-              <div className="w-full bg-[#F0EBE5] rounded-2xl h-full flex items-end p-1">
+              <div className="w-full bg-[#F4F6F9] rounded-2xl h-full flex items-end p-1">
                 <div
                   style={{ height: `${heightPercent}%` }}
                   className={`w-full ${barBg} rounded-xl transition-all duration-500 group-hover:brightness-110`}
                 />
               </div>
-              <span className="text-[11px] font-semibold text-[#78786C]">
+              <span className="text-[11px] font-semibold text-[#526581]">
                 {pt.label}
               </span>
             </div>
