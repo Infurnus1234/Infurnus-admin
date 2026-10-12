@@ -25,20 +25,17 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     ref,
   ) => {
     const baseStyles =
-      "inline-flex min-h-11 items-center justify-center font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#5D7052] disabled:opacity-50 disabled:cursor-not-allowed rounded-full cursor-pointer";
+      "inline-flex min-h-11 items-center justify-center font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#154B3D] disabled:opacity-50 disabled:cursor-not-allowed rounded-md cursor-pointer";
 
     const variantStyles = {
-      primary:
-        "bg-[#5D7052] text-[#F3F4F1] hover:bg-[#4d5e43] shadow-moss active:scale-[0.98]",
-      secondary:
-        "bg-[#C18C5D] text-white hover:bg-[#b07b4c] shadow-terracotta active:scale-[0.98]",
+      primary: "bg-[#154B3D] text-[#F3F4F1] hover:bg-[#103B30]  ",
+      secondary: "bg-[#52645B] text-white hover:bg-[#3F5147]  ",
       accent:
-        "bg-[#E6DCCD] text-[#2C2C24] hover:bg-[#dacdba] border border-[#DED8CF] active:scale-[0.98]",
+        "bg-[#E7ECE8] text-[#202A25] hover:bg-[#dacdba] border border-[#DCE2DD] ",
       outline:
-        "border-2 border-[#DED8CF] text-[#2C2C24] hover:bg-[#F0EBE5] hover:border-[#C18C5D] active:scale-[0.98]",
-      ghost: "text-[#2C2C24] hover:bg-[#F0EBE5] hover:text-[#5D7052]",
-      destructive:
-        "bg-[#A85448] text-white hover:bg-[#93453a] shadow-sm active:scale-[0.98]",
+        "border-2 border-[#DCE2DD] text-[#202A25] hover:bg-[#F2F5F2] hover:border-[#52645B] ",
+      ghost: "text-[#202A25] hover:bg-[#F2F5F2] hover:text-[#154B3D]",
+      destructive: "bg-[#A85448] text-white hover:bg-[#93453a] shadow-sm ",
     };
 
     const sizeStyles = {

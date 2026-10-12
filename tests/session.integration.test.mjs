@@ -1,6 +1,63 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 
+test(
+  "protected page restores a valid backend session after access-token expiry",
+  { skip: !process.env.ADMIN_INTEGRATION_URL },
+  async () => {
+    const origin = process.env.ADMIN_INTEGRATION_URL;
+    assert(["127.0.0.1", "localhost"].includes(new URL(origin).hostname));
+    const jar = new Map();
+    async function call(path, method = "GET", body) {
+      const response = await fetch(origin + path, {
+        method,
+        redirect: "manual",
+        headers: {
+          Cookie: [...jar].map(([key, value]) => `${key}=${value}`).join("; "),
+          "Content-Type": "application/json",
+          Origin: origin,
+        },
+        ...(body === undefined ? {} : { body: JSON.stringify(body) }),
+      });
+      for (const cookie of response.headers.getSetCookie()) {
+        const pair = cookie.split(";")[0],
+          index = pair.indexOf("=");
+        const key = pair.slice(0, index),
+          value = pair.slice(index + 1);
+        if (!value) jar.delete(key);
+        else jar.set(key, value);
+      }
+      return response;
+    }
+    assert.equal(
+      (
+        await call("/api/backend/auth/admin/login", "POST", {
+          email: "visibility-1@example.invalid",
+          password: "Local-fixture-only-2026!",
+        })
+      ).status,
+      200,
+    );
+    jar.set("infurnus_admin_access", "expired-access-fixture");
+    const protectedPage = await call("/admin/users");
+    assert.equal(protectedPage.status, 307);
+    assert.equal(protectedPage.headers.get("location"), "/session/restore");
+    assert.equal((await call("/session/restore")).status, 200);
+    assert.equal((await call("/api/backend/auth/refresh", "POST")).status, 200);
+    assert.equal((await call("/admin/users")).status, 200);
+    assert.equal((await call("/admin/finance")).status, 307);
+    assert.equal(
+      (await call("/api/backend/admin/operations/payments")).status,
+      403,
+    );
+    assert.equal((await call("/api/backend/auth/logout", "POST")).status, 204);
+    assert.equal(
+      (await call("/admin/users")).headers.get("location"),
+      "/login",
+    );
+  },
+);
+
 // Opt-in only against the disposable visibility fixture server documented in the report.
 // These .invalid accounts use disposable test credentials, never production credentials.
 test(

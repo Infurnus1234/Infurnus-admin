@@ -3,7 +3,12 @@ import { Modal } from "./ui/Modal";
 import { PageHeader } from "./layout/PageHeader";
 import { useCallback, useEffect, useState } from "react";
 import { adminApi } from "@/lib/admin-api";
-import { FleetApplication, Page, statusLabel } from "@/lib/request-models";
+import {
+  FleetApplication,
+  Page,
+  statusLabel,
+  roleLabel,
+} from "@/lib/request-models";
 export function FleetApplications() {
   const [data, setData] = useState<Page<FleetApplication> | null>(null);
   const [error, setError] = useState("");
@@ -95,9 +100,11 @@ export function FleetApplications() {
       {data?.items.map((row) => (
         <article className="fleet-application" key={row.id}>
           <p>
-            {row.firstName} {row.lastName} → {row.partnerBusinessName};{" "}
-            {row.requestedSector}/{row.requestedVehicleCategory}:{" "}
-            {statusLabel(row.status)}
+            {`${row.firstName || ""} ${row.lastName || ""}`.trim() ||
+              "Name unavailable"}{" "}
+            <span className="role-badge">{roleLabel(row.requesterRole)}</span> →{" "}
+            {row.partnerBusinessName}; {row.requestedSector}/
+            {row.requestedVehicleCategory}: {statusLabel(row.status)}
           </p>
           {["APPROVED", "REJECTED", "CHANGES_REQUESTED"].map((status) => (
             <button

@@ -41,8 +41,7 @@ export interface SidebarProps {
 
 const renderNavIcon = (iconName?: string) => {
   const iconProps = {
-    className:
-      "w-4 h-4 shrink-0 transition-transform duration-300 group-hover:scale-110",
+    className: "w-4 h-4 shrink-0  ",
   };
   switch (iconName) {
     case "dashboard":
@@ -149,7 +148,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
     <>
       {/* Mobile Drawer Backdrop overlay with blur */}
       <div
-        className={`fixed inset-0 z-40 bg-[#2C2C24]/30 backdrop-blur-xs transition-opacity duration-300 lg:hidden ${
+        className={`fixed inset-0 z-40 bg-[#202A25]/30 backdrop-blur-xs transition-opacity duration-300 lg:hidden ${
           isOpen
             ? "opacity-100 pointer-events-auto"
             : "opacity-0 pointer-events-none"
@@ -162,7 +161,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
       <aside
         ref={drawer}
         aria-label="Main navigation"
-        className={`fixed top-0 bottom-0 left-0 z-50 w-72 bg-[#FDFCF8] bg-grain border-r border-[#DED8CF] flex flex-col justify-between transition-transform duration-400 ease-in-out lg:translate-x-0 lg:visible ${
+        className={`fixed top-0 bottom-0 left-0 z-50 w-72 bg-[#FFFFFF]  border-r border-[#DCE2DD] flex flex-col justify-between transition-transform duration-400 ease-in-out lg:translate-x-0 lg:visible ${
           isOpen
             ? "translate-x-0 shadow-organic-lg"
             : "-translate-x-full invisible"
@@ -170,21 +169,21 @@ export const Sidebar: React.FC<SidebarProps> = ({
       >
         <div className="flex flex-col h-full overflow-hidden">
           {/* Brand Header */}
-          <div className="p-6 shrink-0 flex items-center justify-between border-b border-[#DED8CF]/70">
+          <div className="p-6 shrink-0 flex items-center justify-between border-b border-[#DCE2DD]/70">
             <Link href={`/${role}`} className="flex items-center gap-3.5 group">
-              <div className="w-10 h-10 rounded-2xl bg-[#5D7052] flex items-center justify-center text-[#F3F4F1] shadow-moss group-hover:scale-105 transition-transform duration-300">
+              <div className="w-10 h-10 rounded-md bg-[#154B3D] flex items-center justify-center text-[#F3F4F1]  group-hover:scale-105 ">
                 <Flame className="w-5 h-5" />
               </div>
               <div>
-                <h2 className="font-heading text-xl font-bold tracking-tight text-[#2C2C24]">
+                <h2 className="font-heading text-xl font-bold tracking-tight text-[#202A25]">
                   INFURNUS
                 </h2>
                 <div className="flex items-center gap-1.5 mt-0.5">
-                  <span className="inline-block text-[10px] font-bold uppercase tracking-wider text-[#C18C5D]">
+                  <span className="inline-block text-[10px] font-bold uppercase tracking-wider text-[#52645B]">
                     {role === "super-admin" ? "Super Admin" : "Admin Console"}
                   </span>
                   {role === "admin" && (
-                    <span className="inline-flex items-center gap-1 text-[9px] px-1.5 py-0.2 rounded-full bg-[#E6DCCD] text-[#78786C]">
+                    <span className="inline-flex items-center gap-1 text-[9px] px-1.5 py-0.2 rounded-md bg-[#E7ECE8] text-[#58675D]">
                       <Lock className="w-2.5 h-2.5" /> Scoped
                     </span>
                   )}
@@ -193,7 +192,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
             </Link>
             <button
               onClick={onClose}
-              className="lg:hidden p-2 rounded-xl text-[#78786C] hover:bg-[#F0EBE5] transition-colors focus:outline-none"
+              className="lg:hidden p-2 rounded-xl text-[#58675D] hover:bg-[#F2F5F2] transition-colors focus:outline-none"
               aria-label="Close navigation"
             >
               <X className="w-5 h-5" />
@@ -201,10 +200,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
           </div>
 
           {/* Navigation Scrollable Area */}
-          <div className="flex-1 overflow-y-auto p-4 space-y-6 scrollbar-thin scrollbar-thumb-[#DED8CF]">
+          <div className="flex-1 overflow-y-auto p-4 space-y-6 scrollbar-thin scrollbar-thumb-[#DCE2DD]">
             {groupedSections.map((group, groupIdx) => (
               <div key={groupIdx} className="space-y-1.5">
-                <h3 className="px-3 text-[10px] font-bold uppercase tracking-wider text-[#78786C]/80 font-sans">
+                <h3 className="px-3 text-[10px] font-bold uppercase tracking-wider text-[#58675D]/80 font-sans">
                   {group.section}
                 </h3>
                 <div className="space-y-1">
@@ -220,17 +219,17 @@ export const Sidebar: React.FC<SidebarProps> = ({
                         href={item.href}
                         aria-current={isActive ? "page" : undefined}
                         onClick={onClose}
-                        className={`group flex items-center gap-3 px-3.5 py-2.5 rounded-2xl text-xs font-semibold transition-all duration-300 ${
+                        className={`group flex items-center gap-3 px-3.5 py-2.5 rounded-md text-xs font-semibold transition-colors ${
                           isActive
-                            ? "bg-[#5D7052] text-[#F3F4F1] shadow-moss font-bold"
-                            : "text-[#78786C] hover:bg-[#F0EBE5] hover:text-[#2C2C24]"
+                            ? "bg-[#154B3D] text-[#F3F4F1]  font-bold"
+                            : "text-[#58675D] hover:bg-[#F2F5F2] hover:text-[#202A25]"
                         }`}
                       >
                         <span
                           className={
                             isActive
                               ? "text-[#F3F4F1]"
-                              : "text-[#78786C] group-hover:text-[#5D7052]"
+                              : "text-[#58675D] group-hover:text-[#154B3D]"
                           }
                         >
                           {renderNavIcon(item.icon)}
@@ -238,10 +237,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
                         <span className="flex-1 truncate">{item.title}</span>
                         {item.badge && (
                           <span
-                            className={`px-2 py-0.5 text-[10px] font-bold rounded-full ${
+                            className={`px-2 py-0.5 text-[10px] font-bold rounded-md ${
                               isActive
-                                ? "bg-[#C18C5D] text-white"
-                                : "bg-[#E6DCCD] text-[#2C2C24]"
+                                ? "bg-[#52645B] text-white"
+                                : "bg-[#E7ECE8] text-[#202A25]"
                             }`}
                           >
                             {item.badge}
@@ -256,12 +255,12 @@ export const Sidebar: React.FC<SidebarProps> = ({
           </div>
 
           {/* Sidebar Footer Context */}
-          <div className="p-4 shrink-0 border-t border-[#DED8CF]/70 bg-[#F0EBE5]/50">
-            <div className="p-3 rounded-2xl bg-[#FDFCF8] border border-[#DED8CF] text-center shadow-organic-sm">
-              <p className="text-xs font-bold text-[#2C2C24]">
+          <div className="p-4 shrink-0 border-t border-[#DCE2DD]/70 bg-[#F2F5F2]/50">
+            <div className="p-3 rounded-md bg-[#FFFFFF] border border-[#DCE2DD] text-center shadow-organic-sm">
+              <p className="text-xs font-bold text-[#202A25]">
                 Authenticated Administrator
               </p>
-              <p className="text-[10px] text-[#78786C] mt-0.5">
+              <p className="text-[10px] text-[#58675D] mt-0.5">
                 Backend authorization applies to every operation
               </p>
             </div>

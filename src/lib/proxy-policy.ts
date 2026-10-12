@@ -1,5 +1,17 @@
 export function allowedBackendPath(method: string, path: string): boolean {
   const uuid = "[\\da-f-]{36}";
+  if (method === "POST" && path === "/admin/vehicle-types") return true;
+  if (method === "POST" && path === "/admin/operations/coupons") return true;
+  if (
+    method === "PATCH" &&
+    new RegExp(`^/admin/operations/coupons/${uuid}/active$`, "i").test(path)
+  )
+    return true;
+  if (
+    method === "PATCH" &&
+    new RegExp(`^/admin/vehicle-types/${uuid}$`, "i").test(path)
+  )
+    return true;
   if (method === "POST" && /^\/auth\/(admin\/login|refresh|logout)$/.test(path))
     return true;
   if (
@@ -8,7 +20,21 @@ export function allowedBackendPath(method: string, path: string): boolean {
       "/provider-approvals",
       "/admin/drivers",
       "/admin/drivers/applications",
+      "/admin/dashboard",
+      "/admin/users",
+      "/admin/partners",
+      "/admin/vehicles",
+      "/admin/vehicle-types",
+      "/admin/fleet/analytics",
+      "/admin/fleet/vehicles",
     ].includes(path)
+  )
+    return true;
+  if (
+    method === "GET" &&
+    /^\/admin\/operations\/(commission|refunds|summary|rides|logistics|rentals|payments|wallets|transactions|settlements|coupons|notifications|support|activity)$/.test(
+      path,
+    )
   )
     return true;
   if (

@@ -1,6 +1,70 @@
 import { NavItemConfig, AdminPermission, UserRole, NavItem } from "@/types";
 
 export const MASTER_NAVIGATION_CONFIG: NavItemConfig[] = [
+  {
+    id: "commission",
+    title: "Recorded Commission",
+    path: "commission",
+    icon: "wallet",
+    requiredPermission: "VIEW_PAYMENTS",
+    section: "Finance & Engagement",
+  },
+  {
+    id: "refunds",
+    title: "Refunds",
+    path: "refunds",
+    icon: "wallet",
+    requiredPermission: "VIEW_PAYMENTS",
+    section: "Finance & Engagement",
+  },
+  {
+    id: "pricing",
+    title: "Categories & Pricing",
+    path: "pricing",
+    icon: "car",
+    requiredPermission: "VIEW_VEHICLES",
+    section: "Core Operations",
+  },
+  {
+    id: "logistics",
+    title: "Logistics & Parcels",
+    path: "logistics",
+    icon: "truck",
+    requiredPermission: "VIEW_RIDES",
+    section: "Core Operations",
+  },
+  {
+    id: "rentals",
+    title: "Rental Bookings",
+    path: "rentals",
+    icon: "car",
+    requiredPermission: "VIEW_RIDES",
+    section: "Core Operations",
+  },
+  {
+    id: "wallets",
+    title: "Wallets",
+    path: "wallets",
+    icon: "wallet",
+    requiredPermission: "VIEW_PAYMENTS",
+    section: "Finance & Engagement",
+  },
+  {
+    id: "transactions",
+    title: "Transactions",
+    path: "transactions",
+    icon: "wallet",
+    requiredPermission: "VIEW_PAYMENTS",
+    section: "Finance & Engagement",
+  },
+  {
+    id: "settlements",
+    title: "Settlements",
+    path: "settlements",
+    icon: "wallet",
+    requiredPermission: "VIEW_PAYMENTS",
+    section: "Finance & Engagement",
+  },
   // Section: Core Operations
   {
     id: "dashboard",
@@ -186,21 +250,6 @@ export const MASTER_NAVIGATION_CONFIG: NavItemConfig[] = [
   },
 ];
 
-export const MOCK_ADMIN_PERMISSIONS: AdminPermission[] = [
-  "VIEW_DASHBOARD",
-  "VIEW_USERS",
-  "VIEW_DRIVERS",
-  "VIEW_VEHICLES",
-  "VIEW_FLEETS",
-  "VIEW_RIDES",
-  "VIEW_COUPONS",
-  "VIEW_NOTIFICATIONS",
-  "VIEW_REPORTS",
-  "VIEW_SUPPORT",
-  "CREATE_REQUEST",
-  "VIEW_APPROVALS",
-];
-
 export interface SectionGroupedNavItems {
   section: string;
   items: NavItem[];
@@ -240,5 +289,13 @@ export function getGroupedNavItemsForRole(
     result.push({ section, items });
   });
 
-  return result;
+  const order = [
+    "Core Operations",
+    "Finance & Engagement",
+    "Governance & Security",
+    "System & Control",
+  ];
+  return result.sort(
+    (left, right) => order.indexOf(left.section) - order.indexOf(right.section),
+  );
 }

@@ -1,12 +1,6 @@
 import type { Metadata } from "next";
-import { Fraunces, Nunito } from "next/font/google";
+import { Nunito } from "next/font/google";
 import "./globals.css";
-
-const fraunces = Fraunces({
-  variable: "--font-fraunces",
-  subsets: ["latin"],
-  display: "swap",
-});
 
 const nunito = Nunito({
   variable: "--font-nunito",
@@ -26,11 +20,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html
-      lang="en"
-      className={`${fraunces.variable} ${nunito.variable} h-full antialiased`}
-    >
-      <body className="min-h-full flex flex-col bg-[#FDFCF8] text-[#2C2C24] font-body selection:bg-[#5D7052]/20 selection:text-[#5D7052]">
+    <html lang="en" className={`${nunito.variable} h-full antialiased`}>
+      <body className="min-h-full flex flex-col bg-[#f5f6f5] text-[#202a25] font-sans selection:bg-[#dde9e1] selection:text-[#154b3d]">
         {children}
       </body>
     </html>

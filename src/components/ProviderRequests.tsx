@@ -10,6 +10,13 @@ import {
   reviewPayload,
   statusLabel,
   requestPage,
+  requesterName,
+  requesterRole,
+  requestLabel,
+  requestTarget,
+  shortIdentifier,
+  requestTimestamp,
+  roleLabel,
 } from "@/lib/request-models";
 
 export function ProviderRequests() {
@@ -22,12 +29,16 @@ export function ProviderRequests() {
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
   const [filter, setFilter] = useState("");
+  const [statusFilter, setStatusFilter] = useState("PENDING");
   const [page, setPage] = useState(1);
   const [confirm, setConfirm] = useState<"APPROVED" | "REJECTED" | null>(null);
   const filtered = requests.filter((row) =>
     [
       row.id,
       row.requester_id,
+      requesterName(row),
+      requesterRole(row),
+      requestTarget(row),
       row.request_type,
       row.target_id,
       row.status,
@@ -45,7 +56,11 @@ export function ProviderRequests() {
   };
   const load = useCallback(async () => {
     try {
-      setRequests(await adminApi<ApprovalRequest[]>("/provider-approvals"));
+      setRequests(
+        await adminApi<ApprovalRequest[]>(
+          `/provider-approvals?status=${statusFilter}`,
+        ),
+      );
     } catch (error) {
       if (error instanceof ApiError && error.status === 401)
         router.replace("/login");
@@ -55,10 +70,10 @@ export function ProviderRequests() {
     } finally {
       setLoading(false);
     }
-  }, [router]);
+  }, [router, statusFilter]);
   useEffect(() => {
     let active = true;
-    adminApi<ApprovalRequest[]>("/provider-approvals")
+    adminApi<ApprovalRequest[]>(`/provider-approvals?status=${statusFilter}`)
       .then((rows) => {
         if (active) setRequests(rows);
       })
@@ -77,7 +92,7 @@ export function ProviderRequests() {
     return () => {
       active = false;
     };
-  }, [router]);
+  }, [router, statusFilter]);
   async function open(id: string) {
     setBusy(true);
     setError("");
@@ -138,7 +153,7 @@ export function ProviderRequests() {
     <section className="workspace-section live-workspace">
       <PageHeader
         title="Provider approval requests"
-        description="Review pending changes, supporting documents and decision history."
+        description="Review requests, supporting documents and decision history."
       />
       <div className="request-toolbar">
         <label className="filter-field">
@@ -150,8 +165,35 @@ export function ProviderRequests() {
               setFilter(event.target.value);
               setPage(1);
             }}
-            placeholder="ID, type, target or status"
+            placeholder="Name, role, ID or request type"
           />
+        </label>
+        <label>
+          Status
+          <select
+            value={statusFilter}
+            disabled={busy || loading}
+            onChange={(event) => {
+              setLoading(true);
+              setError("");
+              setRequests([]);
+              setPage(1);
+              setStatusFilter(event.target.value);
+            }}
+          >
+            {[
+              "PENDING",
+              "APPROVED",
+              "REJECTED",
+              "CANCELLED",
+              "EXPIRED",
+              "ALL",
+            ].map((status) => (
+              <option key={status} value={status}>
+                {status === "ALL" ? "All statuses" : requestLabel(status)}
+              </option>
+            ))}
+          </select>
         </label>
         <button
           disabled={busy || loading}
@@ -168,7 +210,7 @@ export function ProviderRequests() {
           onSubmit={(event) => {
             event.preventDefault();
             if (
-              !/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(
+              !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(
                 lookupId.trim(),
               )
             ) {
@@ -191,8 +233,8 @@ export function ProviderRequests() {
         </form>
       </div>
       <p className="workspace-caption">
-        Up to 100 pending requests are supplied by the backend. Filtering
-        applies to the loaded list; use a request ID to open reviewed history.
+        Up to 100 requests for the selected status are loaded. Search applies to
+        this list; use a request ID to open older review history.
       </p>
       {error && <p role="alert">{error}</p>}
       {notice && <p role="status">{notice}</p>}
@@ -202,7 +244,7 @@ export function ProviderRequests() {
         <p>
           {error
             ? "Requests could not be loaded. Resolve the error and retry."
-            : "No pending requests"}
+            : "No requests for this status"}
         </p>
       ) : (
         <div
@@ -212,9 +254,7 @@ export function ProviderRequests() {
           tabIndex={0}
         >
           <table className="operations-table requests-table">
-            <caption className="sr-only">
-              Pending provider approval requests
-            </caption>
+            <caption className="sr-only">Provider approval requests</caption>
             <colgroup>
               <col className="col-requester" />
               <col className="col-type" />
@@ -237,25 +277,25 @@ export function ProviderRequests() {
               {visible.map((row) => (
                 <tr key={row.id}>
                   <td>
-                    <span className="identifier" title={row.requester_id}>
-                      {row.requester_id}
+                    <span className="request-label" title={requesterName(row)}>
+                      {requesterName(row)}
                     </span>
 
-                    <span className="cell-secondary">
-                      {statusLabel(row.requester_role)}
+                    <span className="cell-secondary role-badge">
+                      {requesterRole(row)}
                     </span>
                   </td>
                   <td>
                     <span className="request-type">
-                      {statusLabel(row.request_type)}
+                      {requestLabel(row.request_type)}
                     </span>
                   </td>
                   <td>
-                    <span className="cell-secondary">
-                      {statusLabel(row.target_type)}
+                    <span className="request-label" title={requestTarget(row)}>
+                      {requestTarget(row)}
                     </span>
-                    <span className="identifier" title={row.target_id}>
-                      {row.target_id}
+                    <span className="cell-secondary" title={row.target_id}>
+                      {shortIdentifier(row.target_id)}
                     </span>
                   </td>
                   <td>
@@ -276,7 +316,7 @@ export function ProviderRequests() {
                   </td>
                   <td>
                     <button disabled={busy} onClick={() => open(row.id)}>
-                      Review
+                      {row.status === "PENDING" ? "Review" : "View"}
                     </button>
                   </td>
                 </tr>
@@ -322,6 +362,14 @@ export function ProviderRequests() {
         >
           <article className="detail-panel">
             <p className="detail-id">Request {detail.request.id}</p>
+            <h3>{requesterName(detail.request)}</h3>
+            <p>
+              <span className="role-badge">
+                {requesterRole(detail.request)}
+              </span>{" "}
+              · {requestLabel(detail.request.request_type)}
+            </p>
+            <p>Target: {requestTarget(detail.request)}</p>
             {error && <p role="alert">{error}</p>}
             {notice && <p role="status">{notice}</p>}
             <p>Status: {statusLabel(detail.request.status)}</p>
@@ -340,7 +388,7 @@ export function ProviderRequests() {
             {detail.documents.length ? (
               detail.documents.map((doc) => (
                 <div key={doc.id}>
-                  {doc.document_type}:{" "}
+                  {requestLabel(doc.document_code || doc.document_type)}:{" "}
                   {statusLabel(doc.verification_status || doc.status)}{" "}
                   {Array.from(
                     { length: Math.min(5, doc.pageCount || 1) },
@@ -368,14 +416,21 @@ export function ProviderRequests() {
               />
             </label>
             <button
-              disabled={busy || detail.request.status !== "PENDING"}
+              disabled={
+                busy ||
+                detail.request.status !== "PENDING" ||
+                detail.request.can_review === false
+              }
               onClick={() => setConfirm("APPROVED")}
             >
               Approve
             </button>
             <button
               disabled={
-                busy || !reason.trim() || detail.request.status !== "PENDING"
+                busy ||
+                !reason.trim() ||
+                detail.request.status !== "PENDING" ||
+                detail.request.can_review === false
               }
               onClick={() => setConfirm("REJECTED")}
             >
@@ -387,8 +442,16 @@ export function ProviderRequests() {
             <h3>Review history</h3>
             {detail.history.map((row) => (
               <p key={row.id}>
-                {statusLabel(row.status)} {row.reviewed_at}{" "}
-                {row.rejection_reason}
+                <strong>
+                  {row.requester_display_name?.trim() || "Name unavailable"}
+                </strong>{" "}
+                <span className="role-badge">
+                  {roleLabel(row.requester_account_role || row.requester_role)}
+                </span>{" "}
+                <span className="status-badge" data-status={row.status}>
+                  {requestLabel(row.status)}
+                </span>{" "}
+                {requestTimestamp(row.reviewed_at)} {row.rejection_reason}
               </p>
             ))}
           </article>

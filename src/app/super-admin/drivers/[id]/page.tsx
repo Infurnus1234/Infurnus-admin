@@ -6,8 +6,13 @@ import {
   accessCookie,
   backendFetch,
   currentIdentity,
+  refreshCookie,
 } from "@/lib/backend-session";
-import type { DriverDetails } from "@/lib/request-models";
+import {
+  roleLabel,
+  requestLabel,
+  type DriverDetails,
+} from "@/lib/request-models";
 
 interface DriverDetailsPageProps {
   params: Promise<{
@@ -22,7 +27,12 @@ export default async function DriverDetailsPage({
 }: DriverDetailsPageProps) {
   const { id } = await params;
   const identity = await currentIdentity();
-  if (!identity) redirect("/login");
+  if (!identity)
+    redirect(
+      (await cookies()).get(refreshCookie)?.value
+        ? "/session/restore"
+        : "/login",
+    );
   if (identity.role !== "super_admin") redirect("/admin/drivers");
   if (!/^[\da-f-]{36}$/i.test(id)) notFound();
   const token = (await cookies()).get(accessCookie)!.value;
@@ -35,26 +45,37 @@ export default async function DriverDetailsPage({
   return (
     <section className="workspace-section live-workspace">
       <PageHeader
-        title={driver.user.firstName + " " + driver.user.lastName}
+        title={
+          [driver.user.firstName, driver.user.lastName]
+            .filter(Boolean)
+            .join(" ")
+            .trim() || "Name unavailable"
+        }
         description="Driver account and verification details"
         breadcrumbs={[
           { label: "Drivers", href: "/super-admin/drivers" },
           { label: "Details" },
         ]}
       />
+      <p>
+        <span className="role-badge">
+          {roleLabel(driver.user.role || driver.role)}
+        </span>
+      </p>
       <article className="detail-panel workspace-note">
         <dl className="detail-list">
           <dt>Verification</dt>
-          <dd>{driver.verificationStatus}</dd>
+          <dd>{requestLabel(driver.verificationStatus)}</dd>
           <dt>Account</dt>
-          <dd>{driver.user.status}</dd>
+          <dd>{requestLabel(driver.user.status)}</dd>
         </dl>
         {driver.rejectionReason && <p>{driver.rejectionReason}</p>}
         <h2>Documents</h2>
         {driver.documents.length ? (
           driver.documents.map((document) => (
             <p key={document.id}>
-              {document.documentType}: {document.verificationStatus}
+              {requestLabel(document.documentType)}:{" "}
+              {requestLabel(document.verificationStatus)}
             </p>
           ))
         ) : (
