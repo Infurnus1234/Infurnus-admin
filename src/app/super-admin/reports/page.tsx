@@ -1,4 +1,4 @@
-import { UnavailableModule } from "@/components/UnavailableModule";
+import { OperationsReports } from "@/components/OperationsReports";
 export default function Page() {
-  return <UnavailableModule title="Reports" />;
+  return <OperationsReports />;
 }

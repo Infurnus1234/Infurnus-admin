@@ -11,6 +11,7 @@ import {
   DriverDetails,
   Page,
   statusLabel,
+  roleLabel,
 } from "@/lib/request-models";
 export function DriverRecords() {
   const router = useRouter();
@@ -165,7 +166,9 @@ export function DriverRecords() {
             {data?.items.map((row) => (
               <tr key={row.id}>
                 <td>
-                  {row.firstName} {row.lastName}
+                  {`${row.firstName || ""} ${row.lastName || ""}`.trim() ||
+                    "Name unavailable"}{" "}
+                  <span className="role-badge">{roleLabel(row.role)}</span>
                 </td>
                 <td>{statusLabel(row.verificationStatus)}</td>
                 <td>{row.userStatus}</td>
@@ -219,6 +222,9 @@ export function DriverRecords() {
             <h2>
               {detail.user.firstName} {detail.user.lastName}
             </h2>
+            <p>
+              <span className="role-badge">{roleLabel(detail.user.role)}</span>
+            </p>
             <p>
               Verification: {detail.verificationStatus}; Account:{" "}
               {detail.user.status}

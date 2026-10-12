@@ -62,15 +62,8 @@ export const OrganicAreaChart: React.FC<ChartProps> = ({
           viewBox={`0 0 ${width} ${height}`}
           className="w-full h-auto overflow-visible"
         >
-          <defs>
-            <linearGradient id={`grad-${color}`} x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor={strokeColor} stopOpacity="0.3" />
-              <stop offset="100%" stopColor={strokeColor} stopOpacity="0.0" />
-            </linearGradient>
-          </defs>
-
           {/* Area Fill */}
-          <path d={areaD} fill={`url(#grad-${color})`} />
+          <path d={areaD} fill={strokeColor} fillOpacity={0.1} />
 
           {/* Curve Line */}
           <path
