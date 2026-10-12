@@ -2,11 +2,11 @@
   min-height: 100dvh;
   display: grid;
   grid-template-columns: minmax(320px, 44%) 1fr;
-  background: #f7f8f5;
-  color: #202e25;
+  background: #f4f6f9;
+  color: #101828;
 }
 .brand {
-  background: #203c30;
+  background: #111b26;
   color: #fff;
   padding: 48px 12%;
   display: flex;
@@ -28,12 +28,12 @@
   font-size: 10px;
   letter-spacing: 2px;
   margin-top: 8px;
-  color: #c6d8c9;
+  color: #c6d0df;
 }
 .eyebrow {
   font-size: 11px;
   letter-spacing: 2px;
-  color: #d7bd8d;
+  color: #ff7a0a;
 }
 .brand h1 {
   font-size: clamp(38px, 4.5vw, 65px);
@@ -44,7 +44,7 @@
 }
 .brand p {
   max-width: 350px;
-  color: #d1ded5;
+  color: #c6d0df;
   font-size: 16px;
   line-height: 1.8;
 }
@@ -52,7 +52,7 @@
   display: flex;
   align-items: center;
   gap: 14px;
-  color: #d1ded5;
+  color: #c6d0df;
   font-size: 13px;
   line-height: 1.6;
 }
@@ -68,22 +68,22 @@
   display: flex;
   gap: 5px;
   padding: 5px;
-  background: #e8ede7;
+  background: #e5eaf0;
   border-radius: 12px;
   align-self: flex-end;
 }
 .portals a {
   padding: 9px 17px;
   font-size: 13px;
-  color: #435348;
+  color: #526581;
   text-decoration: none;
   border-radius: 8px;
   font-weight: 700;
 }
 .portals a[aria-current="page"] {
   background: #fff;
-  box-shadow: 0 2px 8px #203c3010;
-  color: #203c30;
+  box-shadow: 0 2px 8px #111b2610;
+  color: #111b26;
 }
 .card {
   width: 100%;
@@ -95,19 +95,19 @@
   letter-spacing: 1.2px;
   text-transform: uppercase;
   font-weight: 800;
-  color: #43634a;
+  color: #e46a00;
 }
 .card h2 {
   font-size: 36px;
   line-height: 1.2;
   letter-spacing: -0.7px;
   margin: 14px 0;
-  color: #203c30;
+  color: #111b26;
 }
 .intro {
   font-size: 15px;
   line-height: 1.6;
-  color: #56645b;
+  color: #526581;
   margin-bottom: 25px;
 }
 .field {
@@ -125,19 +125,19 @@
 .inputWrap input {
   width: 100%;
   min-height: 50px;
-  border: 1px solid #bcc8bd;
+  border: 1px solid #e5eaf0;
   border-radius: 9px;
   background: #fff;
-  color: #202e25;
+  color: #101828;
   padding: 12px 48px 12px 14px;
   font: inherit;
 }
 .inputWrap input[aria-invalid="true"] {
-  border-color: #a43333;
+  border-color: #d92d20;
 }
 .inputWrap input:focus {
-  outline: 3px solid #8db29b55;
-  border-color: #345b41;
+  outline: 3px solid #ff7a0a55;
+  border-color: #e46a00;
 }
 .eye {
   position: absolute;
@@ -147,7 +147,7 @@
   height: 40px;
   border: 0;
   background: transparent;
-  color: #53655a;
+  color: #526581;
   display: grid;
   place-items: center;
   border-radius: 6px;
@@ -156,7 +156,7 @@
 .fieldError {
   display: block;
   font-size: 12px;
-  color: #9a2828;
+  color: #d92d20;
   margin-top: 6px;
 }
 .primary {
@@ -167,8 +167,8 @@
   width: 100%;
   border: 0;
   border-radius: 9px;
-  background: #254c35;
-  color: #fff;
+  background: var(--admin-primary);
+  color: var(--admin-ink);
   min-height: 52px;
   font:
     800 15px var(--font-nunito),
@@ -177,7 +177,7 @@
   margin-top: 26px;
 }
 .primary:hover {
-  background: #173d27;
+  background: #e46a00;
 }
 .primary:disabled,
 .secondary button:disabled {
@@ -186,7 +186,7 @@
 }
 .page button:focus-visible,
 .page a:focus-visible {
-  outline: 3px solid #b18245;
+  outline: 3px solid #e46a00;
   outline-offset: 4px;
 }
 .error,
@@ -198,33 +198,33 @@
 }
 .error {
   background: #fff0ee;
-  color: #9a2828;
+  color: #d92d20;
 }
 .notice {
-  background: #e5f0e6;
-  color: #23452d;
+  background: #fff4e8;
+  color: #ff7a0a;
 }
 .switch {
   text-align: center;
   font-size: 14px;
-  color: #53655a;
+  color: #526581;
   margin-top: 24px;
 }
 .switch a {
   font-weight: 800;
-  color: #254c35;
+  color: #101828;
   text-underline-offset: 4px;
 }
 .caption {
   text-align: center;
   font-size: 12px;
   line-height: 1.7;
-  color: #627166;
+  color: #526581;
   margin-top: 22px;
 }
 .footer {
   font-size: 11px;
-  color: #627166;
+  color: #526581;
   letter-spacing: 0.5px;
   padding-top: 18px;
 }
@@ -239,7 +239,7 @@
   font-size: 13px;
   background: none;
   border: 0;
-  color: #254c35;
+  color: #101828;
   text-decoration: underline;
   cursor: pointer;
 }

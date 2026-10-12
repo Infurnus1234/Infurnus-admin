@@ -25,17 +25,15 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     ref,
   ) => {
     const baseStyles =
-      "inline-flex min-h-11 items-center justify-center font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#154B3D] disabled:opacity-50 disabled:cursor-not-allowed rounded-md cursor-pointer";
+      "admin-button inline-flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer";
 
     const variantStyles = {
-      primary: "bg-[#154B3D] text-[#F3F4F1] hover:bg-[#103B30]  ",
-      secondary: "bg-[#52645B] text-white hover:bg-[#3F5147]  ",
-      accent:
-        "bg-[#E7ECE8] text-[#202A25] hover:bg-[#dacdba] border border-[#DCE2DD] ",
-      outline:
-        "border-2 border-[#DCE2DD] text-[#202A25] hover:bg-[#F2F5F2] hover:border-[#52645B] ",
-      ghost: "text-[#202A25] hover:bg-[#F2F5F2] hover:text-[#154B3D]",
-      destructive: "bg-[#A85448] text-white hover:bg-[#93453a] shadow-sm ",
+      primary: "admin-button-primary",
+      secondary: "admin-button-secondary",
+      accent: "admin-button-secondary",
+      outline: "admin-button-secondary",
+      ghost: "admin-button-ghost",
+      destructive: "admin-button-danger",
     };
 
     const sizeStyles = {

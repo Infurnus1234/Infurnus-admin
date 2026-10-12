@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Menu, UserRound } from "lucide-react";
 import { UserProfile } from "@/types";
 import { Modal } from "../ui/Modal";
+import { GlobalSearch } from "./GlobalSearch";
 export interface TopbarProps {
   user: UserProfile;
   onMobileMenuToggle: () => void;
@@ -44,15 +45,26 @@ export function Topbar({
           >
             <Menu size={22} />
           </button>
-          <span>Operations console</span>
         </div>
+        <GlobalSearch
+          role={user.role === "super-admin" ? "super-admin" : "admin"}
+        />
         <button
           className="account-trigger"
           onClick={() => setAccount(true)}
           aria-label="Open account"
         >
-          <UserRound size={20} />
-          <span>{user.name}</span>
+          <span className="account-avatar">
+            {user.name.trim().slice(0, 1).toUpperCase() || (
+              <UserRound size={18} />
+            )}
+          </span>
+          <span className="account-label">
+            <span>{user.name || "Administrator"}</span>
+            <small>
+              {user.role === "super-admin" ? "Super Admin" : "Admin"}
+            </small>
+          </span>
         </button>
       </header>
       <Modal

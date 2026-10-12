@@ -1,8 +1,10 @@
 import { redirect } from "next/navigation";
 import { currentIdentity, refreshCookie } from "@/lib/backend-session";
-import { cookies } from "next/headers";
+import { cookies, headers } from "next/headers";
+import { sessionReturnPath } from "@/lib/session-return";
 import { AppShell } from "./AppShell";
 import type { AdminPermission } from "@/types";
+import { PermissionDenied } from "../PermissionDenied";
 
 export async function AuthenticatedShell({
   children,
@@ -12,14 +14,17 @@ export async function AuthenticatedShell({
   superOnly?: boolean;
 }) {
   const identity = await currentIdentity();
+  const returnTo = sessionReturnPath(
+    (await headers()).get("x-infurnus-workspace-path"),
+  );
   if (!identity)
     redirect(
       (await cookies()).get(refreshCookie)?.value
-        ? "/session/restore"
+        ? "/session/restore" +
+            (returnTo ? "?returnTo=" + encodeURIComponent(returnTo) : "")
         : "/login",
     );
-  if (superOnly && identity.role !== "super_admin")
-    redirect("/admin/driver-requests");
+  if (superOnly && identity.role !== "super_admin") return <PermissionDenied />;
   const role = identity.role === "super_admin" ? "super-admin" : "admin";
   // Navigation is a presentation aid; the backend enforces every operation.
   const permissions: AdminPermission[] = [

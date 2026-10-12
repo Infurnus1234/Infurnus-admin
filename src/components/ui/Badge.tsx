@@ -2,7 +2,8 @@ import React from "react";
 
 export interface BadgeProps {
   children: React.ReactNode;
-  variant?: "moss" | "terracotta" | "sand" | "muted" | "destructive" | "outline";
+  variant?:
+    "moss" | "terracotta" | "sand" | "muted" | "destructive" | "outline";
   size?: "sm" | "md";
   dot?: boolean;
   className?: string;
@@ -16,21 +17,21 @@ export const Badge: React.FC<BadgeProps> = ({
   className = "",
 }) => {
   const variantStyles = {
-    moss: "bg-[#5D7052]/15 text-[#5D7052] border border-[#5D7052]/20",
-    terracotta: "bg-[#C18C5D]/15 text-[#C18C5D] border border-[#C18C5D]/20",
-    sand: "bg-[#E6DCCD] text-[#2C2C24] border border-[#DED8CF]",
-    muted: "bg-[#F0EBE5] text-[#78786C] border border-[#DED8CF]",
-    destructive: "bg-[#A85448]/15 text-[#A85448] border border-[#A85448]/20",
-    outline: "border border-[#DED8CF] text-[#78786C] bg-transparent",
+    moss: "bg-[#FF7A0A]/15 text-[#FF7A0A] border border-[#FF7A0A]/20",
+    terracotta: "bg-[#2678F3]/15 text-[#2678F3] border border-[#2678F3]/20",
+    sand: "bg-[#E5EAF0] text-[#101828] border border-[#E5EAF0]",
+    muted: "bg-[#F4F6F9] text-[#526581] border border-[#E5EAF0]",
+    destructive: "bg-[#F04438]/15 text-[#F04438] border border-[#F04438]/20",
+    outline: "border border-[#E5EAF0] text-[#526581] bg-transparent",
   };
 
   const dotColors = {
-    moss: "bg-[#5D7052]",
-    terracotta: "bg-[#C18C5D]",
-    sand: "bg-[#2C2C24]",
-    muted: "bg-[#78786C]",
-    destructive: "bg-[#A85448]",
-    outline: "bg-[#78786C]",
+    moss: "bg-[#FF7A0A]",
+    terracotta: "bg-[#2678F3]",
+    sand: "bg-[#101828]",
+    muted: "bg-[#526581]",
+    destructive: "bg-[#F04438]",
+    outline: "bg-[#526581]",
   };
 
   const sizeStyles = {
@@ -39,8 +40,12 @@ export const Badge: React.FC<BadgeProps> = ({
   };
 
   return (
-    <span className={`inline-flex items-center ${variantStyles[variant]} ${sizeStyles[size]} ${className}`}>
-      {dot && <span className={`w-1.5 h-1.5 rounded-full ${dotColors[variant]}`} />}
+    <span
+      className={`inline-flex items-center ${variantStyles[variant]} ${sizeStyles[size]} ${className}`}
+    >
+      {dot && (
+        <span className={`w-1.5 h-1.5 rounded-full ${dotColors[variant]}`} />
+      )}
       {children}
     </span>
   );

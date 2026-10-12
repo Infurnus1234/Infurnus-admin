@@ -26,7 +26,10 @@ export const Dropdown: React.FC<DropdownProps> = ({
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
         setIsOpen(false);
       }
     };
@@ -42,7 +45,7 @@ export const Dropdown: React.FC<DropdownProps> = ({
         <div
           className={`absolute ${
             align === "right" ? "right-0" : "left-0"
-          } mt-2 w-56 bg-white rounded-2xl border border-[#DED8CF] shadow-organic p-1.5 z-40 animate-in fade-in duration-150`}
+          } mt-2 w-56 bg-white rounded-2xl border border-[#E5EAF0] shadow-organic p-1.5 z-40 animate-in fade-in duration-150`}
         >
           {items.map((item, index) => (
             <button
@@ -54,10 +57,10 @@ export const Dropdown: React.FC<DropdownProps> = ({
               }}
               className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium transition-colors text-left ${
                 item.disabled
-                  ? "opacity-40 cursor-not-allowed text-[#78786C]"
+                  ? "opacity-40 cursor-not-allowed text-[#526581]"
                   : item.destructive
-                  ? "text-[#A85448] hover:bg-[#A85448]/10"
-                  : "text-[#2C2C24] hover:bg-[#F0EBE5] hover:text-[#5D7052]"
+                    ? "text-[#F04438] hover:bg-[#F04438]/10"
+                    : "text-[#101828] hover:bg-[#F4F6F9] hover:text-[#FF7A0A]"
               }`}
             >
               {item.icon && <span className="shrink-0">{item.icon}</span>}

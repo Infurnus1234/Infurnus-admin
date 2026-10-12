@@ -29,14 +29,17 @@ async function perform<T>(
 
 // Serialize this dashboard's requests so refresh-token rotation is not raced by sibling views.
 let pending: Promise<unknown> = Promise.resolve();
+export function withAdminSession<T>(operation: () => Promise<T>): Promise<T> {
+  const result = pending.then(operation);
+  pending = result.catch(() => undefined);
+  return result;
+}
 export function adminApi<T>(
   path: string,
   method = "GET",
   body?: unknown,
 ): Promise<T> {
-  const result = pending.then(() => perform<T>(path, method, body));
-  pending = result.catch(() => undefined);
-  return result;
+  return withAdminSession(() => perform<T>(path, method, body));
 }
 
 export async function documentAccessUrl(

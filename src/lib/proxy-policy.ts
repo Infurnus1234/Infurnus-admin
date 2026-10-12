@@ -39,7 +39,18 @@ export function allowedBackendPath(method: string, path: string): boolean {
     return true;
   if (
     method === "GET" &&
-    new RegExp(`^/(provider-approvals|admin/drivers)/${uuid}$`, "i").test(path)
+    new RegExp(
+      `^/(provider-approvals|admin/drivers|admin/users|admin/vehicles|admin/partners|admin/fleet/vehicles)/${uuid}$`,
+      "i",
+    ).test(path)
+  )
+    return true;
+  if (
+    method === "GET" &&
+    new RegExp(
+      `^/admin/drivers/${uuid}/documents/${uuid}/access-url$`,
+      "i",
+    ).test(path)
   )
     return true;
   if (

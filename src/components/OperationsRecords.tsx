@@ -1,5 +1,7 @@
 "use client";
 import { useState } from "react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useBackendQuery } from "@/lib/use-backend-query";
 import { adminApi } from "@/lib/admin-api";
 import {
@@ -23,11 +25,18 @@ interface RecordsPage {
 export function OperationsRecords({
   module,
   readOnly = false,
+  headingLevel = 1,
 }: {
   module: ModuleKey;
   readOnly?: boolean;
+  headingLevel?: 1 | 2;
 }) {
   const config = operationConfigs[module];
+  const pathname = usePathname();
+  const routeRole = pathname.startsWith("/super-admin")
+    ? "super-admin"
+    : "admin";
+  const [pageSize, setPageSize] = useState(25);
 
   const [page, setPage] = useState(1);
   const [draft, setDraft] = useState("");
@@ -75,12 +84,13 @@ export function OperationsRecords({
     error: readError,
     refresh: load,
   } = useBackendQuery<RecordsPage>(
-    operationPath(module, page, search, status, role),
+    operationPath(module, page, search, status, role, pageSize),
   );
-  const pages = Math.max(1, Math.ceil((data?.total ?? 0) / 25));
+  const pages = Math.max(1, Math.ceil((data?.total ?? 0) / pageSize));
   return (
     <section className="workspace-section">
       <PageHeader
+        headingLevel={headingLevel}
         title={config.title}
         description="Browse records, review details and manage supported actions."
       />
@@ -262,6 +272,20 @@ export function OperationsRecords({
         </table>
       </div>
       <nav className="operations-pagination" aria-label="Record pages">
+        <label>
+          Rows per page
+          <select
+            value={pageSize}
+            onChange={(event) => {
+              setPage(1);
+              setPageSize(Number(event.target.value));
+            }}
+          >
+            {[10, 25, 50, 100].map((size) => (
+              <option key={size}>{size}</option>
+            ))}
+          </select>
+        </label>
         <span>
           {data
             ? `${data.total} records · Page ${page} of ${pages}`
@@ -285,6 +309,14 @@ export function OperationsRecords({
         title={`${config.title} record`}
         size="lg"
       >
+        {selected && (
+          <Link
+            className="action-link"
+            href={`/${routeRole}/${module}/${selected.id}`}
+          >
+            Open full record details
+          </Link>
+        )}
         <dl className="record-details">
           {selected &&
             Object.entries(selected)
