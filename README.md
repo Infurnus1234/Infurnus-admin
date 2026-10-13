@@ -33,7 +33,7 @@ Import Infurnus1234/Infurnus-admin from GitHub. Set:
 | Build | `npm run build` |
 | Output | Framework default (`.next`); leave dashboard override disabled |
 | Production branch | `main` after reviewed merge |
-| Environment | `NEXT_PUBLIC_API_URL=https://infurnus-api-675633214574.asia-south2.run.app` |
+
 
 Set the variable for Production and deliberately choose the appropriate backend for Preview/Development. Preview UI currently remains mocked. vercel.json specifies the framework and commands. Next handles App Router routes directly; do not add a catch-all SPA rewrite, export to `out`, or proxy arbitrary API paths. Builds fetch Fraunces/Nunito from Google via next/font and need network access.
 
