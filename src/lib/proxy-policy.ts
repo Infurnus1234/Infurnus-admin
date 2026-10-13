@@ -4,6 +4,11 @@ export function allowedBackendPath(method: string, path: string): boolean {
   if (method === "POST" && path === "/admin/operations/coupons") return true;
   if (
     method === "PATCH" &&
+    new RegExp(`^/admin/operations/support/${uuid}/status$`, "i").test(path)
+  )
+    return true;
+  if (
+    method === "PATCH" &&
     new RegExp(`^/admin/operations/coupons/${uuid}/active$`, "i").test(path)
   )
     return true;

@@ -6,6 +6,17 @@ import {
   fieldValue,
 } from "../src/lib/operations.ts";
 import { allowedBackendPath } from "../src/lib/proxy-policy.ts";
+test("support mutation is allowed only on its scoped status endpoint", () => {
+  const path =
+    "/admin/operations/support/11111111-1111-4111-8111-111111111111/status";
+  assert.equal(allowedBackendPath("PATCH", path), true);
+  assert.equal(allowedBackendPath("DELETE", path), false);
+  assert.equal(allowedBackendPath("POST", path), false);
+  assert.equal(
+    allowedBackendPath("PATCH", "/admin/operations/support/not-an-id/status"),
+    false,
+  );
+});
 test("every operational read uses an explicitly allowed backend endpoint", () => {
   for (const config of Object.values(operationConfigs))
     assert.equal(allowedBackendPath("GET", config.endpoint), true);
