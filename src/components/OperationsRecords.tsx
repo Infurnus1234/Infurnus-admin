@@ -59,14 +59,18 @@ export function OperationsRecords({
       await adminApi(
         module === "users"
           ? `/admin/users/${selected.id}/status`
-          : `/admin/operations/coupons/${selected.id}/active`,
+          : module === "support"
+            ? `/admin/operations/support/${selected.id}/status`
+            : `/admin/operations/coupons/${selected.id}/active`,
         "PATCH",
         module === "users"
           ? { status: mutation }
-          : {
-              isActive: mutation === "activate",
-              expectedUpdatedAt: selected.version_timestamp,
-            },
+          : module === "support"
+            ? { status: mutation, expectedVersion: selected.version }
+            : {
+                isActive: mutation === "activate",
+                expectedUpdatedAt: selected.version_timestamp,
+              },
       );
       setSelected(null);
       setMutation("");
@@ -382,13 +386,20 @@ export function OperationsRecords({
           )}
         {selected &&
           !readOnly &&
-          (module === "users" || module === "coupons") && (
+          (module === "users" ||
+            module === "coupons" ||
+            module === "support") && (
             <div className="operations-toolbar">
               {mutation ? (
                 <>
                   <p>
                     Confirm {mutation} for this{" "}
-                    {module === "users" ? "user account" : "promo code"}?
+                    {module === "users"
+                      ? "user account"
+                      : module === "support"
+                        ? "support ticket"
+                        : "promo code"}
+                    ?
                   </p>
                   <button disabled={saving} onClick={() => void saveMutation()}>
                     {saving ? "Saving…" : "Confirm change"}
@@ -397,8 +408,11 @@ export function OperationsRecords({
                     Cancel change
                   </button>
                 </>
-              ) : module === "users" ? (
-                ["active", "suspended", "banned"]
+              ) : module === "users" || module === "support" ? (
+                (module === "support"
+                  ? ["OPEN", "UNDER_REVIEW", "RESOLVED", "CLOSED"]
+                  : ["active", "suspended", "banned"]
+                )
                   .filter((s) => s !== selected.status)
                   .map((s) => (
                     <button key={s} onClick={() => setMutation(s)}>

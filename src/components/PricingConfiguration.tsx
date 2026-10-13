@@ -9,11 +9,27 @@ interface VehicleType {
   name: string;
   code: string;
   sector: string;
-  baseFare: number;
-  perKmRate: number;
+  baseFare: number | null;
+  perKmRate: number | null;
+  pricingReference?: {
+    displayName: string;
+    baseFare: { minimum: number; maximum: number | null } | null;
+    perKmRate: { minimum: number; maximum: number };
+    routeBased?: boolean;
+  } | null;
   currency: string;
   active: boolean;
   version: number;
+}
+function displayRange(
+  value: { minimum: number; maximum: number | null } | null | undefined,
+  missing: string,
+) {
+  if (!value) return missing;
+  return (
+    (value.minimum / 100).toFixed(2) +
+    (value.maximum === null ? "+" : "–" + (value.maximum / 100).toFixed(2))
+  );
 }
 const empty = {
   name: "",
@@ -22,6 +38,9 @@ const empty = {
   baseFare: "",
   perKmRate: "",
   active: false,
+  pricingMode: "fixed",
+  baseFareMax: "",
+  perKmRateMax: "",
 };
 export function PricingConfiguration() {
   const [offset, setOffset] = useState(0);
@@ -49,8 +68,29 @@ export function PricingConfiguration() {
             name: type.name,
             code: type.code,
             sector: type.sector,
-            baseFare: String(type.baseFare),
-            perKmRate: String(type.perKmRate),
+            baseFare:
+              type.baseFare === null
+                ? type.pricingReference?.baseFare
+                  ? String(type.pricingReference.baseFare.minimum / 100)
+                  : ""
+                : String(type.baseFare),
+            pricingMode:
+              type.baseFare === null
+                ? type.pricingReference?.routeBased
+                  ? "route"
+                  : "range"
+                : "fixed",
+            baseFareMax:
+              type.pricingReference?.baseFare?.maximum == null
+                ? ""
+                : String(type.pricingReference.baseFare.maximum / 100),
+            perKmRateMax: type.pricingReference
+              ? String(type.pricingReference.perKmRate.maximum / 100)
+              : "",
+            perKmRate:
+              type.perKmRate === null
+                ? String((type.pricingReference?.perKmRate.minimum ?? 0) / 100)
+                : String(type.perKmRate),
             active: type.active,
           }
         : empty,
@@ -66,8 +106,34 @@ export function PricingConfiguration() {
     try {
       const common = {
         name: form.name.trim(),
-        baseFare: Number(form.baseFare),
-        perKmRate: Number(form.perKmRate),
+        baseFare: form.pricingMode === "fixed" ? Number(form.baseFare) : null,
+        perKmRate: form.pricingMode === "fixed" ? Number(form.perKmRate) : null,
+        pricingReference:
+          form.pricingMode === "fixed"
+            ? (editing?.pricingReference ?? null)
+            : {
+                displayName: form.name.trim(),
+                baseFare:
+                  form.pricingMode === "route"
+                    ? null
+                    : {
+                        minimum: Math.round(Number(form.baseFare) * 100),
+                        maximum: form.baseFareMax.trim()
+                          ? Math.round(Number(form.baseFareMax) * 100)
+                          : null,
+                      },
+                perKmRate: {
+                  minimum: Math.round(Number(form.perKmRate) * 100),
+                  maximum: Math.round(
+                    Number(
+                      form.pricingMode === "route"
+                        ? form.perKmRate
+                        : form.perKmRateMax,
+                    ) * 100,
+                  ),
+                },
+                ...(form.pricingMode === "route" ? { routeBased: true } : {}),
+              },
         active: form.active,
       };
       await adminApi(
@@ -116,7 +182,15 @@ export function PricingConfiguration() {
         role="region"
         aria-label="Vehicle pricing"
       >
-        <table className="operations-table">
+        <table
+          className="operations-table"
+          style={{ minWidth: 1080, tableLayout: "fixed" }}
+        >
+          <colgroup>
+            {[160, 150, 110, 160, 180, 80, 80, 110].map((width, index) => (
+              <col key={index} style={{ width }} />
+            ))}
+          </colgroup>
           <thead>
             <tr>
               {[
@@ -143,11 +217,42 @@ export function PricingConfiguration() {
             ) : types.length ? (
               types.map((type) => (
                 <tr key={type.id}>
-                  <td>{type.name}</td>
-                  <td>{type.code}</td>
+                  <td
+                    title={type.name}
+                    style={{
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                      whiteSpace: "nowrap",
+                    }}
+                  >
+                    {type.name}
+                  </td>
+                  <td
+                    title={type.code}
+                    style={{
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                      whiteSpace: "nowrap",
+                    }}
+                  >
+                    {type.code}
+                  </td>
                   <td>{type.sector}</td>
-                  <td>{type.baseFare.toFixed(2)}</td>
-                  <td>{type.perKmRate.toFixed(2)}</td>
+                  <td>
+                    {type.baseFare !== null
+                      ? type.baseFare.toFixed(2)
+                      : displayRange(
+                          type.pricingReference?.baseFare,
+                          "Route-based",
+                        )}
+                  </td>
+                  <td>
+                    {type.perKmRate !== null
+                      ? type.perKmRate.toFixed(2)
+                      : type.pricingReference
+                        ? `${(type.pricingReference.perKmRate.minimum / 100).toFixed(2)}–${(type.pricingReference.perKmRate.maximum / 100).toFixed(2)} (reference)`
+                        : "Not configured"}
+                  </td>
                   <td>{type.active ? "Yes" : "No"}</td>
                   <td>{type.version}</td>
                   <td>
@@ -203,9 +308,19 @@ export function PricingConfiguration() {
           <>
             <p>
               This change is persisted to the fare catalog and may affect future
-              bookings. Existing bookings are preserved. Base INR{" "}
-              {form.baseFare}; per km INR {form.perKmRate}; active{" "}
-              {form.active ? "Yes" : "No"}.
+              bookings. Existing bookings are preserved. Pricing mode:{" "}
+              {form.pricingMode}. Base INR{" "}
+              {form.pricingMode === "route"
+                ? "route-based"
+                : form.baseFare +
+                  (form.pricingMode === "range"
+                    ? form.baseFareMax
+                      ? "–" + form.baseFareMax
+                      : "+"
+                    : "")}
+              ; per km INR {form.perKmRate}
+              {form.pricingMode === "range" ? "–" + form.perKmRateMax : ""};
+              active {form.active ? "Yes" : "No"}.
             </p>
             <div className="operations-toolbar">
               <button disabled={saving} onClick={() => void save()}>
@@ -261,22 +376,75 @@ export function PricingConfiguration() {
                 </label>
               </>
             )}
-            {(["baseFare", "perKmRate"] as const).map((key) => (
-              <label key={key}>
-                {key === "baseFare"
-                  ? "Base fare (INR)"
-                  : "Rate per kilometre (INR)"}
-                <input
-                  required
-                  type="number"
-                  min="0"
-                  max="99999999.99"
-                  step="0.01"
-                  value={form[key]}
-                  onChange={(e) => setForm({ ...form, [key]: e.target.value })}
-                />
-              </label>
-            ))}
+            <label>
+              Pricing mode
+              <select
+                value={form.pricingMode}
+                onChange={(e) =>
+                  setForm({ ...form, pricingMode: e.target.value })
+                }
+              >
+                <option value="fixed" disabled={form.code === "ftl"}>
+                  Approved fixed quote
+                </option>
+                {form.pricingMode === "range" && (
+                  <option value="range" disabled>
+                    Existing reference — not bookable
+                  </option>
+                )}
+                <option value="route">Route-based — quote required</option>
+              </select>
+            </label>
+            {(["baseFare", "perKmRate"] as const)
+              .filter(
+                (key) => form.pricingMode !== "route" || key !== "baseFare",
+              )
+              .map((key) => (
+                <label key={key}>
+                  {key === "baseFare"
+                    ? "Base fare (INR)"
+                    : "Rate per kilometre (INR)"}
+                  <input
+                    required
+                    type="number"
+                    min="0"
+                    max="99999999.99"
+                    step="0.01"
+                    value={form[key]}
+                    onChange={(e) =>
+                      setForm({ ...form, [key]: e.target.value })
+                    }
+                  />
+                </label>
+              ))}
+            {form.pricingMode === "range" &&
+              (["baseFareMax", "perKmRateMax"] as const)
+                .filter(
+                  (key) =>
+                    form.pricingMode !== "route" || key !== "baseFareMax",
+                )
+                .map((key) => (
+                  <label key={key}>
+                    {key === "baseFareMax"
+                      ? "Maximum base (INR; blank = open-ended)"
+                      : "Maximum per km (INR)"}
+                    <input
+                      type="number"
+                      min="0"
+                      max="99999999.99"
+                      step="0.01"
+                      required={key === "perKmRateMax"}
+                      value={form[key]}
+                      onChange={(e) =>
+                        setForm({ ...form, [key]: e.target.value })
+                      }
+                    />
+                  </label>
+                ))}
+            <p className="workspace-note">
+              Ranges do not select an exact fare. Fixed quotes require explicit
+              approval. Discounts use the existing backend promo configuration.
+            </p>
             <label>
               <input
                 type="checkbox"
