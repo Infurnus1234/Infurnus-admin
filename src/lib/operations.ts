@@ -367,7 +367,7 @@ export function operationPath(
     page: String(page),
     pageSize: String(pageSize),
   });
-  if (key === "users") query.set("role", role);
+  if (key === "users" && role !== "all") query.set("role", role);
   if (search.trim()) query.set(config.searchKey, search.trim());
   if (status && config.statusKey) query.set(config.statusKey, status);
   return `${config.endpoint}?${query}`;

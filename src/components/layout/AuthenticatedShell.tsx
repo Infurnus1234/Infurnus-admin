@@ -3,7 +3,7 @@ import { currentIdentity, refreshCookie } from "@/lib/backend-session";
 import { cookies, headers } from "next/headers";
 import { sessionReturnPath } from "@/lib/session-return";
 import { AppShell } from "./AppShell";
-import type { AdminPermission } from "@/types";
+import { canOpenPage } from "@/lib/access-policy";
 import { PermissionDenied } from "../PermissionDenied";
 
 export async function AuthenticatedShell({
@@ -25,25 +25,18 @@ export async function AuthenticatedShell({
         : "/login",
     );
   if (superOnly && identity.role !== "super_admin") return <PermissionDenied />;
+  if (
+    !canOpenPage(
+      identity.role,
+      identity.permissions || [],
+      returnTo || (superOnly ? "/super-admin" : "/admin"),
+      identity.scoped,
+    )
+  )
+    return <PermissionDenied />;
   const role = identity.role === "super_admin" ? "super-admin" : "admin";
   // Navigation is a presentation aid; the backend enforces every operation.
-  const permissions: AdminPermission[] = [
-    "VIEW_DASHBOARD",
-    "VIEW_USERS",
-    "VIEW_PARTNERS",
-    "VIEW_VEHICLES",
-    "VIEW_FLEETS",
-    "VIEW_RIDES",
-    "VIEW_COUPONS",
-    "VIEW_NOTIFICATIONS",
-    "VIEW_SUPPORT",
-    "VIEW_REPORTS",
-    "VIEW_DRIVERS",
-    "VIEW_DRIVER_REQUESTS",
-    "VIEW_APPROVALS",
-  ];
-  if (identity.role === "super_admin")
-    permissions.push("VIEW_PAYMENTS", "VIEW_AUDIT_LOGS");
+  const permissions = identity.permissions || [];
   return (
     <AppShell
       role={role}

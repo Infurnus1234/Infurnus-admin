@@ -55,7 +55,7 @@ export interface UserProfile {
   avatarUrl?: string;
   role: UserRole;
   department?: string;
-  permissions?: AdminPermission[];
+  permissions?: string[];
 }
 
 export interface Column<T> {

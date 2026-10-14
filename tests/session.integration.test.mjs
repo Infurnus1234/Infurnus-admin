@@ -126,7 +126,7 @@ test(
     assert.match(await response.text(), /Access restricted/);
     response = await call("/admin/settings");
     assert.equal(response.status, 200);
-    assert.match(await response.text(), /is not connected yet/);
+    assert.match(await response.text(), /Access restricted/);
     response = await call("/admin/driver-requests");
     assert.equal(response.status, 200);
     response = await call("/api/backend/provider-approvals");

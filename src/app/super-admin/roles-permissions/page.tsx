@@ -1,4 +1,4 @@
-import { UnavailableModule } from "@/components/UnavailableModule";
+import { redirect } from "next/navigation";
 export default function Page() {
-  return <UnavailableModule title="Roles and permissions" />;
+  redirect("/super-admin/admins");
 }

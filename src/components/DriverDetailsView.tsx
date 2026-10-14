@@ -4,9 +4,15 @@ import Link from "next/link";
 import { UserRound, ArrowLeft, Car, ShieldCheck } from "lucide-react";
 import { PageHeader } from "./layout/PageHeader";
 import { Modal } from "./ui/Modal";
-import { DocumentsPanel, type SubmittedDocument } from "./DocumentsPanel";
+import {
+  DocumentsPanel,
+  MediaPreview,
+  type SubmittedDocument,
+} from "./DocumentsPanel";
 import { useBackendQuery } from "@/lib/use-backend-query";
 import { adminApi } from "@/lib/admin-api";
+import { useAdminAccess } from "./AdminAccessContext";
+import { profilePhotoDocument } from '@/lib/profile-photo';
 import {
   requestLabel,
   requestTimestamp,
@@ -73,6 +79,7 @@ export function DriverDetailsView({
   id: string;
   role: "admin" | "super-admin";
 }) {
+  const can = useAdminAccess();
   const {
     data: driver,
     busy,
@@ -135,6 +142,7 @@ export function DriverDetailsView({
     expiresAt: doc.expiresAt,
     pages: doc.pages || [],
   }));
+  const photo = profilePhotoDocument(driver.documents);
   return (
     <section className="workspace-section">
       <PageHeader
@@ -150,7 +158,15 @@ export function DriverDetailsView({
       />
       <header className="application-hero review-card">
         <div className="application-avatar">
-          <UserRound />
+          {photo && can("drivers.documents") ? (
+            <MediaPreview
+              compact
+              path={`/api/documents/driver/${driver.id}/${photo.id}${photo.pages?.[0]?.pageNumber ? `?page=${photo.pages[0].pageNumber}` : ""}`}
+              label={`${name} profile photo`}
+            />
+          ) : (
+            <UserRound aria-label="No accessible profile photo" />
+          )}
         </div>
         <div>
           <h2>{name}</h2>
@@ -306,7 +322,7 @@ export function DriverDetailsView({
                 {requestLabel(driver.user.status)}
               </span>
             </p>
-            {["active", "suspended", "banned"]
+            {(can("users.update") ? ["active", "suspended", "banned"] : [])
               .filter((value) => value !== driver.user.status)
               .map((value) => (
                 <button

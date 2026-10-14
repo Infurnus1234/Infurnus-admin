@@ -1,4 +1,4 @@
-import { UnavailableModule } from "@/components/UnavailableModule";
+import { AdminManagement } from "@/components/AdminManagement";
 export default function Page() {
-  return <UnavailableModule title="Administrators" />;
+  return <AdminManagement />;
 }
