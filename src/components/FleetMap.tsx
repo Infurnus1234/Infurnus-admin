@@ -182,38 +182,42 @@ export function FleetMap({
   }, [vehicles, role, ready, revision]);
   return (
     <div className="dashboard-map-container">
-      {!fullPage && <Link className="action-link" href={`/${role}/map`}>
-        Open full-page map
-      </Link>}
-      <div
-        ref={host}
-        className="dashboard-map-surface"
-        role="region"
-        aria-label="Actual fleet locations on Google Maps"
-      />
-      {(!key || sdkError || !ready) && (
-        <div className="dashboard-map-message">
-          <p role={sdkError ? "alert" : "status"}>
-            {!key
-              ? "Browser Maps SDK is not configured."
-              : sdkError || "Loading map…"}
-          </p>
-          {sdkError && (
-            <button
-              type="button"
-              onClick={() => {
-                setReady(false);
-                setRouteMessage("");
-                setSdkError("");
-                setRevision((value) => value + 1);
-              }}
-            >
-              Retry map
-            </button>
-          )}
-          <Link href={`/${role}/fleets`}>Open fleet location records</Link>
-        </div>
+      {!fullPage && (
+        <Link className="action-link" href={`/${role}/map`}>
+          Open full-page map
+        </Link>
       )}
+      <div className="dashboard-map-frame">
+        <div
+          ref={host}
+          className="dashboard-map-surface"
+          role="region"
+          aria-label="Actual fleet locations on Google Maps"
+        />
+        {(!key || sdkError || !ready) && (
+          <div className="dashboard-map-message">
+            <p role={sdkError ? "alert" : "status"}>
+              {!key
+                ? "Browser Maps SDK is not configured."
+                : sdkError || "Loading map…"}
+            </p>
+            {sdkError && (
+              <button
+                type="button"
+                onClick={() => {
+                  setReady(false);
+                  setRouteMessage("");
+                  setSdkError("");
+                  setRevision((value) => value + 1);
+                }}
+              >
+                Retry map
+              </button>
+            )}
+            <Link href={`/${role}/fleets`}>Open fleet location records</Link>
+          </div>
+        )}
+      </div>
       {ready && (
         <p className="workspace-note" role={error ? "alert" : "status"}>
           {error ||
