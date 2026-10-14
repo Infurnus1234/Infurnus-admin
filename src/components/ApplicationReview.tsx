@@ -1,4 +1,5 @@
 "use client";
+import { useAdminAccess } from "./AdminAccessContext";
 import { useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
@@ -32,6 +33,7 @@ export function ApplicationReview({
   id: string;
   role: "admin" | "super-admin";
 }) {
+  const can = useAdminAccess();
   const params = useSearchParams();
   const back = reviewReturnPath(params.get("returnTo"), role);
   const {
@@ -287,7 +289,11 @@ export function ApplicationReview({
               <textarea
                 value={reason}
                 maxLength={1000}
-                disabled={saving || !canReview}
+                disabled={
+                  saving ||
+                  !canReview ||
+                  (!can("approvals.approve") && !can("approvals.reject"))
+                }
                 onChange={(event) => setReason(event.target.value)}
                 placeholder="Required when rejecting an application"
               />
@@ -295,14 +301,19 @@ export function ApplicationReview({
             <div className="review-actions">
               <button
                 className="workspace-primary"
-                disabled={saving || !canReview}
+                disabled={saving || !canReview || !can("approvals.approve")}
                 onClick={() => setDecision("APPROVED")}
               >
                 Approve application
               </button>
               <button
                 className="admin-button-danger"
-                disabled={saving || !canReview || !reason.trim()}
+                disabled={
+                  saving ||
+                  !canReview ||
+                  !can("approvals.reject") ||
+                  !reason.trim()
+                }
                 onClick={() => setDecision("REJECTED")}
               >
                 Reject application

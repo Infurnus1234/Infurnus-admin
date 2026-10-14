@@ -27,12 +27,12 @@ import {
   Flame,
   X,
 } from "lucide-react";
-import { UserRole, AdminPermission } from "@/types";
+import { UserRole } from "@/types";
 import { getGroupedNavItemsForRole } from "@/config/navigation";
 
 export interface SidebarProps {
   role: UserRole;
-  userPermissions?: AdminPermission[];
+  userPermissions?: string[];
   isOpen: boolean;
   onClose: () => void;
   className?: string;

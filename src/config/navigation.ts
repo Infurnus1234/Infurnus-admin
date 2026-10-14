@@ -1,9 +1,5 @@
-import type {
-  NavItemConfig,
-  AdminPermission,
-  UserRole,
-  NavItem,
-} from "@/types";
+import type { NavItemConfig, UserRole, NavItem } from "@/types";
+import { canOpenPage } from "../lib/access-policy.ts";
 
 export const MASTER_NAVIGATION_CONFIG: NavItemConfig[] = [
   {
@@ -254,11 +250,17 @@ export interface SectionGroupedNavItems {
 
 export function getGroupedNavItemsForRole(
   role: UserRole,
-  userPermissions: AdminPermission[] = [],
+  userPermissions: string[] = [],
 ): SectionGroupedNavItems[] {
   const basePath = role === "super-admin" ? "/super-admin" : "/admin";
 
   const visibleConfigs = MASTER_NAVIGATION_CONFIG.filter((config) => {
+    if (role === "super-admin") return true;
+    if (
+      userPermissions.some((key) => key.includes(".")) ||
+      userPermissions.length === 0
+    )
+      return canOpenPage("admin", userPermissions, `/admin/${config.path}`);
     if (!config.requiredPermission) return true;
     return userPermissions.includes(config.requiredPermission);
   });

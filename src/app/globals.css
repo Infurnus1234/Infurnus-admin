@@ -1733,6 +1733,31 @@ body
   padding: 24px;
   color: var(--admin-muted);
 }
+.dashboard-map-container {
+  position: relative;
+}
+.dashboard-map-surface {
+  height: 250px;
+  border: 1px solid var(--admin-border);
+  border-radius: 10px;
+  overflow: hidden;
+}
+.dashboard-map-message {
+  position: absolute;
+  inset: 0;
+  min-height: 250px;
+  background: #f8fafc;
+  border: 1px dashed var(--admin-border);
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 24px;
+  text-align: center;
+  color: var(--admin-muted);
+}
 .dashboard-map-unavailable h3 {
   font-size: 16px;
   color: var(--admin-ink);
@@ -2057,4 +2082,15 @@ body
 /* Keep the actual account control visible on compact screens. */
 .account-trigger span.account-avatar {
   display: grid;
+}
+
+.fleet-map-popup {
+  display: grid;
+  gap: 8px;
+  max-width: 220px;
+}
+
+.full-fleet-map .dashboard-map-surface {
+  height: calc(100dvh - 260px);
+  min-height: 360px;
 }

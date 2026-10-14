@@ -1,6 +1,9 @@
 "use client";
 import Link from "next/link";
 import { useState } from "react";
+import { dashboardDestination } from "@/lib/dashboard-navigation";
+import { FleetMap } from "./FleetMap";
+import type { FleetMapVehicle } from "@/lib/fleet-map";
 import {
   Users,
   Car,
@@ -10,7 +13,6 @@ import {
   CheckCircle2,
   XCircle,
   IndianRupee,
-  MapPin,
 } from "lucide-react";
 import { useBackendQuery } from "@/lib/use-backend-query";
 import {
@@ -73,14 +75,7 @@ export function OperationsOverview({
     "/admin/operations/rentals?pageSize=5&" + query,
   );
   const fleet = useBackendQuery<{
-    items: {
-      id: string;
-      plateNumber: string;
-      driverName?: string;
-      latitude: number | null;
-      longitude: number | null;
-      status: string;
-    }[];
+    items: FleetMapVehicle[];
   }>("/admin/fleet/vehicles?pageSize=10");
   const summary = operations.data;
   const states =
@@ -273,24 +268,41 @@ export function OperationsOverview({
         </p>
       )}
       <div className="dashboard-kpis">
-        {metrics.map((metric, index) => (
-          <article className="dashboard-kpi" key={metric.title}>
-            <div className={"kpi-icon " + metric.color}>
-              <metric.icon size={28} />
-            </div>
-            <div>
-              <h2>{metric.title}</h2>
-              <strong>
-                {(index < 4 ? accounts.busy : operations.busy)
-                  ? "Loading…"
-                  : metric.value === undefined
-                    ? "Unavailable"
-                    : metric.value.toLocaleString("en-IN")}
-              </strong>
-              <p>{metric.note}</p>
-            </div>
-          </article>
-        ))}
+        {metrics.map((metric, index) => {
+          const href = dashboardDestination(role, metric.title, period);
+          const content = (
+            <>
+              <div className={"kpi-icon " + metric.color}>
+                <metric.icon size={28} />
+              </div>
+              <div>
+                <h2>{metric.title}</h2>
+                <strong>
+                  {(index < 4 ? accounts.busy : operations.busy)
+                    ? "Loading…"
+                    : metric.value === undefined
+                      ? "Unavailable"
+                      : metric.value.toLocaleString("en-IN")}
+                </strong>
+                <p>{metric.note}</p>
+              </div>
+            </>
+          );
+          return href ? (
+            <Link
+              className="dashboard-kpi"
+              key={metric.title}
+              href={href}
+              aria-label={`Open ${metric.title.toLowerCase()}`}
+            >
+              {content}
+            </Link>
+          ) : (
+            <article className="dashboard-kpi" key={metric.title}>
+              {content}
+            </article>
+          );
+        })}
       </div>
       <div className="dashboard-middle">
         <section className="review-card">
@@ -298,17 +310,13 @@ export function OperationsOverview({
             <h2>Live Booking Monitoring</h2>
             <Link href={"/" + role + "/fleets"}>View fleet</Link>
           </div>
-          <div className="dashboard-map-unavailable">
-            <MapPin size={38} />
-            <h3>Browser map not configured</h3>
-            <p>
-              Live geographic visualization needs the approved browser Maps SDK
-              configuration. No simulated markers or locations are shown.
-            </p>
-            <Link href={"/" + role + "/fleets"}>
-              Open actual fleet location records
-            </Link>
-          </div>
+          <FleetMap
+            key={fleet.busy ? "loading" : "loaded"}
+            vehicles={fleet.data?.items || []}
+            role={role}
+            busy={fleet.busy}
+            error={fleet.error}
+          />
           {fleet.error && <p role="alert">{fleet.error}</p>}
           <div className="dashboard-fleet-status">
             {fleet.busy

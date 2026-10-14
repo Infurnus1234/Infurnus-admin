@@ -1,5 +1,29 @@
 export function allowedBackendPath(method: string, path: string): boolean {
   const uuid = "[\\da-f-]{36}";
+  if (
+    method === "GET" &&
+    ["/admin/access/me", "/admin/access/admins"].includes(path)
+  )
+    return true;
+  if (method === "POST" && path === "/admin/access/admins") return true;
+  if (
+    method === "PATCH" &&
+    new RegExp(`^/admin/access/admins/${uuid}/permissions$`, "i").test(path)
+  )
+    return true;
+  if (method === "POST" && path === "/vehicles") return true;
+  if (
+    ["GET", "PATCH"].includes(method) &&
+    new RegExp(`^/vehicles/${uuid}$`, "i").test(path)
+  )
+    return true;
+  if (
+    method === "POST" &&
+    new RegExp(`^/vehicles/${uuid}/deactivate$`, "i").test(path)
+  )
+    return true;
+  if (method === "POST" && ["/maps/geocode", "/maps/route"].includes(path))
+    return true;
   if (method === "POST" && path === "/admin/vehicle-types") return true;
   if (method === "POST" && path === "/admin/operations/coupons") return true;
   if (

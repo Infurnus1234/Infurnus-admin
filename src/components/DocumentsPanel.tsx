@@ -22,7 +22,15 @@ export interface SubmittedDocument {
     createdAt?: string;
   }[];
 }
-function MediaPreview({ path, label }: { path: string; label: string }) {
+export function MediaPreview({
+  path,
+  label,
+  compact = false,
+}: {
+  path: string;
+  label: string;
+  compact?: boolean;
+}) {
   const [retry, setRetry] = useState(0),
     [zoom, setZoom] = useState(1);
   const key = path + "\n" + retry;
@@ -79,6 +87,28 @@ function MediaPreview({ path, label }: { path: string; label: string }) {
         </button>
       </div>
     );
+  if (compact) {
+    if (!current?.url) return <span role="status">Loading photo…</span>;
+    if (!current.type?.startsWith("image/"))
+      return <span role="alert">Profile photo is not an image.</span>;
+    return (
+      <Image
+        src={current.url}
+        unoptimized
+        width={80}
+        height={80}
+        alt={label}
+        className="rounded-full object-cover"
+        onError={() =>
+          setResult({
+            key,
+            error:
+              "The profile image could not be rendered. Retry secure access.",
+          })
+        }
+      />
+    );
+  }
   return (
     <div className="document-preview">
       <div className="document-preview-toolbar">

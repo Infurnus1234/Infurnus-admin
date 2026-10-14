@@ -18,7 +18,20 @@ async function perform<T>(
     ...(body === undefined ? {} : { body: JSON.stringify(body) }),
   });
   if (response.status === 204) return undefined as T;
-  const envelope = await response.json();
+  let envelope;
+  try {
+    envelope = await response.json();
+  } catch {
+    throw new ApiError(
+      "Backend returned an unreadable response. Please retry.",
+      response.ok ? 502 : response.status,
+    );
+  }
+  if (!envelope || typeof envelope !== "object")
+    throw new ApiError(
+      "Backend returned an invalid response. Please retry.",
+      response.ok ? 502 : response.status,
+    );
   if (!response.ok || !envelope.success)
     throw new ApiError(
       envelope.error?.message || "Request failed",

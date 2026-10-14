@@ -1,7 +1,8 @@
 "use client";
-import { useState } from "react";
+import { useAdminAccess } from "./AdminAccessContext";
+import { Suspense, useState } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import { useBackendQuery } from "@/lib/use-backend-query";
 import { adminApi } from "@/lib/admin-api";
 import {
@@ -15,6 +16,7 @@ import {
 import { PageHeader } from "./layout/PageHeader";
 import { Modal } from "./ui/Modal";
 import { CouponCreate } from "./CouponCreate";
+import { VehicleActions } from "./VehicleActions";
 import { roleLabel, requestLabel, shortIdentifier } from "@/lib/request-models";
 interface RecordsPage {
   items: Record<string, unknown>[];
@@ -22,27 +24,70 @@ interface RecordsPage {
   page: number;
   pageSize: number;
 }
-export function OperationsRecords({
-  module,
-  readOnly = false,
-  headingLevel = 1,
-}: {
+interface RecordsProps {
   module: ModuleKey;
   readOnly?: boolean;
   headingLevel?: 1 | 2;
-}) {
+  initialStatus?: string;
+}
+export function OperationsRecords(props: RecordsProps) {
+  return (
+    <Suspense fallback={<p role="status">Loading filters…</p>}>
+      <QueryRecords {...props} />
+    </Suspense>
+  );
+}
+function QueryRecords(props: RecordsProps) {
+  const query = useSearchParams();
+  return (
+    <RecordsContent
+      key={props.module + query.toString()}
+      {...props}
+      query={query.toString()}
+    />
+  );
+}
+function RecordsContent({
+  module,
+  readOnly = false,
+  headingLevel = 1,
+  initialStatus,
+  query,
+}: RecordsProps & { query: string }) {
+  const can = useAdminAccess();
+  const parameters = new URLSearchParams(query);
   const config = operationConfigs[module];
   const pathname = usePathname();
   const routeRole = pathname.startsWith("/super-admin")
     ? "super-admin"
     : "admin";
-  const [pageSize, setPageSize] = useState(25);
+  const [pageSize, setPageSize] = useState(
+    [10, 25, 50, 100].includes(Number(parameters.get("pageSize")))
+      ? Number(parameters.get("pageSize"))
+      : 25,
+  );
 
-  const [page, setPage] = useState(1);
-  const [draft, setDraft] = useState("");
-  const [search, setSearch] = useState("");
-  const [status, setStatus] = useState("");
-  const [role, setRole] = useState("customer");
+  const [page, setPage] = useState(
+    Number.isSafeInteger(Number(parameters.get("page"))) &&
+      Number(parameters.get("page")) > 0
+      ? Number(parameters.get("page"))
+      : 1,
+  );
+  const [draft, setDraft] = useState(parameters.get("search") || "");
+  const [search, setSearch] = useState(parameters.get("search") || "");
+  const [status, setStatus] = useState(
+    initialStatus ??
+      (config.statuses?.includes(parameters.get("status") || "")
+        ? parameters.get("status")!
+        : ""),
+  );
+  const [role, setRole] = useState(
+    ["all", "customer", "driver", "fleet_owner", "driver_fleet_owner"].includes(
+      parameters.get("role") || "",
+    )
+      ? parameters.get("role")!
+      : "customer",
+  );
 
   const [error, setError] = useState("");
   const [selected, setSelected] = useState<Record<string, unknown> | null>(
@@ -88,9 +133,27 @@ export function OperationsRecords({
     error: readError,
     refresh: load,
   } = useBackendQuery<RecordsPage>(
-    operationPath(module, page, search, status, role, pageSize),
+    operationPath(module, page, search, status, role, pageSize) +
+      ["from", "to"]
+        .map((key) =>
+          parameters.get(key)
+            ? `&${key}=${encodeURIComponent(parameters.get(key)!)}`
+            : "",
+        )
+        .join(""),
   );
   const pages = Math.max(1, Math.ceil((data?.total ?? 0) / pageSize));
+  const backQuery = new URLSearchParams(query);
+  if (!pathname.endsWith("/bookings")) {
+    backQuery.set("page", String(page));
+    backQuery.set("pageSize", String(pageSize));
+    if (search) backQuery.set("search", search);
+    else backQuery.delete("search");
+    if (status) backQuery.set("status", status);
+    else backQuery.delete("status");
+    if (module === "users") backQuery.set("role", role);
+  }
+  const returnTo = pathname + (backQuery.size ? "?" + backQuery : "");
   return (
     <section className="workspace-section">
       <PageHeader
@@ -116,13 +179,17 @@ export function OperationsRecords({
                 setRole(event.target.value);
               }}
             >
-              {["customer", "driver", "fleet_owner", "driver_fleet_owner"].map(
-                (value) => (
-                  <option key={value} value={value}>
-                    {roleLabel(value)}
-                  </option>
-                ),
-              )}
+              {[
+                "all",
+                "customer",
+                "driver",
+                "fleet_owner",
+                "driver_fleet_owner",
+              ].map((value) => (
+                <option key={value} value={value}>
+                  {value === "all" ? "All accounts" : roleLabel(value)}
+                </option>
+              ))}
             </select>
           </label>
         )}
@@ -172,8 +239,20 @@ export function OperationsRecords({
         <button type="button" disabled={busy} onClick={() => void load()}>
           Refresh
         </button>
+        <button
+          type="button"
+          disabled={busy}
+          onClick={() => {
+            setPage(1);
+            setDraft("");
+            setSearch("");
+            setStatus(initialStatus || "");
+          }}
+        >
+          Clear filters
+        </button>
       </form>
-      {module === "coupons" && !readOnly && (
+      {module === "coupons" && !readOnly && can("coupons.create") && (
         <div className="operations-toolbar">
           <CouponCreate
             onSaved={() => {
@@ -181,6 +260,11 @@ export function OperationsRecords({
               load();
             }}
           />
+        </div>
+      )}
+      {module === "vehicles" && !readOnly && (
+        <div className="operations-toolbar">
+          <VehicleActions onSaved={() => void load()} />
         </div>
       )}
       {config.note && <p className="workspace-note">{config.note}</p>}
@@ -316,10 +400,21 @@ export function OperationsRecords({
         {selected && (
           <Link
             className="action-link"
-            href={`/${routeRole}/${module}/${selected.id}`}
+            href={`/${routeRole}/${module}/${selected.id}?returnTo=${encodeURIComponent(returnTo)}`}
           >
             Open full record details
           </Link>
+        )}
+        {module === "vehicles" && selected && !readOnly && (
+          <div className="operations-toolbar">
+            <VehicleActions
+              vehicleId={String(selected.id)}
+              onSaved={() => {
+                setSelected(null);
+                void load();
+              }}
+            />
+          </div>
         )}
         <dl className="record-details">
           {selected &&
@@ -386,6 +481,11 @@ export function OperationsRecords({
           )}
         {selected &&
           !readOnly &&
+          can(`${module}.update`) &&
+          !(
+            module === "users" &&
+            ["admin", "super_admin"].includes(String(selected.role))
+          ) &&
           (module === "users" ||
             module === "coupons" ||
             module === "support") && (

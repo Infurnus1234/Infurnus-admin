@@ -17,6 +17,8 @@ export interface AdminIdentity {
   email: string;
   role: "admin" | "super_admin";
   status: string;
+  permissions?: string[];
+  scoped?: boolean;
 }
 
 export async function backendFetch(path: string, init: RequestInit = {}) {
@@ -36,7 +38,7 @@ export async function identityFor(
       Buffer.from(token.split(".")[1], "base64url").toString(),
     );
     if (!/^[\da-f-]{36}$/i.test(claims.sub)) return null;
-    const response = await backendFetch(`/admin/users/${claims.sub}`, {
+    const response = await backendFetch("/admin/access/me", {
       headers: { Authorization: `Bearer ${token}` },
     });
     if (!response.ok) return null;

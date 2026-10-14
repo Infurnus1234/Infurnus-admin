@@ -1,7 +1,9 @@
 "use client";
+import { useAdminAccess } from "./AdminAccessContext";
 import { useState } from "react";
 import { useBackendQuery } from "@/lib/use-backend-query";
 import { adminApi } from "@/lib/admin-api";
+import { perKmReferenceInput } from "@/lib/pricing-reference-input";
 import { PageHeader } from "./layout/PageHeader";
 import { Modal } from "./ui/Modal";
 interface VehicleType {
@@ -43,6 +45,7 @@ const empty = {
   perKmRateMax: "",
 };
 export function PricingConfiguration() {
+  const can = useAdminAccess();
   const [offset, setOffset] = useState(0);
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
@@ -122,16 +125,7 @@ export function PricingConfiguration() {
                           ? Math.round(Number(form.baseFareMax) * 100)
                           : null,
                       },
-                perKmRate: {
-                  minimum: Math.round(Number(form.perKmRate) * 100),
-                  maximum: Math.round(
-                    Number(
-                      form.pricingMode === "route"
-                        ? form.perKmRate
-                        : form.perKmRateMax,
-                    ) * 100,
-                  ),
-                },
+                perKmRate: perKmReferenceInput(form),
                 ...(form.pricingMode === "route" ? { routeBased: true } : {}),
               },
         active: form.active,
@@ -165,7 +159,9 @@ export function PricingConfiguration() {
         description="Versioned INR rates maintained by the existing fare catalog."
       />
       <div className="operations-toolbar">
-        <button onClick={() => start(null)}>Add category</button>
+        <button disabled={!can("pricing.create")} onClick={() => start(null)}>
+          Add category
+        </button>
         <button disabled={busy} onClick={() => void load()}>
           Refresh
         </button>
@@ -256,7 +252,12 @@ export function PricingConfiguration() {
                   <td>{type.active ? "Yes" : "No"}</td>
                   <td>{type.version}</td>
                   <td>
-                    <button onClick={() => start(type)}>Edit</button>
+                    <button
+                      disabled={!can("pricing.update")}
+                      onClick={() => start(type)}
+                    >
+                      Edit
+                    </button>
                   </td>
                 </tr>
               ))
@@ -319,7 +320,7 @@ export function PricingConfiguration() {
                       : "+"
                     : "")}
               ; per km INR {form.perKmRate}
-              {form.pricingMode === "range" ? "–" + form.perKmRateMax : ""};
+              {form.pricingMode !== "fixed" ? "–" + form.perKmRateMax : ""};
               active {form.active ? "Yes" : "No"}.
             </p>
             <div className="operations-toolbar">
@@ -387,11 +388,9 @@ export function PricingConfiguration() {
                 <option value="fixed" disabled={form.code === "ftl"}>
                   Approved fixed quote
                 </option>
-                {form.pricingMode === "range" && (
-                  <option value="range" disabled>
-                    Existing reference — not bookable
-                  </option>
-                )}
+                <option value="range" disabled={form.code === "ftl"}>
+                  Reference range — quote required
+                </option>
                 <option value="route">Route-based — quote required</option>
               </select>
             </label>
@@ -417,7 +416,7 @@ export function PricingConfiguration() {
                   />
                 </label>
               ))}
-            {form.pricingMode === "range" &&
+            {form.pricingMode !== "fixed" &&
               (["baseFareMax", "perKmRateMax"] as const)
                 .filter(
                   (key) =>

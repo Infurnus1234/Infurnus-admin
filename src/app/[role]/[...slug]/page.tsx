@@ -7,6 +7,8 @@ import { PricingConfiguration } from "@/components/PricingConfiguration";
 import { OperationsReports } from "@/components/OperationsReports";
 import { operationConfigs, type ModuleKey } from "@/lib/operations";
 import { RecordDetails } from "@/components/RecordDetails";
+import { BookingsOverview } from "@/components/BookingsOverview";
+import { FullFleetMap } from "@/components/FullFleetMap";
 export default async function Page({
   params,
 }: {
@@ -14,6 +16,18 @@ export default async function Page({
 }) {
   const { role, slug } = await params;
   if (role !== "admin" && role !== "super-admin") notFound();
+  if (slug.join("/") === "map")
+    return (
+      <AuthenticatedShell superOnly={role === "super-admin"}>
+        <FullFleetMap role={role} />
+      </AuthenticatedShell>
+    );
+  if (slug.join("/") === "bookings")
+    return (
+      <AuthenticatedShell superOnly={role === "super-admin"}>
+        <BookingsOverview />
+      </AuthenticatedShell>
+    );
   const detail =
     slug.length === 2 &&
     /^[\da-f-]{36}$/i.test(slug[1]) &&
@@ -21,9 +35,7 @@ export default async function Page({
   if (detail) {
     const key = slug[0] as ModuleKey;
     return (
-      <AuthenticatedShell
-        superOnly={role === "super-admin" || !!operationConfigs[key].superOnly}
-      >
+      <AuthenticatedShell superOnly={role === "super-admin"}>
         <RecordDetails module={key} id={slug[1]} role={role} />
       </AuthenticatedShell>
     );
@@ -36,9 +48,7 @@ export default async function Page({
   const moduleKey = slug.join("/") as ModuleKey;
   const config = operationConfigs[moduleKey];
   return (
-    <AuthenticatedShell
-      superOnly={role === "super-admin" || !!config?.superOnly}
-    >
+    <AuthenticatedShell superOnly={role === "super-admin"}>
       {slug.join("/") === "reports" ? (
         <OperationsReports />
       ) : slug.join("/") === "pricing" ? (

@@ -10,15 +10,24 @@ import {
 } from "@/lib/operations";
 import { roleLabel, requestLabel } from "@/lib/request-models";
 import { PageHeader } from "./layout/PageHeader";
-export function RecordDetails({
-  module,
-  id,
-  role,
-}: {
+import { Suspense } from "react";
+import { useSearchParams } from "next/navigation";
+import { recordReturnPath } from "@/lib/dashboard-navigation";
+import { VehicleActions } from "./VehicleActions";
+type DetailsProps = {
   module: ModuleKey;
   id: string;
   role: "admin" | "super-admin";
-}) {
+};
+export function RecordDetails(props: DetailsProps) {
+  return (
+    <Suspense fallback={<p role="status">Loading record…</p>}>
+      <DetailsContent {...props} />
+    </Suspense>
+  );
+}
+function DetailsContent({ module, id, role }: DetailsProps) {
+  const query = useSearchParams();
   const config = operationConfigs[module];
   const direct = ["users", "partners", "vehicles", "fleets"].includes(module);
   const path = direct
@@ -29,7 +38,7 @@ export function RecordDetails({
   const row = direct
     ? data
     : (data?.items as Record<string, unknown>[] | undefined)?.[0];
-  const parent = `/${role}/${module}`;
+  const parent = recordReturnPath(query.get("returnTo"), role, module);
   if (busy)
     return (
       <div className="review-card" role="status">
@@ -140,6 +149,11 @@ export function RecordDetails({
               ),
           )}
           <button onClick={refresh}>Refresh record</button>
+          {module === "vehicles" && (
+            <div className="operations-toolbar">
+              <VehicleActions vehicleId={id} onSaved={refresh} />
+            </div>
+          )}
         </>
       )}
     </section>
