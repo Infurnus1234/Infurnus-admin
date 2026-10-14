@@ -1733,7 +1733,7 @@ body
   padding: 24px;
   color: var(--admin-muted);
 }
-.dashboard-map-container {
+.dashboard-map-frame {
   position: relative;
 }
 .dashboard-map-surface {
