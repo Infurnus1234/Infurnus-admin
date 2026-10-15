@@ -20,7 +20,13 @@ type Inventory = {
   pageSize: number;
   total: number;
 };
-export function AdminManagement({ adminId }: { adminId?: string }) {
+export function AdminManagement({
+  adminId,
+  title = "Admin Management",
+}: {
+  adminId?: string;
+  title?: string;
+}) {
   const [page, setPage] = useState(1);
   const endpoint =
     "/admin/access/admins?" +
@@ -138,7 +144,7 @@ export function AdminManagement({ adminId }: { adminId?: string }) {
   return (
     <div className="space-y-6">
       <PageHeader
-        title="Admin Management"
+        title={title}
         description="Create Admin accounts and grant only the operations they need. Super Admin access is required."
       />
       {error && (
