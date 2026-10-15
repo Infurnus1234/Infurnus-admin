@@ -1,18 +1,22 @@
 "use client";
 import Link from "next/link";
-import { useState } from "react";
+import { Suspense } from "react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import {
+  dashboardPeriodQuery,
+  periodError,
+  presetPeriod,
+} from "@/lib/dashboard-period";
 import { dashboardDestination } from "@/lib/dashboard-navigation";
 import { FleetMap } from "./FleetMap";
 import type { FleetMapVehicle } from "@/lib/fleet-map";
 import {
   Users,
   Car,
-  Store,
   Truck,
   CalendarCheck,
   CheckCircle2,
   XCircle,
-  IndianRupee,
 } from "lucide-react";
 import { useBackendQuery } from "@/lib/use-backend-query";
 import {
@@ -45,34 +49,45 @@ type Booking = {
   total_amount?: string;
   currency?: string;
 };
-export function OperationsOverview({
-  role,
-}: {
-  role: "admin" | "super-admin";
-}) {
-  const [period, setPeriod] = useState({ from: "", to: "" }),
-    [preset, setPreset] = useState("All records");
-  const query = new URLSearchParams();
-  if (period.from) query.set("from", period.from);
-  if (period.to) query.set("to", period.to);
+function Overview({ role }: { role: "admin" | "super-admin" }) {
+  const search = useSearchParams(),
+    pathname = usePathname(),
+    router = useRouter();
+  const period = { from: search.get("from") || "", to: search.get("to") || "" };
+  const preset =
+    search.get("period") ||
+    (period.from || period.to ? "Custom" : "All records");
+  const invalidPeriod = periodError(period);
+  const query = dashboardPeriodQuery(period);
+  function setPeriod(next: typeof period, label = "Custom") {
+    const parameters = new URLSearchParams(dashboardPeriodQuery(next));
+    if (label !== "All records") parameters.set("period", label);
+    router.replace(pathname + (parameters.size ? "?" + parameters : ""), {
+      scroll: false,
+    });
+  }
   const accounts = useBackendQuery<{
     users: { total: number };
     drivers: { total: number };
     partners: { total: number };
     vehicles: { total: number };
     pendingApprovals: number;
-  }>("/admin/dashboard");
+  }>("/admin/dashboard?" + query, !invalidPeriod);
   const operations = useBackendQuery<Summary>(
     "/admin/operations/summary?" + query,
+    !invalidPeriod,
   );
   const rides = useBackendQuery<{ items: Booking[] }>(
     "/admin/operations/rides?pageSize=5&" + query,
+    !invalidPeriod,
   );
   const logistics = useBackendQuery<{ items: Booking[] }>(
     "/admin/operations/logistics?pageSize=5&" + query,
+    !invalidPeriod,
   );
   const rentals = useBackendQuery<{ items: Booking[] }>(
     "/admin/operations/rentals?pageSize=5&" + query,
+    !invalidPeriod,
   );
   const fleet = useBackendQuery<{
     items: FleetMapVehicle[];
@@ -117,28 +132,21 @@ export function OperationsOverview({
       value: accounts.data?.users.total,
       icon: Users,
       color: "orange",
-      note: "Current registered accounts",
+      note: "Accounts registered in this period",
     },
     {
       title: "Total Drivers",
       value: accounts.data?.drivers.total,
       icon: UserDriver,
       color: "orange",
-      note: "Driver and combined-role accounts",
-    },
-    {
-      title: "Total Vendors",
-      value: undefined,
-      icon: Store,
-      color: "green",
-      note: "Vendor entity not configured",
+      note: "Driver profiles created in this period",
     },
     {
       title: "Total Vehicles",
       value: accounts.data?.vehicles.total,
       icon: Car,
       color: "blue",
-      note: "Current inventory records",
+      note: "Vehicles registered in this period",
     },
     {
       title: "Total Bookings",
@@ -152,21 +160,14 @@ export function OperationsOverview({
       value: completed,
       icon: CheckCircle2,
       color: "green",
-      note: "Completed or delivered records",
+      note: "Current status of bookings created in period",
     },
     {
       title: "Cancelled",
       value: cancelled,
       icon: XCircle,
       color: "red",
-      note: "Current cancellation status",
-    },
-    {
-      title: "Total Revenue",
-      value: undefined,
-      icon: IndianRupee,
-      color: "purple",
-      note: "Revenue definition not connected",
+      note: "Current status of bookings created in period",
     },
   ];
   function load() {
@@ -178,19 +179,10 @@ export function OperationsOverview({
     fleet.refresh();
   }
   function choose(days: number, label: string) {
-    const today = new Date(),
-      start = new Date();
-    start.setDate(start.getDate() - days + 1);
-    const date = (d: Date) =>
-      d.getFullYear() +
-      "-" +
-      String(d.getMonth() + 1).padStart(2, "0") +
-      "-" +
-      String(d.getDate()).padStart(2, "0");
-    setPeriod({ from: date(start), to: date(today) });
-    setPreset(label);
+    setPeriod(presetPeriod(days), label);
   }
   const error =
+    invalidPeriod ||
     accounts.error ||
     operations.error ||
     rides.error ||
@@ -205,7 +197,9 @@ export function OperationsOverview({
           <div className="dashboard-presets">
             {[
               [1, "Today"],
+              [2, "2 Days"],
               [7, "7 Days"],
+              [15, "15 Days"],
               [30, "30 Days"],
             ].map(([days, label]) => (
               <button
@@ -221,8 +215,7 @@ export function OperationsOverview({
               className={preset === "All records" ? "is-active" : ""}
               aria-pressed={preset === "All records"}
               onClick={() => {
-                setPeriod({ from: "", to: "" });
-                setPreset("All records");
+                setPeriod({ from: "", to: "" }, "All records");
               }}
             >
               All records
@@ -232,13 +225,12 @@ export function OperationsOverview({
       />
       <div className="dashboard-period">
         <label>
-          Booking records from
+          Records from
           <input
             type="date"
             value={period.from}
             onChange={(e) => {
               setPeriod({ ...period, from: e.target.value });
-              setPreset("Custom");
             }}
           />
         </label>
@@ -250,16 +242,19 @@ export function OperationsOverview({
             min={period.from}
             onChange={(e) => {
               setPeriod({ ...period, to: e.target.value });
-              setPreset("Custom");
             }}
           />
         </label>
-        <button disabled={accounts.busy || operations.busy} onClick={load}>
+        <button
+          disabled={!!invalidPeriod || accounts.busy || operations.busy}
+          onClick={load}
+        >
           Refresh dashboard
         </button>
         <span>
-          Account KPIs are current totals; booking and receipt panels use these
-          creation dates.
+          Asia/Kolkata calendar dates, inclusive. Registrations and booking
+          creation use this period; booking statuses are current, not historical
+          transitions. Receipts use capture time. Live fleet is current.
         </span>
       </div>
       {error && (
@@ -339,7 +334,9 @@ export function OperationsOverview({
             <h2>Recent Bookings</h2>
             <Link href={"/" + role + "/rides"}>View rides</Link>
           </div>
-          {rides.busy || logistics.busy || rentals.busy ? (
+          {rides.error || logistics.error || rentals.error || invalidPeriod ? (
+            <p role="alert">Recent bookings unavailable for this period.</p>
+          ) : rides.busy || logistics.busy || rentals.busy ? (
             <p role="status">Loading actual recent bookings…</p>
           ) : recent.length ? (
             <div className="recent-bookings">
@@ -375,7 +372,7 @@ export function OperationsOverview({
                       {row.pickup_address || row.destination_address
                         ? [row.pickup_address, row.destination_address]
                             .filter(Boolean)
-                            .join(" → ")
+                            .join(" â†’ ")
                         : "Route information not returned"}
                     </small>
                   </div>
@@ -407,13 +404,15 @@ export function OperationsOverview({
         </section>
       </div>
       <div className="dashboard-bottom">
-        <section className="review-card">
-          <div className="dashboard-card-title">
-            <h2>Captured Receipts Overview</h2>
-            <span>Monthly</span>
-          </div>
-          <ReceiptsChart rows={summary?.receiptSeries} />
-        </section>
+        {summary?.receiptSeries != null && (
+          <section className="review-card">
+            <div className="dashboard-card-title">
+              <h2>Captured Receipts Overview</h2>
+              <span>Monthly</span>
+            </div>
+            <ReceiptsChart rows={summary?.receiptSeries} />
+          </section>
+        )}
         <section className="review-card">
           <div className="dashboard-card-title">
             <h2>Booking Status</h2>
@@ -433,3 +432,11 @@ export function OperationsOverview({
   );
 }
 const UserDriver = Users;
+
+export function OperationsOverview(props: { role: "admin" | "super-admin" }) {
+  return (
+    <Suspense fallback={<p role="status">Loading Dashboard…</p>}>
+      <Overview {...props} />
+    </Suspense>
+  );
+}

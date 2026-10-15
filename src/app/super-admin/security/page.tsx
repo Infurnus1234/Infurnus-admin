@@ -1,4 +1,4 @@
-import { UnavailableModule } from "@/components/UnavailableModule";
+import { notFound } from "next/navigation";
 export default function Page() {
-  return <UnavailableModule title="Security" />;
+  notFound();
 }

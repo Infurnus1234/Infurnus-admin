@@ -8,8 +8,8 @@ export function OperationsReports() {
   return (
     <section className="workspace-section">
       <PageHeader
-        title="Reports & Analytics"
-        description="Explore current authorized records by source. Export and advanced analytics are not connected."
+        title="Reports"
+        description="Explore current authorized backend records by source."
       />
       <div className="operations-toolbar">
         <label>

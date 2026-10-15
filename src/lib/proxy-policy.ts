@@ -8,7 +8,9 @@ export function allowedBackendPath(method: string, path: string): boolean {
   if (method === "POST" && path === "/admin/access/admins") return true;
   if (
     method === "PATCH" &&
-    new RegExp(`^/admin/access/admins/${uuid}/permissions$`, "i").test(path)
+    new RegExp(`^/admin/access/admins/${uuid}/(permissions|status)$`, "i").test(
+      path,
+    )
   )
     return true;
   if (method === "POST" && path === "/vehicles") return true;

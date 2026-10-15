@@ -2,13 +2,23 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { canOpenPage, pagePermission } from "../src/lib/access-policy.ts";
 import { allowedBackendPath } from "../src/lib/proxy-policy.ts";
-import {profilePhotoDocument} from '../src/lib/profile-photo.ts';
-test('native lowercase and catalog profile-photo fields identify the actual uploaded photo',()=>{
-  const native={id:'native',documentType:'profile_photo'};
-  const catalog={id:'catalog',documentType:'other',documentCode:'PROFILE_PHOTO'};
-  assert.equal(profilePhotoDocument([{documentType:'driver_license'},native]),native);
-  assert.equal(profilePhotoDocument([catalog]),catalog);
-  assert.equal(profilePhotoDocument([{documentType:'driver_license'}]),undefined);
+import { profilePhotoDocument } from "../src/lib/profile-photo.ts";
+test("native lowercase and catalog profile-photo fields identify the actual uploaded photo", () => {
+  const native = { id: "native", documentType: "profile_photo" };
+  const catalog = {
+    id: "catalog",
+    documentType: "other",
+    documentCode: "PROFILE_PHOTO",
+  };
+  assert.equal(
+    profilePhotoDocument([{ documentType: "driver_license" }, native]),
+    native,
+  );
+  assert.equal(profilePhotoDocument([catalog]), catalog);
+  assert.equal(
+    profilePhotoDocument([{ documentType: "driver_license" }]),
+    undefined,
+  );
 });
 test("saved grants independently guard modules, details and direct URLs", () => {
   assert.equal(canOpenPage("admin", [], "/admin/users"), false);
@@ -31,6 +41,11 @@ test("saved grants independently guard modules, details and direct URLs", () => 
   assert.equal(pagePermission("/admin/finance"), "payments.read");
 });
 test("BFF permits exact reviewed admin management contracts", () => {
+  const statusPath =
+    "/admin/access/admins/550e8400-e29b-41d4-a716-446655440000/status";
+  assert.equal(allowedBackendPath("PATCH", statusPath), true);
+  assert.equal(allowedBackendPath("POST", statusPath), false);
+  assert.equal(allowedBackendPath("PATCH", statusPath + "/extra"), false);
   assert.equal(allowedBackendPath("POST", "/admin/access/admins"), true);
   assert.equal(allowedBackendPath("GET", "/admin/access/me"), true);
   assert.equal(
