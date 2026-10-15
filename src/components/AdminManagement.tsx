@@ -106,6 +106,31 @@ export function AdminManagement({ adminId }: { adminId?: string }) {
     }
   }
   const groups = new Map<string, string[]>();
+  async function changeStatus(admin: ManagedAdmin) {
+    if (busy) return;
+    setBusy(true);
+    setError("");
+    setMessage("");
+    try {
+      const status = admin.status === "active" ? "suspended" : "active";
+      await adminApi(`/admin/access/admins/${admin.id}/status`, "PATCH", {
+        status,
+        expectedUpdatedAt: admin.updatedAt,
+      });
+      setSelected(null);
+      setGrants([]);
+      setMessage(
+        status === "active"
+          ? "Admin enabled. Access is restored; revoked refresh sessions remain revoked."
+          : "Admin disabled. Protected access is blocked and refresh sessions are revoked.",
+      );
+      await load();
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Status change failed");
+    } finally {
+      setBusy(false);
+    }
+  }
   for (const permission of data?.catalog || []) {
     const resource = permission.split(".")[0];
     groups.set(resource, [...(groups.get(resource) || []), permission]);
@@ -167,6 +192,17 @@ export function AdminManagement({ adminId }: { adminId?: string }) {
                       >
                         Configure permissions
                       </Button>
+                      {["active", "suspended"].includes(admin.status) && (
+                        <Button
+                          disabled={busy}
+                          variant="outline"
+                          onClick={() => void changeStatus(admin)}
+                        >
+                          {admin.status === "active"
+                            ? "Disable Admin"
+                            : "Enable Admin"}
+                        </Button>
+                      )}
                     </td>
                   </tr>
                 ))}

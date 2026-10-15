@@ -122,11 +122,9 @@ test(
     assert.equal(response.status, 200);
     assert.match(await response.text(), /Access restricted/);
     response = await call("/super-admin/settings");
-    assert.equal(response.status, 200);
-    assert.match(await response.text(), /Access restricted/);
+    assert.equal(response.status, 404);
     response = await call("/admin/settings");
-    assert.equal(response.status, 200);
-    assert.match(await response.text(), /Access restricted/);
+    assert.equal(response.status, 404);
     response = await call("/admin/driver-requests");
     assert.equal(response.status, 200);
     response = await call("/api/backend/provider-approvals");

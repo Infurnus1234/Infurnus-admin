@@ -17,6 +17,9 @@ export function dashboardDestination(
   if (!target[title]) return null;
   const url = new URL(`/${role}/${target[title]}`, "https://local.invalid");
   if (
+    title === "Total Users" ||
+    title === "Total Drivers" ||
+    title === "Total Vehicles" ||
     title === "Total Bookings" ||
     title === "Completed" ||
     title === "Cancelled"

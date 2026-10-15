@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { adminApi, ApiError } from "./admin-api";
 
 /** Discard superseded reads; never show an old page under a new filter. */
-export function useBackendQuery<T>(path: string) {
+export function useBackendQuery<T>(path: string, enabled = true) {
   const router = useRouter();
   const [revision, setRevision] = useState(0);
   const key = path + "\n" + revision;
@@ -14,6 +14,7 @@ export function useBackendQuery<T>(path: string) {
     error: string;
   } | null>(null);
   useEffect(() => {
+    if (!enabled) return;
     let current = true;
     void adminApi<T>(path).then(
       (data) => {
@@ -33,12 +34,12 @@ export function useBackendQuery<T>(path: string) {
     return () => {
       current = false;
     };
-  }, [path, key, router]);
+  }, [path, key, router, enabled]);
   const refresh = useCallback(() => setRevision((value) => value + 1), []);
   return {
-    data: result?.key === key ? result.data : null,
-    error: result?.key === key ? result.error : "",
-    busy: result?.key !== key,
+    data: enabled && result?.key === key ? result.data : null,
+    error: enabled && result?.key === key ? result.error : "",
+    busy: enabled && result?.key !== key,
     refresh,
   };
 }

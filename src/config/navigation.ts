@@ -1,5 +1,6 @@
 import type { NavItemConfig, UserRole, NavItem } from "@/types";
 import { canOpenPage } from "../lib/access-policy.ts";
+import { hasAdminBackend } from "../lib/feature-availability.ts";
 
 export const MASTER_NAVIGATION_CONFIG: NavItemConfig[] = [
   {
@@ -167,11 +168,11 @@ export const MASTER_NAVIGATION_CONFIG: NavItemConfig[] = [
   },
   {
     id: "reports",
-    title: "Reports & Analytics",
+    title: "Reports",
     path: "reports",
     icon: "bar-chart",
     requiredPermission: "VIEW_REPORTS",
-    section: "Reports & Analytics",
+    section: "Reports",
   },
 
   // Section: Governance & Security
@@ -255,6 +256,7 @@ export function getGroupedNavItemsForRole(
   const basePath = role === "super-admin" ? "/super-admin" : "/admin";
 
   const visibleConfigs = MASTER_NAVIGATION_CONFIG.filter((config) => {
+    if (!hasAdminBackend(config.path)) return false;
     if (role === "super-admin") return true;
     if (
       userPermissions.some((key) => key.includes(".")) ||
@@ -295,7 +297,7 @@ export function getGroupedNavItemsForRole(
     "Vehicle Management",
     "Pricing & Commission",
     "Wallet & Payments",
-    "Reports & Analytics",
+    "Reports",
     "System Management",
     "Governance & Security",
     "System & Control",
