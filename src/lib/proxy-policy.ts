@@ -1,4 +1,11 @@
 export function allowedBackendPath(method: string, path: string): boolean {
+  if (
+    method === "DELETE" &&
+    /^\/admin\/records\/(users|drivers|admins|partners|vehicles|vehicle-types|coupons)\/[\da-f-]{36}$/i.test(
+      path,
+    )
+  )
+    return true;
   const uuid = "[\\da-f-]{36}";
   if (
     method === "GET" &&

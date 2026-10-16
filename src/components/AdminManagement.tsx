@@ -4,6 +4,7 @@ import { adminApi } from "@/lib/admin-api";
 import { PageHeader } from "./layout/PageHeader";
 import { Button } from "./ui/Button";
 import { Input } from "./ui/Input";
+import { DeleteRecord } from "./DeleteRecord";
 type ManagedAdmin = {
   id: string;
   firstName: string;
@@ -23,9 +24,11 @@ type Inventory = {
 export function AdminManagement({
   adminId,
   title = "Admin Management",
+  allowCreate = true,
 }: {
   adminId?: string;
   title?: string;
+  allowCreate?: boolean;
 }) {
   const [page, setPage] = useState(1);
   const endpoint =
@@ -145,7 +148,11 @@ export function AdminManagement({
     <div className="space-y-6">
       <PageHeader
         title={title}
-        description="Create Admin accounts and grant only the operations they need. Super Admin access is required."
+        description={
+          allowCreate
+            ? "Create Admin accounts and grant only the operations they need. Super Admin access is required."
+            : "View existing Admin accounts and manage their permissions. Super Admin access is required."
+        }
       />
       {error && (
         <p role="alert" className="text-red-700">
@@ -180,6 +187,18 @@ export function AdminManagement({
                     <td>{admin.status}</td>
                     <td>{admin.permissions.length} granted</td>
                     <td>
+                      <DeleteRecord
+                        module="admins"
+                        id={admin.id}
+                        label={`${admin.firstName} ${admin.lastName} (${admin.email})`}
+                        onDeleted={(message) => {
+                          setMessage(message);
+                          setSelected(null);
+                          setGrants([]);
+                          if (page !== 1) setPage(1);
+                          else void load();
+                        }}
+                      />
                       <Button
                         disabled={busy}
                         variant="outline"
@@ -235,111 +254,121 @@ export function AdminManagement({
               Next
             </Button>
           </nav>
-          <form onSubmit={submit} className="space-y-5 rounded-2xl border p-5">
-            <h2 className="text-xl font-semibold">
-              {selected ? `Permissions for ${selected.email}` : "Create Admin"}
-            </h2>
-            {!selected && (
-              <div className="grid gap-4 md:grid-cols-2">
-                <Input
-                  label="First name"
-                  required
-                  maxLength={100}
-                  value={form.firstName}
-                  onChange={(e) =>
-                    setForm({ ...form, firstName: e.target.value })
-                  }
-                  disabled={busy}
-                />
-                <Input
-                  label="Last name"
-                  required
-                  maxLength={100}
-                  value={form.lastName}
-                  onChange={(e) =>
-                    setForm({ ...form, lastName: e.target.value })
-                  }
-                  disabled={busy}
-                />
-                <Input
-                  label="Email"
-                  type="email"
-                  required
-                  maxLength={320}
-                  autoComplete="off"
-                  value={form.email}
-                  onChange={(e) => setForm({ ...form, email: e.target.value })}
-                  disabled={busy}
-                />
-                <Input
-                  label="Password (8–128 characters)"
-                  type="password"
-                  required
-                  minLength={8}
-                  maxLength={128}
-                  autoComplete="new-password"
-                  value={form.password}
-                  onChange={(e) =>
-                    setForm({ ...form, password: e.target.value })
-                  }
-                  disabled={busy}
-                />
-              </div>
-            )}
-            <p>
-              Unselected operations are denied. Detail and mutation permissions
-              also require their module’s read permission. Private documents and
-              contact information are separate grants. Unsupported delete or
-              financial execution operations cannot be granted.
-            </p>
-            <fieldset disabled={busy}>
-              <legend className="font-semibold">Granted permissions</legend>
-              <div className="grid gap-4 md:grid-cols-3">
-                {[...groups].map(([resource, keys]) => (
-                  <fieldset key={resource} className="rounded-xl border p-3">
-                    <legend className="capitalize">{resource}</legend>
-                    {keys.map((key) => (
-                      <label key={key} className="block py-1">
-                        <input
-                          type="checkbox"
-                          checked={grants.includes(key)}
-                          onChange={(e) =>
-                            setGrants((current) =>
-                              e.target.checked
-                                ? [...current, key]
-                                : current.filter((value) => value !== key),
-                            )
-                          }
-                        />{" "}
-                        {key.split(".")[1].replaceAll("_", " ")}
-                      </label>
-                    ))}
-                  </fieldset>
-                ))}
-              </div>
-            </fieldset>
-            <Button type="submit" disabled={busy}>
-              {busy
-                ? "Saving…"
-                : selected
-                  ? "Save permissions"
+          {(allowCreate || selected) && (
+            <form
+              onSubmit={submit}
+              className="space-y-5 rounded-2xl border p-5"
+            >
+              <h2 className="text-xl font-semibold">
+                {selected
+                  ? `Permissions for ${selected.email}`
                   : "Create Admin"}
-            </Button>
-            {selected && (
-              <Button
-                disabled={busy}
-                type="button"
-                variant="outline"
-                onClick={() => {
-                  setSelected(null);
-                  setGrants([]);
-                  setError("");
-                }}
-              >
-                Cancel
+              </h2>
+              {!selected && (
+                <div className="grid gap-4 md:grid-cols-2">
+                  <Input
+                    label="First name"
+                    required
+                    maxLength={100}
+                    value={form.firstName}
+                    onChange={(e) =>
+                      setForm({ ...form, firstName: e.target.value })
+                    }
+                    disabled={busy}
+                  />
+                  <Input
+                    label="Last name"
+                    required
+                    maxLength={100}
+                    value={form.lastName}
+                    onChange={(e) =>
+                      setForm({ ...form, lastName: e.target.value })
+                    }
+                    disabled={busy}
+                  />
+                  <Input
+                    label="Email"
+                    type="email"
+                    required
+                    maxLength={320}
+                    autoComplete="off"
+                    value={form.email}
+                    onChange={(e) =>
+                      setForm({ ...form, email: e.target.value })
+                    }
+                    disabled={busy}
+                  />
+                  <Input
+                    label="Password (8–128 characters)"
+                    type="password"
+                    required
+                    minLength={8}
+                    maxLength={128}
+                    autoComplete="new-password"
+                    value={form.password}
+                    onChange={(e) =>
+                      setForm({ ...form, password: e.target.value })
+                    }
+                    disabled={busy}
+                  />
+                </div>
+              )}
+              <p>
+                Unselected operations are denied. Detail and mutation
+                permissions also require their module’s read permission. Private
+                documents and contact information are separate grants. Deletion
+                requires its own explicit grant and an eligible record.
+                Financial execution operations cannot be granted.
+              </p>
+              <fieldset disabled={busy}>
+                <legend className="font-semibold">Granted permissions</legend>
+                <div className="grid gap-4 md:grid-cols-3">
+                  {[...groups].map(([resource, keys]) => (
+                    <fieldset key={resource} className="rounded-xl border p-3">
+                      <legend className="capitalize">{resource}</legend>
+                      {keys.map((key) => (
+                        <label key={key} className="block py-1">
+                          <input
+                            type="checkbox"
+                            checked={grants.includes(key)}
+                            onChange={(e) =>
+                              setGrants((current) =>
+                                e.target.checked
+                                  ? [...current, key]
+                                  : current.filter((value) => value !== key),
+                              )
+                            }
+                          />{" "}
+                          {key.split(".")[1].replaceAll("_", " ")}
+                        </label>
+                      ))}
+                    </fieldset>
+                  ))}
+                </div>
+              </fieldset>
+              <Button type="submit" disabled={busy}>
+                {busy
+                  ? "Saving…"
+                  : selected
+                    ? "Save permissions"
+                    : "Create Admin"}
               </Button>
-            )}
-          </form>
+              {selected && (
+                <Button
+                  disabled={busy}
+                  type="button"
+                  variant="outline"
+                  onClick={() => {
+                    setSelected(null);
+                    setGrants([]);
+                    setError("");
+                  }}
+                >
+                  Cancel
+                </Button>
+              )}
+            </form>
+          )}
         </>
       )}
     </div>

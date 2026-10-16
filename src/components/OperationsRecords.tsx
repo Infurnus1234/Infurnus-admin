@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 import { useBackendQuery } from "@/lib/use-backend-query";
 import { adminApi } from "@/lib/admin-api";
+import { DeleteRecord } from "./DeleteRecord";
 import {
   operationConfigs,
   operationPath,
@@ -344,6 +345,29 @@ function RecordsContent({
                     >
                       View
                     </button>
+                    {!readOnly &&
+                      (module === "users" ||
+                        module === "partners" ||
+                        module === "vehicles" ||
+                        module === "coupons") && (
+                        <DeleteRecord
+                          module={module}
+                          id={String(row.id)}
+                          label={String(
+                            row.account_display_name ||
+                              row.code ||
+                              row.plateNumber ||
+                              row.businessName ||
+                              row.id,
+                          )}
+                          onDeleted={(message) => {
+                            setNotice(message);
+                            setSelected(null);
+                            if (page > 1) setPage(1);
+                            load();
+                          }}
+                        />
+                      )}
                   </td>
                 </tr>
               ))

@@ -3,6 +3,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { PageHeader } from "./layout/PageHeader";
+import { DeleteRecord } from "./DeleteRecord";
 import { useBackendQuery } from "@/lib/use-backend-query";
 import {
   roleLabel,
@@ -11,6 +12,7 @@ import {
   type Page,
 } from "@/lib/request-models";
 export function DriverRecords() {
+  const [notice, setNotice] = useState("");
   const pathname = usePathname();
   const role = pathname.startsWith("/super-admin") ? "super-admin" : "admin";
   const [page, setPage] = useState(1),
@@ -33,6 +35,7 @@ export function DriverRecords() {
         title="Drivers"
         description="Verified identities, account status, vehicle associations and submitted documents."
       />
+      {notice && <p role="status">{notice}</p>}
       <form
         className="operations-toolbar"
         onSubmit={(e) => {
@@ -135,6 +138,20 @@ export function DriverRecords() {
                     >
                       View driver
                     </Link>
+                    <DeleteRecord
+                      module="drivers"
+                      id={driver.id}
+                      label={
+                        [driver.firstName, driver.lastName]
+                          .filter(Boolean)
+                          .join(" ") || driver.id
+                      }
+                      onDeleted={(message) => {
+                        setNotice(message);
+                        if (page > 1) setPage(1);
+                        refresh();
+                      }}
+                    />
                   </td>
                 </tr>
               ))

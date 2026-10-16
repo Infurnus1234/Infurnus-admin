@@ -41,6 +41,33 @@ test("saved grants independently guard modules, details and direct URLs", () => 
   assert.equal(pagePermission("/admin/finance"), "payments.read");
 });
 test("BFF permits exact reviewed admin management contracts", () => {
+  for (const entityModule of [
+    "users",
+    "drivers",
+    "admins",
+    "partners",
+    "vehicles",
+    "vehicle-types",
+    "coupons",
+  ])
+    assert.equal(
+      allowedBackendPath(
+        "DELETE",
+        `/admin/records/${entityModule}/550e8400-e29b-41d4-a716-446655440000`,
+      ),
+      true,
+    );
+  assert.equal(
+    allowedBackendPath(
+      "DELETE",
+      "/admin/records/payments/550e8400-e29b-41d4-a716-446655440000",
+    ),
+    false,
+  );
+  assert.equal(
+    allowedBackendPath("DELETE", "/admin/records/users/not-an-id"),
+    false,
+  );
   const statusPath =
     "/admin/access/admins/550e8400-e29b-41d4-a716-446655440000/status";
   assert.equal(allowedBackendPath("PATCH", statusPath), true);

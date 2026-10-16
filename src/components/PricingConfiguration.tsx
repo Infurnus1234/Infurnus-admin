@@ -1,4 +1,5 @@
 "use client";
+import { DeleteRecord } from "./DeleteRecord";
 import { useAdminAccess } from "./AdminAccessContext";
 import { useState } from "react";
 import { useBackendQuery } from "@/lib/use-backend-query";
@@ -258,6 +259,16 @@ export function PricingConfiguration() {
                     >
                       Edit
                     </button>
+                    <DeleteRecord
+                      module="vehicle-types"
+                      id={type.id}
+                      label={`${type.name} (${type.code})`}
+                      onDeleted={(message) => {
+                        setNotice(message);
+                        setOffset(0);
+                        void load();
+                      }}
+                    />
                   </td>
                 </tr>
               ))
