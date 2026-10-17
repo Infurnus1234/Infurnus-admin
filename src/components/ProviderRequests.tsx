@@ -2,7 +2,8 @@
 import { useCallback, useEffect, useState } from "react";
 import { PageHeader } from "./layout/PageHeader";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
-import { adminApi, ApiError } from "@/lib/admin-api";
+import { ApiError } from "@/lib/admin-api";
+import { loadProviderApprovals } from "@/lib/approval-api";
 import {
   ApprovalRequest,
   requestPage,
@@ -36,6 +37,7 @@ export function ProviderRequests() {
     [
       row.id,
       row.requester_id,
+      row.requester_email,
       requesterName(row),
       requesterRole(row),
       requestTarget(row),
@@ -51,11 +53,7 @@ export function ProviderRequests() {
   const [lookupId, setLookupId] = useState("");
   const load = useCallback(async () => {
     try {
-      setRequests(
-        await adminApi<ApprovalRequest[]>(
-          `/provider-approvals?status=${statusFilter}`,
-        ),
-      );
+      setRequests(await loadProviderApprovals(statusFilter));
     } catch (error) {
       if (error instanceof ApiError && error.status === 401)
         router.replace("/login");
@@ -68,7 +66,7 @@ export function ProviderRequests() {
   }, [router, statusFilter]);
   useEffect(() => {
     let active = true;
-    adminApi<ApprovalRequest[]>(`/provider-approvals?status=${statusFilter}`)
+    loadProviderApprovals(statusFilter)
       .then((rows) => {
         if (active) setRequests(rows);
       })
@@ -114,7 +112,7 @@ export function ProviderRequests() {
               setFilter(event.target.value);
               setPage(1);
             }}
-            placeholder="Name, role, ID or request type"
+            placeholder="Name, email, role, ID or request type"
           />
         </label>
         <label>
@@ -182,7 +180,8 @@ export function ProviderRequests() {
         </form>
       </div>
       <p className="workspace-caption">
-        Up to 100 requests for the selected status are loaded. Search applies to
+        Up to 100 requests for the selected status are loaded. Driver profile
+        and document reviews are grouped by driver account. Search applies to
         this list; use a request ID to open older review history.
       </p>
       {error && <p role="alert">{error}</p>}
@@ -229,6 +228,11 @@ export function ProviderRequests() {
                       {requesterName(row)}
                     </span>
 
+                    {row.requester_email && (
+                      <span className="cell-secondary">
+                        {row.requester_email}
+                      </span>
+                    )}
                     <span className="cell-secondary role-badge">
                       {requesterRole(row)}
                     </span>
@@ -242,6 +246,11 @@ export function ProviderRequests() {
                     <span className="request-label" title={requestTarget(row)}>
                       {requestTarget(row)}
                     </span>
+                    {row.driver_profile_id && (
+                      <span className="cell-secondary">
+                        {row.item_count} review items
+                      </span>
+                    )}
                     <span className="cell-secondary" title={row.target_id}>
                       {shortIdentifier(row.target_id)}
                     </span>

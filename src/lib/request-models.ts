@@ -13,6 +13,8 @@ export interface ApprovalRequest {
   target_id: string;
   status: string;
   submitted_at: string;
+  driver_profile_id?: string;
+  item_count?: number;
 }
 export interface ReviewDocument {
   id: string;
@@ -35,6 +37,15 @@ export interface ReviewDocument {
   document_metadata?: { documentNumber?: string; expiresAt?: string };
 }
 export interface ApprovalDetails {
+  onboarding_status?: string;
+  onboarding_items?: {
+    id: string;
+    target_type: string;
+    target_id: string;
+    label: string;
+    status: string;
+    expected_updated_at: string;
+  }[];
   request: ApprovalRequest;
   target: {
     id: string;
@@ -178,5 +189,33 @@ export function reviewPayload(
     status,
     expectedUpdatedAt: details.target.updated_at,
     ...(reason.trim() ? { reason: reason.trim() } : {}),
+  };
+}
+
+export function onboardingReviewPayload(
+  details: ApprovalDetails,
+  status: "APPROVED" | "REJECTED",
+  reason: string,
+  itemId?: string,
+) {
+  const base = reviewPayload(details, status, reason);
+  if (!details.onboarding_items) return base;
+  const pending = details.onboarding_items.filter(
+    (item) => item.status === "PENDING",
+  );
+  if (itemId) {
+    const item = pending.find((item) => item.id === itemId);
+    if (!item)
+      throw new Error("This item is no longer pending. Reload the onboarding.");
+    return { ...base, expectedUpdatedAt: item.expected_updated_at };
+  }
+  if (!pending.length)
+    throw new Error("No pending onboarding items. Reload the onboarding.");
+  return {
+    ...base,
+    items: pending.map((item) => ({
+      id: item.id,
+      expectedUpdatedAt: item.expected_updated_at,
+    })),
   };
 }

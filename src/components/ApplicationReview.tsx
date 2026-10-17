@@ -1,6 +1,6 @@
 "use client";
 import { useAdminAccess } from "./AdminAccessContext";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import {
@@ -22,7 +22,7 @@ import {
   requestLabel,
   requestTarget,
   requestTimestamp,
-  reviewPayload,
+  onboardingReviewPayload,
   roleLabel,
   type ApprovalDetails,
 } from "@/lib/request-models";
@@ -34,6 +34,7 @@ export function ApplicationReview({
   role: "admin" | "super-admin";
 }) {
   const can = useAdminAccess();
+  const pendingSave = useRef(false);
   const params = useSearchParams();
   const back = reviewReturnPath(params.get("returnTo"), role);
   const {
@@ -41,7 +42,12 @@ export function ApplicationReview({
     busy: loading,
     error: readError,
     refresh,
-  } = useBackendQuery<ApprovalDetails>(`/provider-approvals/${id}`);
+  } = useBackendQuery<ApprovalDetails>(
+    `/provider-approvals/${id}?group=driver`,
+    true,
+    `/provider-approvals/${id}`,
+  );
+  const [selectedItem, setSelectedItem] = useState<string | undefined>();
   const [reason, setReason] = useState(""),
     [saving, setSaving] = useState(false),
     [error, setError] = useState(""),
@@ -50,14 +56,15 @@ export function ApplicationReview({
     null,
   );
   async function save() {
-    if (!detail || !decision) return;
+    if (!detail || !decision || pendingSave.current) return;
+    pendingSave.current = true;
     setSaving(true);
     setError("");
     try {
       await adminApi(
-        `/provider-approvals/${id}/review`,
+        `/provider-approvals/${selectedItem || id}/review`,
         "POST",
-        reviewPayload(detail, decision, reason),
+        onboardingReviewPayload(detail, decision, reason, selectedItem),
       );
       setDecision(null);
       setNotice("Decision persisted by the backend.");
@@ -69,6 +76,7 @@ export function ApplicationReview({
           : "Decision failed. Reload and retry.",
       );
     } finally {
+      pendingSave.current = false;
       setSaving(false);
     }
   }
@@ -243,6 +251,65 @@ export function ApplicationReview({
             owner={id}
             initialDocumentId={detail.request.target_id}
           />
+          {detail.onboarding_items && (
+            <section className="review-card">
+              <h2>Onboarding review items</h2>
+              <p>
+                Review individual items here, or approve/reject all pending
+                items together. Required document validation still applies to
+                overall approval.
+              </p>
+              <p>
+                Overall onboarding:{" "}
+                {requestLabel(
+                  detail.onboarding_status ||
+                    target.verification_status ||
+                    "UNKNOWN",
+                )}
+              </p>
+              <ul>
+                {detail.onboarding_items
+                  .filter(
+                    (item, index, items) =>
+                      items.findIndex(
+                        (other) => other.target_id === item.target_id,
+                      ) === index,
+                  )
+                  .map((item) => (
+                    <li key={item.id}>
+                      <strong>{requestLabel(item.label)}</strong> —{" "}
+                      {requestLabel(item.status)}
+                      {item.status === "PENDING" && canReview && (
+                        <div className="review-actions">
+                          <button
+                            disabled={saving || !can("approvals.approve")}
+                            onClick={() => {
+                              setSelectedItem(item.id);
+                              setDecision("APPROVED");
+                            }}
+                          >
+                            Approve {requestLabel(item.label)}
+                          </button>
+                          <button
+                            disabled={
+                              saving ||
+                              !can("approvals.reject") ||
+                              !reason.trim()
+                            }
+                            onClick={() => {
+                              setSelectedItem(item.id);
+                              setDecision("REJECTED");
+                            }}
+                          >
+                            Reject {requestLabel(item.label)}
+                          </button>
+                        </div>
+                      )}
+                    </li>
+                  ))}
+              </ul>
+            </section>
+          )}
           <section className="review-card">
             <h2>
               <Clock size={18} />
@@ -302,9 +369,14 @@ export function ApplicationReview({
               <button
                 className="workspace-primary"
                 disabled={saving || !canReview || !can("approvals.approve")}
-                onClick={() => setDecision("APPROVED")}
+                onClick={() => {
+                  setSelectedItem(undefined);
+                  setDecision("APPROVED");
+                }}
               >
-                Approve application
+                {detail.onboarding_items
+                  ? "Approve onboarding"
+                  : "Approve application"}
               </button>
               <button
                 className="admin-button-danger"
@@ -314,9 +386,14 @@ export function ApplicationReview({
                   !can("approvals.reject") ||
                   !reason.trim()
                 }
-                onClick={() => setDecision("REJECTED")}
+                onClick={() => {
+                  setSelectedItem(undefined);
+                  setDecision("REJECTED");
+                }}
               >
-                Reject application
+                {detail.onboarding_items
+                  ? "Reject onboarding"
+                  : "Reject application"}
               </button>
             </div>
             {!canReview && (
@@ -364,6 +441,13 @@ export function ApplicationReview({
           {requesterName(detail.request)}?
         </p>
         <p>{reason.trim() || "No review reason supplied."}</p>
+        {detail.onboarding_items && (
+          <p>
+            {selectedItem
+              ? `Review item: ${requestLabel(detail.onboarding_items.find((item) => item.id === selectedItem)?.label || "")}`
+              : "This decision applies to every pending item in this driver onboarding."}
+          </p>
+        )}
         {error && <p role="alert">{error}</p>}
       </Modal>
     </section>

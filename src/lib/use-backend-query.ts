@@ -2,9 +2,14 @@
 import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { adminApi, ApiError } from "./admin-api";
+import { approvalQuery } from "./approval-api";
 
 /** Discard superseded reads; never show an old page under a new filter. */
-export function useBackendQuery<T>(path: string, enabled = true) {
+export function useBackendQuery<T>(
+  path: string,
+  enabled = true,
+  fallbackPath?: string,
+) {
   const router = useRouter();
   const [revision, setRevision] = useState(0);
   const key = path + "\n" + revision;
@@ -16,7 +21,9 @@ export function useBackendQuery<T>(path: string, enabled = true) {
   useEffect(() => {
     if (!enabled) return;
     let current = true;
-    void adminApi<T>(path).then(
+    void (
+      fallbackPath ? approvalQuery<T>(path, fallbackPath) : adminApi<T>(path)
+    ).then(
       (data) => {
         if (current) setResult({ key, data, error: "" });
       },
@@ -34,7 +41,7 @@ export function useBackendQuery<T>(path: string, enabled = true) {
     return () => {
       current = false;
     };
-  }, [path, key, router, enabled]);
+  }, [path, key, router, enabled, fallbackPath]);
   const refresh = useCallback(() => setRevision((value) => value + 1), []);
   return {
     data: enabled && result?.key === key ? result.data : null,
