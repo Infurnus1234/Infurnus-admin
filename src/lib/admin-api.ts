@@ -55,6 +55,37 @@ export function adminApi<T>(
   return withAdminSession(() => perform<T>(path, method, body));
 }
 
+export async function permanentlyDeleteRecord(
+  module: string,
+  id: string,
+  retainHistory = false,
+): Promise<string> {
+  const result = await adminApi<{
+    id: string;
+    deleted: boolean;
+    mode?: string;
+    message?: string;
+  }>(
+    `/admin/records/${encodeURIComponent(module)}/${encodeURIComponent(id)}`,
+    "DELETE",
+    retainHistory ? { retainHistory: true } : undefined,
+  );
+  if (!result || result.deleted !== true || result.id !== id)
+    throw new ApiError(
+      "Deletion was not confirmed by the backend. Refresh the list before retrying.",
+      502,
+    );
+  if (retainHistory && result.mode !== "retained")
+    throw new ApiError(
+      "Backend did not confirm retention-safe deletion. Refresh before retrying.",
+      502,
+    );
+  return result.mode === "retained"
+    ? result.message ||
+        "Driver account deleted from active use; records retained."
+    : "Record permanently deleted.";
+}
+
 export async function documentAccessUrl(
   requestId: string,
   documentId: string,

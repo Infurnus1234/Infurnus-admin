@@ -41,6 +41,7 @@ export async function AuthenticatedShell({
     <AppShell
       role={role}
       user={{
+        id: identity.id,
         name: `${identity.firstName} ${identity.lastName}`,
         email: identity.email,
         role,

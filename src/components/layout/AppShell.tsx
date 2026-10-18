@@ -1,10 +1,11 @@
 "use client";
 
-import React, { useCallback, useState } from "react";
+import React from "react";
 import { Sidebar } from "./Sidebar";
 import { Topbar } from "./Topbar";
 import { UserProfile, UserRole } from "@/types";
 import { AdminAccessProvider } from "../AdminAccessContext";
+import { useSidebarState } from "@/lib/use-sidebar-state";
 
 export interface AppShellProps {
   role: UserRole;
@@ -13,28 +14,28 @@ export interface AppShellProps {
 }
 
 export const AppShell: React.FC<AppShellProps> = ({ role, user, children }) => {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-
-  const closeSidebar = useCallback(() => setIsSidebarOpen(false), []);
+  const sidebar = useSidebarState(user.id || user.email, role);
   return (
     <AdminAccessProvider value={{ role, permissions: user.permissions || [] }}>
-      <div className="admin-app-shell">
+      <div className="admin-app-shell" data-sidebar-expanded={sidebar.expanded}>
         <a href="#main-content" className="skip-link">
           Skip to content
         </a>
         <Sidebar
           role={role}
           userPermissions={user.permissions}
-          isOpen={isSidebarOpen}
-          onClose={closeSidebar}
+          isOpen={sidebar.expanded}
+          onClose={sidebar.closeMobile}
+          onToggle={sidebar.toggle}
         />
 
         {/* Main App Container */}
-        <div inert={isSidebarOpen} className="admin-app-content">
+        <div inert={sidebar.inertContent} className="admin-app-content">
           {/* Topbar Navigation Bar */}
           <Topbar
             user={user}
-            onMobileMenuToggle={() => setIsSidebarOpen((prev) => !prev)}
+            sidebarExpanded={sidebar.expanded}
+            onSidebarToggle={sidebar.toggle}
           />
 
           {/* Main Content Area */}

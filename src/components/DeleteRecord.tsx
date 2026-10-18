@@ -1,6 +1,6 @@
 "use client";
-import { useState } from "react";
-import { adminApi } from "@/lib/admin-api";
+import { useRef, useState } from "react";
+import { permanentlyDeleteRecord } from "@/lib/admin-api";
 import { useAdminAccess } from "./AdminAccessContext";
 import { Modal } from "./ui/Modal";
 
@@ -24,6 +24,7 @@ export function DeleteRecord({
   onDeleted: (message: string) => void;
 }) {
   const can = useAdminAccess();
+  const pending = useRef(false);
   const [open, setOpen] = useState(false),
     [busy, setBusy] = useState(false),
     [error, setError] = useState("");
@@ -31,18 +32,20 @@ export function DeleteRecord({
     (module === "vehicle-types" ? "pricing" : module) + ".delete";
   if (!can(permission)) return null;
   async function remove() {
-    if (busy) return;
+    if (pending.current) return;
+    pending.current = true;
     setBusy(true);
     setError("");
     try {
-      await adminApi(`/admin/records/${module}/${id}`, "DELETE");
+      const message = await permanentlyDeleteRecord(module, id);
       setOpen(false);
-      onDeleted("Record permanently deleted.");
+      onDeleted(message);
     } catch (e) {
       setError(
         e instanceof Error ? e.message : "Deletion failed. Please retry.",
       );
     } finally {
+      pending.current = false;
       setBusy(false);
     }
   }

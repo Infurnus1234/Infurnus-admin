@@ -25,16 +25,16 @@ import {
   Sliders,
   Settings,
   Flame,
-  X,
+  PanelLeftClose,
 } from "lucide-react";
 import { UserRole } from "@/types";
 import { getGroupedNavItemsForRole } from "@/config/navigation";
-
 export interface SidebarProps {
   role: UserRole;
   userPermissions?: string[];
   isOpen: boolean;
   onClose: () => void;
+  onToggle: () => void;
   className?: string;
 }
 
@@ -95,6 +95,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   userPermissions,
   isOpen,
   onClose,
+  onToggle,
   className = "",
 }) => {
   const drawer = useRef<HTMLElement>(null);
@@ -118,7 +119,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
       if (event.key === "Tab") {
         const elements = Array.from(
           panel?.querySelectorAll<HTMLElement>(
-            "a[href],button:not(:disabled),summary",
+            "a[href],button:not(:disabled),input:not(:disabled),summary",
           ) || [],
         ).filter((element) => element.getClientRects().length > 0);
         const first = elements[0],
@@ -142,7 +143,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
   }, [isOpen, onClose]);
   const pathname = usePathname();
   const groupedSections = getGroupedNavItemsForRole(role, userPermissions);
-
   return (
     <>
       <div
@@ -152,6 +152,9 @@ export const Sidebar: React.FC<SidebarProps> = ({
       />
       <aside
         ref={drawer}
+        id="admin-sidebar"
+        inert={!isOpen}
+        aria-hidden={!isOpen}
         aria-label="Main navigation"
         className={`admin-sidebar ${isOpen ? "is-open" : ""} ${className}`}
       >
@@ -161,11 +164,16 @@ export const Sidebar: React.FC<SidebarProps> = ({
             <span>INFURNUS</span>
           </Link>
           <button
-            className="admin-nav-close"
-            onClick={onClose}
-            aria-label="Close navigation"
+            id="hide-sidebar"
+            type="button"
+            className="admin-sidebar-toggle"
+            onClick={onToggle}
+            aria-label="Hide Sidebar"
+            title="Hide Sidebar"
+            aria-controls="admin-sidebar"
+            aria-expanded={isOpen}
           >
-            <X size={20} />
+            <PanelLeftClose size={20} aria-hidden="true" />
           </button>
         </div>
         <nav className="admin-nav-scroll">

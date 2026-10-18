@@ -1,18 +1,20 @@
 "use client";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { Menu, UserRound } from "lucide-react";
+import { PanelLeftOpen, UserRound } from "lucide-react";
 import { UserProfile } from "@/types";
 import { Modal } from "../ui/Modal";
 import { GlobalSearch } from "./GlobalSearch";
 export interface TopbarProps {
   user: UserProfile;
-  onMobileMenuToggle: () => void;
+  onSidebarToggle: () => void;
+  sidebarExpanded: boolean;
   className?: string;
 }
 export function Topbar({
   user,
-  onMobileMenuToggle,
+  onSidebarToggle,
+  sidebarExpanded,
   className = "",
 }: TopbarProps) {
   const router = useRouter();
@@ -38,13 +40,20 @@ export function Topbar({
     <>
       <header className={"workspace-topbar " + className}>
         <div className="topbar-context">
-          <button
-            className="lg:hidden"
-            onClick={onMobileMenuToggle}
-            aria-label="Toggle navigation menu"
-          >
-            <Menu size={22} />
-          </button>
+          {!sidebarExpanded && (
+            <button
+              id="show-sidebar"
+              type="button"
+              className="admin-sidebar-toggle"
+              onClick={onSidebarToggle}
+              aria-label="Show Sidebar"
+              title="Show Sidebar"
+              aria-controls="admin-sidebar"
+              aria-expanded={false}
+            >
+              <PanelLeftOpen size={22} aria-hidden="true" />
+            </button>
+          )}
         </div>
         <GlobalSearch
           role={user.role === "super-admin" ? "super-admin" : "admin"}

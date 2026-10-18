@@ -913,6 +913,8 @@ body
   font-family: var(--font-admin), Arial, sans-serif;
 }
 .admin-app-content {
+  margin-left: 0;
+  transition: margin-left 0.2s ease;
   min-width: 0;
   display: flex;
   flex-direction: column;
@@ -937,11 +939,14 @@ body
   color: #d1d8e1;
   transform: translateX(-100%);
   visibility: hidden;
-  transition: transform 0.2s;
+  transition:
+    transform 0.2s ease,
+    visibility 0s linear 0.2s;
 }
 .admin-sidebar.is-open {
   transform: translateX(0);
   visibility: visible;
+  transition-delay: 0s;
 }
 .admin-brand {
   height: var(--admin-topbar-height);
@@ -990,8 +995,33 @@ body
 .admin-nav-group:not([open]) summary:after {
   transform: none;
 }
-.admin-nav-group:first-child summary {
-  display: none;
+.admin-sidebar-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 34px;
+  min-height: 34px;
+  border: 1px solid #344254;
+  border-radius: 6px;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+}
+.admin-sidebar-toggle:hover {
+  background: rgb(128 128 128 / 12%);
+}
+.admin-sidebar-toggle svg {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+.workspace-topbar .admin-sidebar-toggle {
+  padding: 6px;
+}
+.admin-sidebar-toggle:focus-visible {
+  outline: 2px solid var(--admin-primary);
+  outline-offset: 2px;
 }
 .admin-nav-link {
   display: flex;
@@ -2038,14 +2068,9 @@ body
   }
 }
 @media (min-width: 1024px) {
-  .admin-sidebar {
-    transform: none;
-    visibility: visible;
-  }
-  .admin-app-content {
+  .admin-app-shell[data-sidebar-expanded="true"] .admin-app-content {
     margin-left: var(--admin-sidebar-width);
   }
-  .admin-nav-close,
   .admin-nav-backdrop {
     display: none !important;
   }
@@ -2093,4 +2118,11 @@ body
 .full-fleet-map .dashboard-map-surface {
   height: calc(100dvh - 260px);
   min-height: 360px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .admin-sidebar,
+  .admin-app-content {
+    transition: none;
+  }
 }
