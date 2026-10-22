@@ -42,3 +42,13 @@ next-env.d.ts
 
 # Public environment template only
 !.env.example
+
+# Service-account and private credential exports
+**/service-account*.json
+**/serviceAccount*.json
+**/firebase-adminsdk*.json
+*.log
+*.key
+*.jks
+*.keystore
+*.p12
