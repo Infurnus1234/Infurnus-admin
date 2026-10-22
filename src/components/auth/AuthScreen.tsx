@@ -47,7 +47,7 @@ export function AuthScreen({ superPortal }: { superPortal: boolean }) {
       const result = await adminApi<{ identity: { role: string } }>(
         "/auth/admin/login",
         "POST",
-        { email: values.email.trim(), password: values.password },
+        { email: values.email.trim(), password: values.password, role: superPortal ? "super_admin" : "admin" },
       );
       router.replace(
         result.identity.role === "super_admin"
