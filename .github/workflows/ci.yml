@@ -1,0 +1,33 @@
+name: Admin CI
+on:
+  push:
+    branches: [main, 'integration/**']
+  pull_request:
+    branches: [main]
+permissions:
+  contents: read
+jobs:
+  admin:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: 22
+          cache: npm
+      - name: Install locked dependencies
+        run: npm ci
+      - name: Dependency security audit
+        run: npm audit --audit-level=moderate
+      - name: Secret and private-artifact scan
+        run: node scripts/check-source-secrets.js
+      - name: Lint
+        run: npm run lint
+      - name: Typecheck
+        run: npx tsc --noEmit
+      - name: Tests
+        run: npm test
+      - name: Production build
+        env:
+          NEXT_TELEMETRY_DISABLED: '1'
+        run: npm run build
