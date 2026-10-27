@@ -48,6 +48,40 @@ test("HTML, SVG and executable media are rejected", () => {
     "application/pdf",
   );
 });
+
+test("expiring signed private download endpoint is accepted without allowing arbitrary APIs", () => {
+  const query =
+    "?public_id=synthetic%2Ffixture.png&api_key=test&signature=" +
+    "a".repeat(40) +
+    "&expires_at=1893456000";
+  assert.equal(
+    new URL(
+      documentStorageUrl(
+        "https://api.cloudinary.com/v1_1/test-cloud/image/download" + query,
+      ),
+    ).hostname,
+    "api.cloudinary.com",
+  );
+  for (const path of [
+    "/v1_1/test-cloud/image/upload",
+    "/v1_1/test-cloud/resources",
+    "/v1_1/test-cloud/image/destroy",
+  ])
+    assert.throws(() =>
+      documentStorageUrl("https://api.cloudinary.com" + path + query),
+    );
+  assert.throws(() =>
+    documentStorageUrl(
+      "https://api.cloudinary.com/v1_1/test-cloud/image/download",
+    ),
+  );
+  assert.throws(() =>
+    documentStorageUrl(
+      "https://api.cloudinary.com.evil.invalid/v1_1/test-cloud/image/download" +
+        query,
+    ),
+  );
+});
 test("real PDF bytes are preserved; unavailable storage and disguised payloads fail", async () => {
   const pdf = new TextEncoder().encode("%PDF-1.7\nfixture bytes");
   const result = await readDocument(

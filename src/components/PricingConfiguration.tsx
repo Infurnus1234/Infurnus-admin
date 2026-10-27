@@ -4,7 +4,7 @@ import { useAdminAccess } from "./AdminAccessContext";
 import { useState } from "react";
 import { useBackendQuery } from "@/lib/use-backend-query";
 import { adminApi } from "@/lib/admin-api";
-import { perKmReferenceInput } from "@/lib/pricing-reference-input";
+import { pricingReferenceInput, type SavedPricingReference } from "@/lib/pricing-reference-input";
 import { PageHeader } from "./layout/PageHeader";
 import { Modal } from "./ui/Modal";
 interface VehicleType {
@@ -14,12 +14,7 @@ interface VehicleType {
   sector: string;
   baseFare: number | null;
   perKmRate: number | null;
-  pricingReference?: {
-    displayName: string;
-    baseFare: { minimum: number; maximum: number | null } | null;
-    perKmRate: { minimum: number; maximum: number };
-    routeBased?: boolean;
-  } | null;
+  pricingReference?: SavedPricingReference | null;
   currency: string;
   active: boolean;
   version: number;
@@ -31,7 +26,7 @@ function displayRange(
   if (!value) return missing;
   return (
     (value.minimum / 100).toFixed(2) +
-    (value.maximum === null ? "+" : "–" + (value.maximum / 100).toFixed(2))
+    (value.maximum === null ? "+" : "â€“" + (value.maximum / 100).toFixed(2))
   );
 }
 const empty = {
@@ -112,23 +107,7 @@ export function PricingConfiguration() {
         name: form.name.trim(),
         baseFare: form.pricingMode === "fixed" ? Number(form.baseFare) : null,
         perKmRate: form.pricingMode === "fixed" ? Number(form.perKmRate) : null,
-        pricingReference:
-          form.pricingMode === "fixed"
-            ? (editing?.pricingReference ?? null)
-            : {
-                displayName: form.name.trim(),
-                baseFare:
-                  form.pricingMode === "route"
-                    ? null
-                    : {
-                        minimum: Math.round(Number(form.baseFare) * 100),
-                        maximum: form.baseFareMax.trim()
-                          ? Math.round(Number(form.baseFareMax) * 100)
-                          : null,
-                      },
-                perKmRate: perKmReferenceInput(form),
-                ...(form.pricingMode === "route" ? { routeBased: true } : {}),
-              },
+        pricingReference: pricingReferenceInput(form, editing?.pricingReference),
         active: form.active,
       };
       await adminApi(
@@ -209,7 +188,7 @@ export function PricingConfiguration() {
           <tbody>
             {busy ? (
               <tr>
-                <td colSpan={8}>Loading…</td>
+                <td colSpan={8}>Loadingâ€¦</td>
               </tr>
             ) : types.length ? (
               types.map((type) => (
@@ -247,7 +226,7 @@ export function PricingConfiguration() {
                     {type.perKmRate !== null
                       ? type.perKmRate.toFixed(2)
                       : type.pricingReference
-                        ? `${(type.pricingReference.perKmRate.minimum / 100).toFixed(2)}–${(type.pricingReference.perKmRate.maximum / 100).toFixed(2)} (reference)`
+                        ? `${(type.pricingReference.perKmRate.minimum / 100).toFixed(2)}â€“${(type.pricingReference.perKmRate.maximum / 100).toFixed(2)} (reference)`
                         : "Not configured"}
                   </td>
                   <td>{type.active ? "Yes" : "No"}</td>
@@ -327,16 +306,16 @@ export function PricingConfiguration() {
                 : form.baseFare +
                   (form.pricingMode === "range"
                     ? form.baseFareMax
-                      ? "–" + form.baseFareMax
+                      ? "â€“" + form.baseFareMax
                       : "+"
                     : "")}
               ; per km INR {form.perKmRate}
-              {form.pricingMode !== "fixed" ? "–" + form.perKmRateMax : ""};
+              {form.pricingMode !== "fixed" ? "â€“" + form.perKmRateMax : ""};
               active {form.active ? "Yes" : "No"}.
             </p>
             <div className="operations-toolbar">
               <button disabled={saving} onClick={() => void save()}>
-                {saving ? "Saving…" : "Confirm and save"}
+                {saving ? "Savingâ€¦" : "Confirm and save"}
               </button>
               <button disabled={saving} onClick={() => setConfirm(false)}>
                 Back
@@ -400,9 +379,9 @@ export function PricingConfiguration() {
                   Approved fixed quote
                 </option>
                 <option value="range" disabled={form.code === "ftl"}>
-                  Reference range — quote required
+                  Reference range â€” quote required
                 </option>
-                <option value="route">Route-based — quote required</option>
+                <option value="route">Route-based â€” quote required</option>
               </select>
             </label>
             {(["baseFare", "perKmRate"] as const)

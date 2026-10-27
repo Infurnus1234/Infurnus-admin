@@ -21,3 +21,24 @@ export function perKmReferenceInput(form: {
     throw Error("Maximum per-km rate must be at least the minimum.");
   return { minimum: amounts[0], maximum: amounts[1] };
 }
+
+export interface SavedPricingReference {
+  displayName: string;
+  baseFare: { minimum: number; maximum: number | null } | null;
+  perKmRate: { minimum: number; maximum: number };
+  routeBased?: boolean;
+  demandPricing?: {windowSeconds:number;lowBookingCount:number;highBookingCount:number;staleAfterSeconds:number};
+}
+export function pricingReferenceInput(form:{name:string;pricingMode:string;baseFare:string;baseFareMax:string;perKmRate:string;perKmRateMax:string},previous?:SavedPricingReference|null):SavedPricingReference|null {
+  if(form.pricingMode==='fixed') {
+    if(previous?.demandPricing) throw Error('Demand-priced categories must retain range or route pricing.');
+    return null;
+  }
+  return {
+    displayName:form.name.trim(),
+    baseFare:form.pricingMode==='route'?null:{minimum:Math.round(Number(form.baseFare)*100),maximum:form.baseFareMax.trim()?Math.round(Number(form.baseFareMax)*100):null},
+    perKmRate:perKmReferenceInput(form),
+    ...(form.pricingMode==='route'?{routeBased:true}:{}),
+    ...(previous?.demandPricing?{demandPricing:{...previous.demandPricing}}:{}),
+  };
+}

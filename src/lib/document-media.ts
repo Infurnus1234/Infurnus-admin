@@ -12,6 +12,20 @@ export function documentStorageUrl(
     !url.port
   )
     return url.href;
+  // The backend's Cloudinary SDK creates expiring private_download_url links
+  // on the download API, rather than the delivery CDN. Permit only that signed
+  // read endpoint; keep arbitrary API paths and redirect destinations denied.
+  if (
+    url.protocol === "https:" &&
+    url.hostname === "api.cloudinary.com" &&
+    !url.port &&
+    /^\/v1_1\/[a-z0-9_-]+\/(image|raw)\/download$/.test(url.pathname) &&
+    url.searchParams.has("public_id") &&
+    url.searchParams.has("api_key") &&
+    /^[a-f0-9]{40,64}$/i.test(url.searchParams.get("signature") || "") &&
+    /^\d+$/.test(url.searchParams.get("expires_at") || "")
+  )
+    return url.href;
   if (
     !production &&
     localOrigin &&

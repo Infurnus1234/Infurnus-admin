@@ -13,6 +13,7 @@ import { PageHeader } from "./layout/PageHeader";
 import { Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { recordReturnPath } from "@/lib/dashboard-navigation";
+import { FleetOwnerWorkspace } from "./FleetOwnerWorkspace";
 import { VehicleActions } from "./VehicleActions";
 type DetailsProps = {
   module: ModuleKey;
@@ -148,6 +149,7 @@ function DetailsContent({ module, id, role }: DetailsProps) {
                 </article>
               ),
           )}
+          {module === "partners" && role === "super-admin" && <FleetOwnerWorkspace partnerId={id} />}
           <button onClick={refresh}>Refresh record</button>
           {module === "vehicles" && (
             <div className="operations-toolbar">

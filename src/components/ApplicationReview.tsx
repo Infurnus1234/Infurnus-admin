@@ -15,6 +15,7 @@ import { Modal } from "./ui/Modal";
 import { DocumentsPanel, type SubmittedDocument } from "./DocumentsPanel";
 import { useBackendQuery } from "@/lib/use-backend-query";
 import { adminApi } from "@/lib/admin-api";
+import { reviewDocumentFields } from "@/lib/review-document-fields";
 import { reviewReturnPath } from "@/lib/review-context";
 import {
   requesterName,
@@ -110,16 +111,17 @@ export function ApplicationReview({
     label: requestLabel(doc.document_code || doc.document_type),
     status: doc.verification_status || doc.status || "UNKNOWN",
     mimeType: doc.mime_type,
-    number: doc.document_metadata?.documentNumber,
+    ...reviewDocumentFields(doc),
     createdAt: doc.created_at,
     reviewedAt: doc.verified_at || doc.reviewed_at,
-    reason: doc.rejection_reason,
-    expiresAt: doc.document_metadata?.expiresAt,
     pages: doc.pages || [],
   }));
   const canReview =
     detail.request.status === "PENDING" && detail.request.can_review !== false;
   const target = detail.target;
+  const bankBlocked =
+    detail.request.target_type === "bank_account" &&
+    target.is_verified !== true;
   return (
     <section className="workspace-section">
       <PageHeader
@@ -245,6 +247,41 @@ export function ApplicationReview({
               </dl>
             </section>
           )}
+          {detail.request.target_type === "bank_account" && (
+            <section className="review-card">
+              <h2>Bank account review</h2>
+              <dl className="review-fields">
+                <div>
+                  <dt>Account holder</dt>
+                  <dd>{target.account_holder_name}</dd>
+                </div>
+                <div>
+                  <dt>Account</dt>
+                  <dd>Ending {target.account_number_last4}</dd>
+                </div>
+                <div>
+                  <dt>Bank / IFSC</dt>
+                  <dd>
+                    {target.bank_name} / {target.ifsc_code}
+                  </dd>
+                </div>
+                <div>
+                  <dt>Ownership verification</dt>
+                  <dd>
+                    {target.is_verified
+                      ? "Verified by the backend"
+                      : "Not verified"}
+                  </dd>
+                </div>
+              </dl>
+              {bankBlocked && (
+                <p role="status">
+                  {target.verification_blocker ||
+                    "Bank ownership verification is unavailable. Details can be rejected for correction; approval cannot enable payouts."}
+                </p>
+              )}
+            </section>
+          )}
           <DocumentsPanel
             documents={documents}
             kind="approval"
@@ -368,7 +405,12 @@ export function ApplicationReview({
             <div className="review-actions">
               <button
                 className="workspace-primary"
-                disabled={saving || !canReview || !can("approvals.approve")}
+                disabled={
+                  saving ||
+                  !canReview ||
+                  bankBlocked ||
+                  !can("approvals.approve")
+                }
                 onClick={() => {
                   setSelectedItem(undefined);
                   setDecision("APPROVED");

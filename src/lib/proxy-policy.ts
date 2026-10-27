@@ -6,6 +6,7 @@ export function allowedBackendPath(method: string, path: string): boolean {
     )
   )
     return true;
+  if (["GET","PUT"].includes(method) && path === "/provider-approvals/document-policies") return true;
   const uuid = "[\\da-f-]{36}";
   if (
     method === "GET" &&
@@ -20,6 +21,7 @@ export function allowedBackendPath(method: string, path: string): boolean {
     )
   )
     return true;
+  if (method === "GET" && new RegExp(`^/provider-approvals/fleet-owners/${uuid}/overview$`, "i").test(path)) return true;
   if (method === "POST" && path === "/vehicles") return true;
   if (
     ["GET", "PATCH"].includes(method) &&

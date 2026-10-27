@@ -15,6 +15,8 @@ export interface SubmittedDocument {
   reviewedAt?: string;
   reason?: string;
   expiresAt?: string;
+  issuedAt?: string;
+  licenceClasses?: string;
   pages: {
     pageNumber: number;
     side?: string;
@@ -261,6 +263,9 @@ export function DocumentsPanel({
                 {requestLabel(document.status)}
               </span>
               {document.number && <p>Document number: {document.number}</p>}
+              {document.licenceClasses && (
+                <p>Licence vehicle classes: {document.licenceClasses}</p>
+              )}
               <p>
                 Uploaded:{" "}
                 {document.createdAt
@@ -272,6 +277,9 @@ export function DocumentsPanel({
               )}
               {document.expiresAt && (
                 <p>Expiry: {requestTimestamp(document.expiresAt)}</p>
+              )}
+              {document.issuedAt && (
+                <p>Issued: {requestTimestamp(document.issuedAt)}</p>
               )}
               {document.reason && (
                 <p className="review-comment">

@@ -34,7 +34,19 @@ export interface ReviewDocument {
   verified_at?: string;
   reviewed_at?: string;
   rejection_reason?: string;
-  document_metadata?: { documentNumber?: string; expiresAt?: string };
+  expires_at?: string | null;
+  issued_at?: string | null;
+  metadata?: {
+    documentNumber?: string;
+    expiresAt?: string;
+    rejectionReason?: string;
+  };
+  document_metadata?: {
+    documentNumber?: string;
+    expiresAt?: string;
+    issuedAt?: string;
+    licenceClasses?: string;
+  };
 }
 export interface ApprovalDetails {
   onboarding_status?: string;
@@ -60,6 +72,12 @@ export interface ApprovalDetails {
     updated_at: string;
     verification_status?: string;
     first_name?: string;
+    account_holder_name?: string;
+    account_number_last4?: string;
+    ifsc_code?: string;
+    bank_name?: string;
+    is_verified?: boolean;
+    verification_blocker?: string | null;
     user_id?: string;
   };
   documents: ReviewDocument[];
@@ -172,6 +190,12 @@ export const requestPage = (page: number, total: number) =>
 export function requestTimestamp(value: string | null) {
   if (!value) return "Not reviewed";
   const date = new Date(value);
+  if (/^\d{4}-\d{2}-\d{2}$/.test(value) && !Number.isNaN(date.getTime())) {
+    return date.toLocaleDateString("en-IN", {
+      dateStyle: "medium",
+      timeZone: "UTC",
+    });
+  }
   return Number.isNaN(date.getTime())
     ? "Time unavailable"
     : date.toLocaleString("en-IN", { dateStyle: "medium", timeStyle: "short" });
